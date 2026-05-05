@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
@@ -6,20 +6,23 @@ function ProfileDetails() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    if (id) fetchUser();
-  }, [id]);
+  // ✅ LIVE BACKEND URL
+  const API = "https://matrimony-backend-1-ri82.onrender.com/api";
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/${id}`
-      );
+      const res = await axios.get(`${API}/users/${id}`);
       setUser(res.data);
     } catch (err) {
       console.log("API ERROR:", err);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchUser();
+    }
+  }, [fetchUser, id]);
 
   if (!user) return <p>Loading profile...</p>;
 
