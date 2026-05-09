@@ -54,11 +54,17 @@ function AddProfile() {
         formData.append("image", imageFile);
       }
 
-      await axios.post("http://localhost:5000/api/users", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
+      await axios.post(
+        "https://matrimony-backend-1-ri82.onrender.com/api/users",
+        formData,
+        {
+         headers: {
+           "Content-Type": "multipart/form-data"
         }
-      });
+       
+      }
+      
+    );
 
       alert("Profile Added 💍");
 

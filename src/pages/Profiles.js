@@ -16,13 +16,29 @@ function Profiles() {
   }, []);
 
   const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:5000/api/users");
-    setUsers(res.data);
+    try {
+      const res = await axios.get(
+        "https://matrimony-backend-1-ri82.onrender.com/api/users"
+      );
+
+      setUsers(res.data);
+
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const toggleInterest = async (id) => {
-    await axios.put(`http://localhost:5000/api/users/${id}/toggle`);
-    fetchUsers();
+    try {
+      await axios.put(
+        `https://matrimony-backend-1-ri82.onrender.com/api/users/${id}/toggle`
+      );
+
+      fetchUsers();
+
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const filteredUsers = users.filter((user) => {
@@ -87,12 +103,13 @@ function Profiles() {
         {filteredUsers.map((user) => (
           <div key={user._id} style={styles.card}>
             <img
-              src={`http://localhost:5000${user.image}`}
+              src={`https://matrimony-backend-1-ri82.onrender.com${user.image}`}
               style={styles.image}
               alt="profile"
             />
 
             <h3 style={styles.name}>{user.name}</h3>
+
             <p style={styles.info}>
               {user.age} yrs • {user.location}
             </p>
@@ -106,7 +123,7 @@ function Profiles() {
                 <button style={styles.viewBtn}>View</button>
               </Link>
 
-              {/* ✅ CHAT BUTTON */}
+              {/* CHAT BUTTON */}
               <Link to={`/chat/${user._id}`}>
                 <button style={styles.chatBtn}>💬 Chat</button>
               </Link>

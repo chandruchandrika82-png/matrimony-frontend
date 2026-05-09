@@ -10,11 +10,21 @@ function SavedProfiles() {
   }, []);
 
   const fetchSavedUsers = async () => {
-    const res = await axios.get("http://localhost:5000/api/users");
+    try {
+      const res = await axios.get(
+        "https://matrimony-backend-1-ri82.onrender.com/api/users"
+      );
 
-    // ✅ Only interested users
-    const saved = res.data.filter(user => user.interested === true);
-    setUsers(saved);
+      // ✅ Only interested users
+      const saved = res.data.filter(
+        user => user.interested === true
+      );
+
+      setUsers(saved);
+
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -26,7 +36,11 @@ function SavedProfiles() {
       <div style={styles.grid}>
         {users.map(user => (
           <div key={user._id} style={styles.card}>
-            <img src={user.image} style={styles.image} alt="profile" />
+            <img
+              src={user.image}
+              style={styles.image}
+              alt="profile"
+            />
 
             <h3>{user.name}</h3>
             <p>{user.age} yrs • {user.location}</p>

@@ -6,7 +6,7 @@ function InterestedProfiles() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/users")
+    axios.get("https://matrimony-backend-1-ri82.onrender.com/api/users")
       .then(res => {
         // ❤️ filter only interested
         const liked = res.data.filter(user => user.interested);
