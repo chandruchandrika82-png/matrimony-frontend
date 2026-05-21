@@ -1,57 +1,146 @@
-import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+
+    // 🔥 ensures UI refresh after logout
+    window.location.reload();
+  };
+
   return (
-    <div style={styles.nav}>
-
+    <div style={styles.navbar}>
+      
+      {/* LOGO */}
       <div style={styles.logoContainer}>
-        <img src={logo} alt="logo" style={styles.logo} />
-        <h2 style={styles.title}>Digi Ghatak</h2>
+        <img
+          src="/logo.png"
+          alt="logo"
+          style={styles.logoImage}
+        />
+
+        <h2 style={styles.logoText}>
+          Digi Ghatak
+        </h2>
       </div>
 
-      <div>
-        <Link to="/" style={styles.link}>Home</Link>
-        <Link to="/profiles" style={styles.link}>Profiles</Link>
-        <Link to="/add-profile" style={styles.link}>Add Profile</Link>
-        <Link to="/interested" style={styles.link}>❤️</Link>
-      </div>
+      {/* MENU */}
+      <div style={styles.links}>
+        
+        <Link to="/" style={styles.link}>
+          Home
+        </Link>
 
+        <Link to="/profiles" style={styles.link}>
+          Profiles
+        </Link>
+
+        <Link to="/add-profile" style={styles.link}>
+          Add Profile
+        </Link>
+
+        <Link to="/interested" style={styles.link}>
+          Interested
+        </Link>
+
+        {/* AUTH SECTION */}
+        {!token ? (
+          <>
+            <Link to="/login" style={styles.link}>
+              Login
+            </Link>
+
+            <Link to="/register" style={styles.registerBtn}>
+              Register
+            </Link>
+          </>
+        ) : (
+          <button onClick={logout} style={styles.logoutBtn}>
+            Logout
+          </button>
+        )}
+      </div>
     </div>
   );
 }
 
+/* ================= STYLES ================= */
+
 const styles = {
-  nav: {
+  navbar: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    padding: "18px 50px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "15px 40px",
-    background: "linear-gradient(90deg, #8B0000, #ff4d6d)",
-    color: "white",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+    background: "rgba(255,255,255,0.08)",
+    backdropFilter: "blur(10px)",
+    WebkitBackdropFilter: "blur(10px)",
+    borderBottom: "1px solid rgba(255,255,255,0.15)",
+    zIndex: 999,
+    boxSizing: "border-box"
   },
 
   logoContainer: {
     display: "flex",
     alignItems: "center",
-    gap: 10
+    gap: "12px"
   },
 
-  logo: {
-    width: 45,
-    height: 45,
-    borderRadius: "50%"
+  logoImage: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "50%",
+    objectFit: "cover"
   },
 
-  title: {
+  logoText: {
+    color: "#8B0000",
+    fontSize: "24px",
+    fontWeight: "700",
     margin: 0
   },
 
+  links: {
+    display: "flex",
+    alignItems: "center",
+    gap: "25px"
+  },
+
   link: {
-    margin: "0 15px",
-    color: "white",
+    color: "#333",
     textDecoration: "none",
+    fontSize: "16px",
+    fontWeight: "600",
+    transition: "0.3s"
+  },
+
+  registerBtn: {
+    background: "#ff4d6d",
+    color: "white",
+    padding: "10px 18px",
+    borderRadius: "10px",
+    textDecoration: "none",
+    fontWeight: "bold"
+  },
+
+  logoutBtn: {
+    background: "#8B0000",
+    color: "white",
+    border: "none",
+    padding: "10px 18px",
+    borderRadius: "10px",
+    cursor: "pointer",
     fontWeight: "bold"
   }
 };

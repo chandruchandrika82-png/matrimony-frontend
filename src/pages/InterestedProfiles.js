@@ -16,7 +16,12 @@ function InterestedProfiles() {
   }, []);
 
   return (
-    <div style={{ textAlign: "center", padding: 40 }}>
+    <div style={{
+      textAlign: "center",
+      minHeight: "100vh",
+      padding: "120px 20px 40px",
+      background: "linear-gradient(to bottom right, #d79861, #ffe4ec)"
+      }}>
       <h2>❤️ Interested Profiles</h2>
 
       {users.length === 0 && <p>No interested profiles yet</p>}
@@ -31,7 +36,7 @@ function InterestedProfiles() {
           <div key={user._id} style={{
             width: 250,
             padding: 20,
-            border: "1px solid #ccc",
+            border: "1px solid #cccccc",
             borderRadius: 10
           }}>
             <img

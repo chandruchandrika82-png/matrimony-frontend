@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 
 function AddProfile() {
+
   const [form, setForm] = useState({
     name: "",
     age: "",
@@ -23,15 +24,14 @@ function AddProfile() {
 
     religion: "",
     caste: "",
+
     star: "",
     zodiac: "",
+    rashi: "",
     dosha: "",
 
     phone: "",
-    address: "",
-
-    zodiacImage: "",
-    navamsaImage: ""
+    address: ""
   });
 
   const [imageFile, setImageFile] = useState(null);
@@ -44,22 +44,19 @@ function AddProfile() {
   };
 
   const handleSubmit = async () => {
-    console.log("FINAL SUBMIT CLICKED");
-
     try {
+
       const formData = new FormData();
 
-      // append all fields
       Object.keys(form).forEach((key) => {
         formData.append(key, form[key]);
       });
 
-      // append image
       if (imageFile) {
         formData.append("image", imageFile);
       }
 
-      const res = await axios.post(
+      await axios.post(
         "https://matrimony-backend-1-ri82.onrender.com/api/users",
         formData,
         {
@@ -69,271 +66,387 @@ function AddProfile() {
         }
       );
 
-      console.log("SUCCESS:", res.data);
-
       alert("Profile Added Successfully 💍");
 
-      // reset form
       setForm({
         name: "",
         age: "",
         location: "",
         email: "",
         password: "",
+
         gender: "",
         dob: "",
         timeOfBirth: "",
         placeOfBirth: "",
+
         fatherName: "",
         motherName: "",
+
         education: "",
         job: "",
         income: "",
+
         religion: "",
         caste: "",
+
         star: "",
         zodiac: "",
+        rashi: "",
         dosha: "",
+
         phone: "",
-        address: "",
-        zodiacImage: "",
-        navamsaImage: ""
+        address: ""
       });
 
       setImageFile(null);
 
     } catch (err) {
-      console.log("FULL ERROR:", err);
-
-      alert(
-        err?.response?.data?.message ||
-        err.message ||
-        "Submission Failed"
-      );
+      console.log(err);
+      alert(err?.response?.data?.error || "Submission Failed");
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Add Profile 💍</h2>
+    <div style={styles.page}>
 
-      {/* BASIC */}
-      <h3>👤 Basic Info</h3>
+      <div style={styles.container}>
 
-      <input
-        name="name"
-        placeholder="Name"
-        value={form.name}
-        onChange={handleChange}
-      />
+        <h1 style={styles.title}>💍 Add Profile</h1>
 
-      <input
-        name="age"
-        placeholder="Age"
-        value={form.age}
-        onChange={handleChange}
-      />
+        {/* BASIC INFO */}
+        <div style={styles.section}>
+          <h3>👤 Basic Info</h3>
 
-      <input
-        name="location"
-        placeholder="Location"
-        value={form.location}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="name"
+            placeholder="Name"
+            value={form.name}
+            onChange={handleChange}
+          />
 
-      <input
-        name="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="age"
+            placeholder="Age"
+            value={form.age}
+            onChange={handleChange}
+          />
 
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+          />
 
-      {/* IMAGE */}
-      <input
-        type="file"
-        onChange={(e) => setImageFile(e.target.files[0])}
-      />
+          <input
+            style={styles.input}
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+          />
 
-      {/* PERSONAL */}
-      <h3>📅 Personal Details</h3>
+          <input
+            style={styles.input}
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+          />
 
-      <input
-        name="gender"
-        placeholder="Gender"
-        value={form.gender}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            type="file"
+            onChange={(e) => setImageFile(e.target.files[0])}
+          />
+        </div>
 
-      <input
-        name="dob"
-        placeholder="Date of Birth"
-        value={form.dob}
-        onChange={handleChange}
-      />
+        {/* PERSONAL DETAILS */}
+        <div style={styles.section}>
+          <h3>📅 Personal Details</h3>
 
-      <input
-        name="timeOfBirth"
-        placeholder="Time Of Birth"
-        value={form.timeOfBirth}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="gender"
+            placeholder="Gender"
+            value={form.gender}
+            onChange={handleChange}
+          />
 
-      <input
-        name="placeOfBirth"
-        placeholder="Place Of Birth"
-        value={form.placeOfBirth}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="dob"
+            placeholder="Date of Birth"
+            value={form.dob}
+            onChange={handleChange}
+          />
 
-      {/* FAMILY */}
-      <h3>👪 Family</h3>
+          <input
+            style={styles.input}
+            name="timeOfBirth"
+            placeholder="Time of Birth"
+            value={form.timeOfBirth}
+            onChange={handleChange}
+          />
 
-      <input
-        name="fatherName"
-        placeholder="Father Name"
-        value={form.fatherName}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="placeOfBirth"
+            placeholder="Place of Birth"
+            value={form.placeOfBirth}
+            onChange={handleChange}
+          />
+        </div>
 
-      <input
-        name="motherName"
-        placeholder="Mother Name"
-        value={form.motherName}
-        onChange={handleChange}
-      />
+        {/* FAMILY */}
+        <div style={styles.section}>
+          <h3>👪 Family</h3>
 
-      {/* CAREER */}
-      <h3>🎓 Career</h3>
+          <input
+            style={styles.input}
+            name="fatherName"
+            placeholder="Father Name"
+            value={form.fatherName}
+            onChange={handleChange}
+          />
 
-      <input
-        name="education"
-        placeholder="Education"
-        value={form.education}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="motherName"
+            placeholder="Mother Name"
+            value={form.motherName}
+            onChange={handleChange}
+          />
+        </div>
 
-      <input
-        name="job"
-        placeholder="Job"
-        value={form.job}
-        onChange={handleChange}
-      />
+        {/* CAREER */}
+        <div style={styles.section}>
+          <h3>🎓 Career</h3>
 
-      <input
-        name="income"
-        placeholder="Income"
-        value={form.income}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="education"
+            placeholder="Education"
+            value={form.education}
+            onChange={handleChange}
+          />
 
-      {/* RELIGION */}
-      <h3>🕉️ Religion</h3>
+          <input
+            style={styles.input}
+            name="job"
+            placeholder="Job"
+            value={form.job}
+            onChange={handleChange}
+          />
 
-      <input
-        name="religion"
-        placeholder="Religion"
-        value={form.religion}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="income"
+            placeholder="Income"
+            value={form.income}
+            onChange={handleChange}
+          />
+        </div>
 
-      <input
-        name="caste"
-        placeholder="Caste"
-        value={form.caste}
-        onChange={handleChange}
-      />
+        {/* RELIGION */}
+        <div style={styles.section}>
+          <h3>🕉️ Religion</h3>
 
-      <input
-        name="star"
-        placeholder="Star"
-        value={form.star}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="religion"
+            placeholder="Religion"
+            value={form.religion}
+            onChange={handleChange}
+          />
 
-      <input
-        name="zodiac"
-        placeholder="Zodiac"
-        value={form.zodiac}
-        onChange={handleChange}
-      />
+          <input
+            style={styles.input}
+            name="caste"
+            placeholder="Caste"
+            value={form.caste}
+            onChange={handleChange}
+          />
+        </div>
 
-      <input
-        name="dosha"
-        placeholder="Dosha"
-        value={form.dosha}
-        onChange={handleChange}
-      />
+        {/* ASTROLOGY */}
+        <div style={styles.astroBox}>
 
-      {/* CONTACT */}
-      <h3>📞 Contact</h3>
+          <h3>🔮 Select Zodiac</h3>
 
-      <input
-        name="phone"
-        placeholder="Phone"
-        value={form.phone}
-        onChange={handleChange}
-      />
+          <div style={styles.zodiacGrid}>
 
-      <input
-        name="address"
-        placeholder="Address"
-        value={form.address}
-        onChange={handleChange}
-      />
+            {[
+              "Aries",
+              "Taurus",
+              "Gemini",
+              "Cancer",
+              "Leo",
+              "Virgo",
+              "Libra",
+              "Scorpio",
+              "Sagittarius",
+              "Capricorn",
+              "Aquarius",
+              "Pisces"
+            ].map((z) => (
 
-      {/* HOROSCOPE */}
-      <h3>🔮 Horoscope</h3>
+              <div
+                key={z}
+                onClick={() => setForm({ ...form, zodiac: z })}
+                style={{
+                  ...styles.zodiacCard,
+                  background: form.zodiac === z ? "#ff4d6d" : "#fff",
+                  color: form.zodiac === z ? "#fff" : "#000"
+                }}
+              >
+                {z}
+              </div>
 
-      <input
-        name="zodiacImage"
-        placeholder="Zodiac Image URL"
-        value={form.zodiacImage}
-        onChange={handleChange}
-      />
+            ))}
 
-      <input
-        name="navamsaImage"
-        placeholder="Navamsa Image URL"
-        value={form.navamsaImage}
-        onChange={handleChange}
-      />
+          </div>
 
-      <br />
-      <br />
+          <input
+            style={styles.input}
+            name="star"
+            placeholder="Star / Nakshatra"
+            value={form.star}
+            onChange={handleChange}
+          />
 
-      <button onClick={handleSubmit} style={styles.button}>
-        Save
-      </button>
+          <input
+            style={styles.input}
+            name="rashi"
+            placeholder="Rashi"
+            value={form.rashi}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="dosha"
+            placeholder="Dosha"
+            value={form.dosha}
+            onChange={handleChange}
+          />
+
+        </div>
+
+        {/* CONTACT */}
+        <div style={styles.section}>
+          <h3>📞 Contact</h3>
+
+          <input
+            style={styles.input}
+            name="phone"
+            placeholder="Phone"
+            value={form.phone}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+          />
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          style={styles.button}
+        >
+          Save Profile 💍
+        </button>
+
+      </div>
+
     </div>
   );
 }
 
 const styles = {
+
+  page: {
+    background: "#fff5f7",
+    minHeight: "100vh",
+    padding: 30
+  },
+
   container: {
-    padding: 40,
-    maxWidth: 600,
-    margin: "auto",
+  minHeight: "100vh",
+  padding: "120px 20px 40px",
+  background: "linear-gradient(to bottom right, #5e421e, #ffe4ec)",
+},
+
+  title: {
+    textAlign: "center",
+    color: "#8B0000",
+    marginBottom: 10
+  },
+
+  section: {
+    background: "#fff7fb",
+    padding: 20,
+    borderRadius: 15,
+    border: "1px solid #ffe1ec",
     display: "flex",
     flexDirection: "column",
-    gap: 10
+    gap: 12
+  },
+
+  input: {
+    padding: 14,
+    borderRadius: 10,
+    border: "1px solid #ddd",
+    outline: "none",
+    fontSize: 15
   },
 
   button: {
-    padding: 10,
-    background: "#8B0000",
+    padding: 15,
+    background: "#ff4d6d",
     color: "white",
     border: "none",
-    borderRadius: 5,
-    cursor: "pointer"
+    borderRadius: 12,
+    cursor: "pointer",
+    fontSize: 16,
+    fontWeight: "bold"
+  },
+
+  astroBox: {
+    background: "#fff0f6",
+    padding: 20,
+    borderRadius: 15,
+    border: "1px solid #ffd6e8",
+    display: "flex",
+    flexDirection: "column",
+    gap: 12
+  },
+
+  zodiacGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 12
+  },
+
+  zodiacCard: {
+    padding: 12,
+    border: "1px solid #ddd",
+    borderRadius: 12,
+    cursor: "pointer",
+    textAlign: "center",
+    fontWeight: "bold",
+    transition: "0.2s"
   }
+
 };
 
 export default AddProfile;

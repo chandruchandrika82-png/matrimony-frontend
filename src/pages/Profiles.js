@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Profiles() {
+
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -17,6 +18,7 @@ function Profiles() {
 
   const fetchUsers = async () => {
     try {
+
       const res = await axios.get(
         "https://matrimony-backend-1-ri82.onrender.com/api/users"
       );
@@ -30,6 +32,7 @@ function Profiles() {
 
   const toggleInterest = async (id) => {
     try {
+
       await axios.put(
         `https://matrimony-backend-1-ri82.onrender.com/api/users/${id}/toggle`
       );
@@ -55,18 +58,18 @@ function Profiles() {
 
   return (
     <div style={styles.container}>
+
       <h1 style={styles.title}>💍 Find Your Match</h1>
 
-      {/* SEARCH */}
       <input
-        placeholder="Search name..."
+        placeholder="Search by name..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={styles.search}
       />
 
-      {/* FILTERS */}
       <div style={styles.filters}>
+
         <input
           type="number"
           placeholder="Min Age"
@@ -96,159 +99,214 @@ function Profiles() {
           onChange={(e) => setReligion(e.target.value)}
           style={styles.filterInput}
         />
+
       </div>
 
-      {/* PROFILE CARDS */}
       <div style={styles.grid}>
+
         {filteredUsers.map((user) => (
+
           <div key={user._id} style={styles.card}>
+
             <img
-              src={`https://matrimony-backend-1-ri82.onrender.com${user.image}`}
+              src={
+                user.image
+                  ? `https://matrimony-backend-1-ri82.onrender.com${user.image}`
+                  : "https://via.placeholder.com/300x320"
+              }
               style={styles.image}
               alt="profile"
             />
 
-            <h3 style={styles.name}>{user.name}</h3>
+            <div style={styles.cardContent}>
 
-            <p style={styles.info}>
-              {user.age} yrs • {user.location}
-            </p>
+              <h3 style={styles.name}>
+                {user.name}
+              </h3>
 
-            {user.interested && (
-              <p style={styles.badge}>❤️ Interested</p>
-            )}
+              <p style={styles.info}>
+                {user.age} yrs • {user.location}
+              </p>
 
-            <div style={styles.buttons}>
-              <Link to={`/profile/${user._id}`}>
-                <button style={styles.viewBtn}>View</button>
-              </Link>
+              <p style={styles.religion}>
+                🕉️ {user.religion || "Not Mentioned"}
+              </p>
 
-              {/* CHAT BUTTON */}
-              <Link to={`/chat/${user._id}`}>
-                <button style={styles.chatBtn}>💬 Chat</button>
-              </Link>
+              {user.interested && (
+                <p style={styles.badge}>
+                  ❤️ Interested
+                </p>
+              )}
 
-              <button
-                onClick={() => toggleInterest(user._id)}
-                style={{
-                  ...styles.interestBtn,
-                  background: user.interested ? "#ccc" : "#ff4d6d"
-                }}
-              >
-                {user.interested ? "Saved" : "❤️ Interested"}
-              </button>
+              <div style={styles.buttons}>
+
+                <Link to={`/profile/${user._id}`}>
+                  <button style={styles.viewBtn}>
+                    View
+                  </button>
+                </Link>
+
+                <Link to={`/chat/${user._id}`}>
+                  <button style={styles.chatBtn}>
+                    💬 Chat
+                  </button>
+                </Link>
+
+                <button
+                  onClick={() => toggleInterest(user._id)}
+                  style={{
+                    ...styles.interestBtn,
+                    background: user.interested ? "#bbb" : "#ff4d6d"
+                  }}
+                >
+                  {user.interested ? "Saved" : "❤️ Interested"}
+                </button>
+
+              </div>
+
             </div>
+
           </div>
+
         ))}
+
       </div>
+
     </div>
   );
 }
 
 const styles = {
+
   container: {
-    padding: 40,
-    textAlign: "center",
-    background: "#fff5f7",
-    minHeight: "100vh",
-    fontFamily: "Arial"
+  minHeight: "100vh",
+  padding: "120px 20px 40px",
+  background: "linear-gradient(to bottom right, #4e2f0df4, #ffe4ec)",
   },
 
   title: {
-    marginBottom: 20,
+    marginBottom: 25,
     color: "#8B0000",
-    fontSize: 28
+    fontSize: 42,
+    fontWeight: "700"
   },
 
   search: {
-    padding: 12,
+    padding: 15,
     width: "60%",
-    maxWidth: 400,
-    borderRadius: 25,
-    border: "1px solid #ddd",
-    marginBottom: 20
+    maxWidth: 450,
+    borderRadius: 30,
+    border: "1px solid #eee",
+    marginBottom: 25,
+    fontSize: 16,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+    outline: "none"
   },
 
   filters: {
     display: "flex",
-    gap: 10,
+    gap: 15,
     justifyContent: "center",
-    marginBottom: 30,
+    marginBottom: 40,
     flexWrap: "wrap"
   },
 
   filterInput: {
-    padding: 10,
-    borderRadius: 20,
-    border: "1px solid #ccc"
+    padding: "12px 18px",
+    borderRadius: 25,
+    border: "1px solid #ddd",
+    outline: "none",
+    fontSize: 14
   },
 
   grid: {
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 25
+    gap: 30
   },
 
   card: {
-    width: 260,
-    padding: 20,
-    background: "white",
-    borderRadius: 15,
-    boxShadow: "0 8px 20px rgba(0,0,0,0.1)"
+    width: 300,
+    background: "#fff",
+    borderRadius: 22,
+    overflow: "hidden",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+    paddingBottom: 20
   },
 
   image: {
     width: "100%",
-    height: 220,
-    objectFit: "cover",
-    borderRadius: 12,
-    marginBottom: 10
+    height: 320,
+    objectFit: "cover"
+  },
+
+  cardContent: {
+    padding: 20
   },
 
   name: {
-    fontSize: 18,
-    fontWeight: "bold"
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 10,
+    color: "#222"
   },
 
   info: {
-    color: "#555",
-    marginBottom: 10
+    color: "#666",
+    marginBottom: 8,
+    fontSize: 15
+  },
+
+  religion: {
+    color: "#888",
+    marginBottom: 15,
+    fontSize: 14
   },
 
   badge: {
+    background: "#e8fff0",
     color: "green",
-    fontWeight: "bold",
-    marginBottom: 10
+    display: "inline-block",
+    padding: "6px 14px",
+    borderRadius: 20,
+    fontWeight: "600",
+    marginBottom: 18,
+    fontSize: 14
   },
 
   buttons: {
     display: "flex",
-    justifyContent: "space-between",
-    marginTop: 10
+    justifyContent: "center",
+    gap: 10,
+    flexWrap: "wrap",
+    marginTop: 15
   },
 
   viewBtn: {
-    padding: "6px 12px",
+    padding: "10px 16px",
     background: "#8B0000",
     color: "white",
     border: "none",
-    borderRadius: 5
+    borderRadius: 10,
+    cursor: "pointer"
   },
 
   chatBtn: {
-    padding: "6px 12px",
+    padding: "10px 16px",
     background: "#007bff",
     color: "white",
     border: "none",
-    borderRadius: 5
+    borderRadius: 10,
+    cursor: "pointer"
   },
 
   interestBtn: {
-    padding: "6px 12px",
+    padding: "10px 16px",
     border: "none",
-    borderRadius: 5,
-    color: "white"
+    borderRadius: 10,
+    color: "white",
+    cursor: "pointer"
   }
 };
 

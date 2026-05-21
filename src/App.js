@@ -8,6 +8,8 @@ import ProfileDetails from "./pages/ProfileDetails";
 import InterestedProfiles from "./pages/InterestedProfiles";
 import SavedProfiles from "./pages/SavedProfiles";
 import Chat from "./pages/Chat";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/interested" element={<InterestedProfiles />} />
         <Route path="/saved" element={<SavedProfiles />} />
         <Route path="/chat/:id" element={<Chat />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
