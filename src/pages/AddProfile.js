@@ -954,15 +954,6 @@ const styles = {
     gap: 12
   },
 
-  zodiacCard: {
-    padding: 12,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    cursor: "pointer",
-    textAlign: "center",
-    fontWeight: "bold",
-    transition: "0.2s"
-  },
 
   zodiacCard: {
   padding: 12,

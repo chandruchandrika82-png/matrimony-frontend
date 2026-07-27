@@ -9,9 +9,10 @@ function InterestRequests() {
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
+ useEffect(() => {
+  fetchRequests();
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   const fetchRequests = async () => {
     try {
