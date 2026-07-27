@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function InterestedProfiles() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -23,6 +24,22 @@ function InterestedProfiles() {
       background: "linear-gradient(to bottom right, #d79861, #ffe4ec)"
       }}>
       <h2>❤️ Interested Profiles</h2>
+      <button
+  onClick={() => navigate(-1)}
+  style={{
+    padding: "10px 18px",
+    background: "#8B0000",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    cursor: "pointer",
+    marginBottom: "20px",
+    fontSize: "16px",
+    fontWeight: "600"
+  }}
+>
+  ← Back
+</button>
 
       {users.length === 0 && <p>No interested profiles yet</p>}
 

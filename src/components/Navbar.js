@@ -4,6 +4,7 @@ function Navbar() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -42,9 +43,11 @@ function Navbar() {
           Profiles
         </Link>
 
-        <Link to="/add-profile" style={styles.link}>
-          Add Profile
+        {token && (
+        <Link to="/my-profile" style={styles.link}>
+          My Profile
         </Link>
+        )}
 
         <Link to="/interested" style={styles.link}>
           Interested
@@ -62,9 +65,18 @@ function Navbar() {
             </Link>
           </>
         ) : (
-          <button onClick={logout} style={styles.logoutBtn}>
-            Logout
-          </button>
+          <>
+  <span style={styles.userName}>
+    👋 Hi, {user?.name}
+  </span>
+
+  <button
+    onClick={logout}
+    style={styles.logoutBtn}
+  >
+    Logout
+  </button>
+</>
         )}
       </div>
     </div>
@@ -90,7 +102,11 @@ const styles = {
     zIndex: 999,
     boxSizing: "border-box"
   },
-
+  userName: {
+  color: "#8B0000",
+  fontWeight: "bold",
+  fontSize: "16px"
+},
   logoContainer: {
     display: "flex",
     alignItems: "center",
