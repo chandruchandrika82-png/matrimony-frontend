@@ -5,6 +5,10 @@ import { useNavigate, Link } from "react-router-dom";
 function Login() {
   const navigate = useNavigate();
 
+  // Backend API
+  const API = "https://matrimony-backend-1-ri82.onrender.com/api";
+  // const API = "http://localhost:5000/api";
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -29,7 +33,7 @@ function Login() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/login",
+        `${API}/login`,
         form
       );
 
@@ -41,8 +45,9 @@ function Login() {
 
       alert("Login Successful 💖");
       navigate("/profiles");
+
     } catch (err) {
-      console.log(err);
+      console.error(err);
       alert(err?.response?.data?.error || "Login Failed");
     }
   };

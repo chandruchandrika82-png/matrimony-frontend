@@ -13,7 +13,7 @@ useEffect(() => {
   if (!user) return;
 
   axios
-    .get(`http://localhost:5000/api/users/${user._id}`)
+  .get(`https://matrimony-backend.onrender.com/api/users/${user._id}`)
     .then((res) => {
       console.log("Profile data:", res.data);
       setProfile(res.data);

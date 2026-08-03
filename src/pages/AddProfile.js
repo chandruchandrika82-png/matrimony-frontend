@@ -169,14 +169,14 @@ if (horoscopeFile) {
     }
 
     await axios.post(
-      "http://localhost:5000/api/users",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }
-    );
+  "https://matrimony-backend.onrender.com/api/users",
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  }
+);
 
     alert("Profile Added Successfully 💍");
 

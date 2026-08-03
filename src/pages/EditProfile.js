@@ -117,7 +117,7 @@ const fetchUser = useCallback(async () => {
   try {
 
    const res = await axios.get(
-  `http://localhost:5000/api/users/${id}`
+  `https://matrimony-backend.onrender.com/api/users/${id}`
 );
     console.log("FULL USER");
     console.log(res.data);
@@ -224,8 +224,8 @@ for (const pair of formData.entries()) {
 
 console.log("========================");
 
-  await axios.put(
-  `http://localhost:5000/api/users/${id}`,
+await axios.put(
+  `https://matrimony-backend.onrender.com/api/users/${id}`,
   formData,
   {
     headers: {
