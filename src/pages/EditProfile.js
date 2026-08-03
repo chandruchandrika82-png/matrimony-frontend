@@ -1,7 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+
 function EditProfile() {
+
+  console.log("🔥 NEW EDITPROFILE FILE LOADED 🔥");
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -112,13 +116,24 @@ businessVerified: false,
 const fetchUser = useCallback(async () => {
   try {
 
-    const res = await axios.get(
-      `https://matrimony-backend-1-ri82.onrender.com/api/users/${id}`
-    );
+   const res = await axios.get(
+  `http://localhost:5000/api/users/${id}`
+);
+    console.log("FULL USER");
+    console.log(res.data);
     console.log("IMAGE:", res.data.image);
     console.log("PROFILE PHOTOS:", res.data.profilePhotos);
-    setForm(res.data);
-
+    setForm({
+    
+      
+  name: res.data.name || "",
+  email: res.data.email || "",
+  mobile: res.data.mobile || "",
+  age: res.data.age || "",
+  
+  // ...all your editable fields only
+});
+console.log("FORM AFTER SET");
   } catch (err) {
 
     console.log(err);
@@ -143,24 +158,42 @@ useEffect(() => {
 const handleUpdate = async () => {
   try {
     const formData = new FormData();
+    console.log("========== FORM DATA ==========");
 
-    Object.keys(form).forEach((key) => {
+for (const [key, value] of formData.entries()) {
+  console.log(key, value);
+}
+
+console.log("===============================");
+    console.log("FORM OBJECT");
+    console.log(form);
+
+   Object.keys(form).forEach((key) => {
+  // Don't send MongoDB/system fields
   if (
-    ![
+    [
       "_id",
       "__v",
       "createdAt",
       "updatedAt",
+
+      // Images
+      "image",
       "profilePhotos",
       "familyPhotos",
       "officePhotos",
-      "image"
+
+      // Arrays managed by backend
+      "interestRequests",
+      "acceptedRequests",
+      "blockedUsers"
     ].includes(key)
   ) {
-    formData.append(key, form[key] ?? "");
+    return;
   }
-});
 
+  formData.append(key, form[key] ?? "");
+});
     if (profilePhotos) {
       profilePhotos.forEach((photo) => {
         formData.append("profilePhotos", photo);
@@ -191,26 +224,35 @@ for (const pair of formData.entries()) {
 
 console.log("========================");
 
-    await axios.put(
-      `https://matrimony-backend-1-ri82.onrender.com/api/users/${id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-
-    alert("Profile Updated Successfully ❤️");
-    navigate("/profiles");
-
-  } catch (err) {
-    console.log(err);
-    console.log(err.response?.data);
-    alert(err.response?.data?.error || "Update Failed");
+  await axios.put(
+  `http://localhost:5000/api/users/${id}`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   }
-};   // <-- Close the function here
+);
 
+   alert("Profile Updated Successfully ❤️");
+  navigate("/profiles");
+
+} catch (err) {
+
+  console.log("========== FRONTEND ERROR ==========");
+  console.log(err);
+
+  if (err.response) {
+    console.log("Status:", err.response.status);
+    console.log("Response:", err.response.data);
+    alert(err.response.data.error || "Update Failed");
+  } else {
+    console.log("No response received");
+    alert(err.message);
+  }
+
+}
+};  
 return (
   <div style={styles.page}>
     <div style={styles.container}>
