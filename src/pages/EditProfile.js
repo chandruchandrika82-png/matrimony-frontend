@@ -9,6 +9,8 @@ function EditProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const API = "https://matrimony-backend-zbvm.onrender.com/api";
+
   const [form, setForm] = useState({
   name: "",
   mobile: "",
@@ -116,23 +118,19 @@ businessVerified: false,
 const fetchUser = useCallback(async () => {
   try {
 
-   const res = await axios.get(
-  `https://matrimony-backend.onrender.com/api/users/${id}`
+
+const res = await axios.get(
+  `${API}/users/${id}`
 );
-    console.log("FULL USER");
-    console.log(res.data);
-    console.log("IMAGE:", res.data.image);
-    console.log("PROFILE PHOTOS:", res.data.profilePhotos);
-    setForm({
-    
-      
-  name: res.data.name || "",
-  email: res.data.email || "",
-  mobile: res.data.mobile || "",
-  age: res.data.age || "",
-  
-  // ...all your editable fields only
-});
+console.log("FULL USER");
+console.log(res.data);
+console.log("IMAGE:", res.data.image);
+console.log("PROFILE PHOTOS:", res.data.profilePhotos);
+
+setForm((prev) => ({
+  ...prev,
+  ...res.data,
+}));
 console.log("FORM AFTER SET");
   } catch (err) {
 
@@ -140,7 +138,7 @@ console.log("FORM AFTER SET");
 
   }
 
-}, [id]);
+}, [API, id]);
 
 useEffect(() => {
 
@@ -225,7 +223,7 @@ for (const pair of formData.entries()) {
 console.log("========================");
 
 await axios.put(
-  `https://matrimony-backend.onrender.com/api/users/${id}`,
+  `${API}/users/${id}`,
   formData,
   {
     headers: {

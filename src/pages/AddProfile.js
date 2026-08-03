@@ -168,8 +168,10 @@ if (horoscopeFile) {
       formData.append("officePhotos", photo);
     }
 
-    await axios.post(
-  "https://matrimony-backend.onrender.com/api/users",
+   const API = "https://matrimony-backend-zbvm.onrender.com/api";
+
+await axios.post(
+  `${API}/users`,
   formData,
   {
     headers: {

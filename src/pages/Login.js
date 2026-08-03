@@ -6,7 +6,7 @@ function Login() {
   const navigate = useNavigate();
 
   // Backend API
-  const API = "https://matrimony-backend-1-ri82.onrender.com/api";
+  const API = "https://matrimony-backend-zbvm.onrender.com/api";
   // const API = "http://localhost:5000/api";
 
   const [form, setForm] = useState({
