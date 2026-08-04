@@ -26,7 +26,6 @@ const initialForm = {
 
   // Career
   education: "",
-  occupation: "",
   nri: "No",
 
   occupationType: "",
@@ -39,6 +38,7 @@ const initialForm = {
   numberOfEmployees: "",
   yearsInBusiness: "",
   branchLocations: "",
+  numberOfBranches: "",
 
   socialMedia: "",
   
@@ -50,13 +50,22 @@ const initialForm = {
 
   // Horoscope
   star: "",
-  zodiac: "",
   rashi: "",
   gothram: "",
   dosha: "",
   birthTime: "",
   birthPlace: "",
   horoscopeFile: "",
+  lagnam: "",
+
+sevvaiDosham: "No",
+rahuKethuDosham: "No",
+
+horoscopeAvailable: "No",
+horoscopeMatchingPreference: "Preferred",
+
+motherTongue: "",
+kuladeivam: "",
 
   // Family
   fatherName: "",
@@ -80,14 +89,21 @@ preferredAgeTo: "",
 preferredHeight: "",
 preferredEducation: "",
 preferredOccupation: "",
+
 preferredReligion: "",
 preferredCaste: "",
 preferredLocation: "",
 
+preferredRashi: "",
+preferredStar: "",
+acceptSevvaiDosham: "Yes",
+horoscopeMatchingRequired: "Yes",
+
+expectations: "",
+
   // Others
   languages: "",
   hobbies: "",
-  expectations: "",
   landAcres: "",
   landValue: "",
   house: "",
@@ -484,13 +500,7 @@ onChange={handleChange}
             onChange={handleChange}
           />
 
-          <input
-  style={styles.input}
-  name="occupation"
-  placeholder="Occupation"
-  value={form.occupation}
-  onChange={handleChange}
-/>
+      
 
 <select
   style={styles.input}
@@ -516,40 +526,6 @@ onChange={handleChange}
 <div style={styles.section}>
   <h3>💼 Business Information</h3>
 
- 
-
-  <input
-  style={styles.input}
-  name="businessCategory"
-  placeholder="Business Category"
-  value={form.businessCategory}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="yearsInBusiness"
-  placeholder="Years in Business"
-  value={form.yearsInBusiness}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="numberOfEmployees"
-  placeholder="Number of Employees"
-  value={form.numberOfEmployees}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="branchLocations"
-  placeholder="Branch Locations"
-  value={form.branchLocations}
-  onChange={handleChange}
-/>
-
   <input
     style={styles.input}
     name="companyName"
@@ -558,11 +534,23 @@ onChange={handleChange}
     onChange={handleChange}
   />
 
-  <input
+  <select
     style={styles.input}
     name="businessType"
-    placeholder="Business Type"
     value={form.businessType}
+    onChange={handleChange}
+  >
+    <option value="">Business Type</option>
+    <option value="Job">Job</option>
+    <option value="Business">Business</option>
+    <option value="Both">Both</option>
+  </select>
+
+  <input
+    style={styles.input}
+    name="businessCategory"
+    placeholder="Business Category"
+    value={form.businessCategory}
     onChange={handleChange}
   />
 
@@ -571,6 +559,46 @@ onChange={handleChange}
     name="businessLocation"
     placeholder="Business Location"
     value={form.businessLocation}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="numberOfBranches"
+    placeholder="Number of Branches"
+    value={form.numberOfBranches}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="branchLocations"
+    placeholder="Branch Locations"
+    value={form.branchLocations}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="yearsInBusiness"
+    placeholder="Years in Business"
+    value={form.yearsInBusiness}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="numberOfEmployees"
+    placeholder="Number of Employees"
+    value={form.numberOfEmployees}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="businessWebsite"
+    placeholder="Business Website"
+    value={form.businessWebsite}
     onChange={handleChange}
   />
 
@@ -594,12 +622,11 @@ onChange={handleChange}
 
   <h3 style={styles.heading}>🏢 Office Photos</h3>
 
-<input
-  type="file"
-  multiple
-  onChange={(e) => setOfficePhotos(Array.from(e.target.files))}
-/>
-
+  <input
+    type="file"
+    multiple
+    onChange={(e) => setOfficePhotos(Array.from(e.target.files))}
+  />
 </div>
         {/* LANGUAGES & HOBBIES */}
 <div style={styles.section}>
@@ -640,92 +667,142 @@ onChange={handleChange}
             value={form.caste}
             onChange={handleChange}
           />
-        </div>
-
-        {/* ASTROLOGY */}
-        <div style={styles.astroBox}>
-
-          <h3>🔮 Select Zodiac</h3>
-
-          <div style={styles.zodiacGrid}>
-
-            {[
-              "Aries",
-              "Taurus",
-              "Gemini",
-              "Cancer",
-              "Leo",
-              "Virgo",
-              "Libra",
-              "Scorpio",
-              "Sagittarius",
-              "Capricorn",
-              "Aquarius",
-              "Pisces"
-            ].map((z) => (
-
-              <div
-                key={z}
-                onClick={() => setForm({ ...form, zodiac: z })}
-                style={{
-                  ...styles.zodiacCard,
-                  background: form.zodiac === z ? "#ff4d6d" : "#fff",
-                  color: form.zodiac === z ? "#fff" : "#000"
-                }}
-              >
-                {z}
-              </div>
-
-            ))}
-
-          </div>
-
           <input
-            style={styles.input}
-            name="star"
-            placeholder="Star / Nakshatra"
-            value={form.star}
-            onChange={handleChange}
-          />
-
-          <input
-            style={styles.input}
-            name="rashi"
-            placeholder="Rashi"
-            value={form.rashi}
-            onChange={handleChange}
-          />
-
-          <input
-            style={styles.input}
-            name="dosha"
-            placeholder="Dosha"
-            value={form.dosha}
-            onChange={handleChange}
-          />
-          <input
-  type="time"
   style={styles.input}
-  name="birthTime"
-  value={form.birthTime}
+  name="subCaste"
+  placeholder="Sub Caste"
+  value={form.subCaste}
   onChange={handleChange}
 />
-<input
-  style={styles.input}
-  name="birthPlace"
-  placeholder="Birth Place"
-  value={form.birthPlace}
-  onChange={handleChange}
-/>
-<h3 style={styles.heading}>📄 Horoscope Upload</h3>
-
-<input
-  type="file"
-  accept=".pdf,.jpg,.jpeg,.png"
-  onChange={(e) => setHoroscopeFile(e.target.files[0])}
-/>
-
         </div>
+
+        {/* ASTROLOGY DETAILS */}
+<div style={styles.section}>
+
+  <h3>🪔 Astrology Details</h3>
+
+  <input
+    style={styles.input}
+    name="rashi"
+    placeholder="Rashi"
+    value={form.rashi}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="star"
+    placeholder="Natchathiram (Star)"
+    value={form.star}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="lagnam"
+    placeholder="Lagnam (Ascendant)"
+    value={form.lagnam}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="gothram"
+    placeholder="Gothram"
+    value={form.gothram}
+    onChange={handleChange}
+  />
+
+  <select
+    style={styles.input}
+    name="sevvaiDosham"
+    value={form.sevvaiDosham}
+    onChange={handleChange}
+  >
+    <option value="No">Sevvai Dosham - No</option>
+    <option value="Yes">Sevvai Dosham - Yes</option>
+  </select>
+
+  <select
+    style={styles.input}
+    name="rahuKethuDosham"
+    value={form.rahuKethuDosham}
+    onChange={handleChange}
+  >
+    <option value="No">Rahu Kethu Dosham - No</option>
+    <option value="Yes">Rahu Kethu Dosham - Yes</option>
+  </select>
+
+  <select
+    style={styles.input}
+    name="horoscopeAvailable"
+    value={form.horoscopeAvailable}
+    onChange={handleChange}
+  >
+    <option value="No">Horoscope Available - No</option>
+    <option value="Yes">Horoscope Available - Yes</option>
+  </select>
+
+  <input
+    type="time"
+    style={styles.input}
+    name="birthTime"
+    value={form.birthTime}
+    onChange={handleChange}
+  />
+
+  <input
+    style={styles.input}
+    name="birthPlace"
+    placeholder="Birth Place"
+    value={form.birthPlace}
+    onChange={handleChange}
+  />
+
+  <select
+    style={styles.input}
+    name="horoscopeMatchingPreference"
+    value={form.horoscopeMatchingPreference}
+    onChange={handleChange}
+  >
+    <option>Must Match</option>
+    <option>Preferred</option>
+    <option>Doesn't Matter</option>
+  </select>
+
+  <input
+    type="file"
+    accept=".pdf,.jpg,.jpeg,.png"
+    onChange={(e) => setHoroscopeFile(e.target.files[0])}
+  />
+
+</div>
+
+{/* ADDITIONAL RELIGIOUS DETAILS */}
+
+<div style={styles.section}>
+
+<h3>🕉 Additional Religious Details</h3>
+
+<input
+style={styles.input}
+name="motherTongue"
+placeholder="Mother Tongue"
+value={form.motherTongue}
+onChange={handleChange}
+/>
+
+<input
+style={styles.input}
+name="kuladeivam"
+placeholder="Kuladeivam"
+value={form.kuladeivam}
+onChange={handleChange}
+/>
+
+</div>
+
+        
          {/* PARTNER EXPECTATIONS */}
 <div style={styles.section}>
   <h3>❤️ Partner Expectations</h3>
@@ -785,6 +862,42 @@ onChange={handleChange}
     value={form.preferredCaste}
     onChange={handleChange}
   />
+
+  <input
+style={styles.input}
+name="preferredRashi"
+placeholder="Preferred Rashi"
+value={form.preferredRashi}
+onChange={handleChange}
+/>
+
+<input
+style={styles.input}
+name="preferredStar"
+placeholder="Preferred Natchathiram"
+value={form.preferredStar}
+onChange={handleChange}
+/>
+
+<select
+style={styles.input}
+name="acceptSevvaiDosham"
+value={form.acceptSevvaiDosham}
+onChange={handleChange}
+>
+<option value="Yes">Accept Sevvai Dosham - Yes</option>
+<option value="No">Accept Sevvai Dosham - No</option>
+</select>
+
+<select
+style={styles.input}
+name="horoscopeMatchingRequired"
+value={form.horoscopeMatchingRequired}
+onChange={handleChange}
+>
+<option value="Yes">Horoscope Matching Required - Yes</option>
+<option value="No">Horoscope Matching Required - No</option>
+</select>
 
   <input
     style={styles.input}
@@ -940,32 +1053,6 @@ const styles = {
     fontWeight: "bold"
   },
 
-  astroBox: {
-    background: "#fff0f6",
-    padding: 20,
-    borderRadius: 15,
-    border: "1px solid #ffd6e8",
-    display: "flex",
-    flexDirection: "column",
-    gap: 12
-  },
-
-  zodiacGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: 12
-  },
-
-
-  zodiacCard: {
-  padding: 12,
-  border: "1px solid #ddd",
-  borderRadius: 12,
-  cursor: "pointer",
-  textAlign: "center",
-  fontWeight: "bold",
-  transition: "0.2s"
-},
 
 backBtn: {
   padding: "10px 20px",
