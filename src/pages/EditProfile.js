@@ -3,174 +3,152 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 function EditProfile() {
-
-  console.log("🔥 NEW EDITPROFILE FILE LOADED 🔥");
-
   const { id } = useParams();
   const navigate = useNavigate();
 
   const API = "https://matrimony-backend-zbvm.onrender.com/api";
 
   const [form, setForm] = useState({
-  name: "",
-  mobile: "",
-  email: "",
-  age: "",
-  gender: "",
-  dob: "",
+    name: "",
+    mobile: "",
+    email: "",
+    age: "",
+    gender: "",
+    dob: "",
 
-  height: "",
-  weight: "",
+    height: "",
+    weight: "",
 
-  nativePlace: "",
-  currentCity: "",
-  district: "",
-  state: "",
-  country: "",
-  maritalStatus: "",
+    nativePlace: "",
+    currentCity: "",
+    district: "",
+    state: "",
+    country: "",
+    maritalStatus: "",
 
-  languages: "",
-  hobbies: "",
+    languages: "",
+    hobbies: "",
 
-  education: "",
-  occupationType: "",
+    education: "",
+    occupationType: "",
 
-  companyName: "",
-  businessType: "",
-  annualIncome: "",
+    companyName: "",
+    businessType: "",
+    annualIncome: "",
 
-  businessLocation: "",
-  businessWebsite: "",
-  businessCategory: "",
-  yearsInBusiness: "",
-  numberOfEmployees: "",
-  branchLocations: "",
+    businessLocation: "",
+    businessWebsite: "",
+    businessCategory: "",
+    yearsInBusiness: "",
+    numberOfEmployees: "",
+    branchLocations: "",
 
-  socialMedia: "",
-  nri: "",
+    socialMedia: "",
+    nri: "",
 
-  religion: "",
-  caste: "",
-  subCaste: "",
+    religion: "",
+    caste: "",
+    subCaste: "",
 
-  star: "",
-  rashi: "",
-  gothram: "",
-  dosha: "",
-  birthTime: "",
-  birthPlace: "",
-  horoscopeFile: "",
-  lagnam: "",
+    star: "",
+    rashi: "",
+    gothram: "",
+    dosha: "",
+    birthTime: "",
+    birthPlace: "",
+    horoscopeFile: "",
+    lagnam: "",
 
-sevvaiDosham: "No",
-rahuKethuDosham: "No",
+    sevvaiDosham: "No",
+    rahuKethuDosham: "No",
+    horoscopeAvailable: "No",
+    horoscopeMatchingPreference: "Preferred",
 
-horoscopeAvailable: "No",
-horoscopeMatchingPreference: "Preferred",
+    motherTongue: "",
+    kuladeivam: "",
 
-motherTongue: "",
-kuladeivam: "",
+    preferredRashi: "",
+    preferredStar: "",
 
-preferredRashi: "",
-preferredStar: "",
+    acceptSevvaiDosham: "Yes",
+    horoscopeMatchingRequired: "Yes",
 
-acceptSevvaiDosham: "Yes",
-horoscopeMatchingRequired: "Yes",
+    numberOfBranches: "",
+    registerAs: "Self",
 
-numberOfBranches: "",
-registerAs: "Self",
+    fatherName: "",
+    fatherOccupation: "",
 
-  fatherName: "",
-  fatherOccupation: "",
+    motherName: "",
+    motherOccupation: "",
 
-  motherName: "",
-  motherOccupation: "",
+    brothersCount: "",
+    brothersMarried: "",
 
-  brothersCount: "",
-  brothersMarried: "",
+    sistersCount: "",
+    sistersMarried: "",
 
-  sistersCount: "",
-  sistersMarried: "",
+    familyType: "",
+    familyStatus: "",
 
-  familyType: "",
-  familyStatus: "",
-  preferredAgeFrom: "",
-preferredAgeTo: "",
+    preferredAgeFrom: "",
+    preferredAgeTo: "",
 
-preferredHeight: "",
-preferredEducation: "",
-preferredOccupation: "",
+    preferredHeight: "",
+    preferredEducation: "",
+    preferredOccupation: "",
 
-preferredReligion: "",
-preferredCaste: "",
-preferredLocation: "",
+    preferredReligion: "",
+    preferredCaste: "",
+    preferredLocation: "",
 
-  expectations: "",
-  landAcres: "",
-landValue: "",
-house: "",
-vehicle: "",
-otherAssets: "",
+    expectations: "",
+    landAcres: "",
+    landValue: "",
+    house: "",
+    vehicle: "",
+    otherAssets: "",
 
-phone: "",
-address: "",
+    phone: "",
+    address: "",
 
-// Privacy Settings
-hideMobile: false,
-hideIncome: false,
-hideCompany: false,
-hidePhotos: false,
-profileVisibility: "Public",
+    hideMobile: false,
+    hideIncome: false,
+    hideCompany: false,
+    hidePhotos: false,
+    profileVisibility: "Public",
 
-// Membership & Verification
-isPremium: false,
-gstVerified: false,
-businessVerified: false,
-  image: "",
-  profilePhotos: [],
-  familyPhotos: [],
-  officePhotos: [],
-  dosha: "",
-  preferredStar: "",
-  horoscopeFile: "",
-});
+    isPremium: false,
+    gstVerified: false,
+    businessVerified: false,
+
+    image: "",
+    profilePhotos: [],
+    familyPhotos: [],
+    officePhotos: [],
+  });
+
   const [imageFile, setImageFile] = useState(null);
   const [profilePhotos, setProfilePhotos] = useState([]);
   const [familyPhotos, setFamilyPhotos] = useState([]);
   const [officePhotos, setOfficePhotos] = useState([]);
   const [horoscopeFile, setHoroscopeFile] = useState(null);
 
-const fetchUser = useCallback(async () => {
-  try {
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/users/${id}`);
+      setForm((prev) => ({
+        ...prev,
+        ...res.data,
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  }, [API, id]);
 
-
-const res = await axios.get(
-  `${API}/users/${id}`
-);
-console.log("FULL USER");
-console.log(res.data);
-console.log("IMAGE:", res.data.image);
-console.log("PROFILE PHOTOS:", res.data.profilePhotos);
-
-setForm((prev) => ({
-  ...prev,
-  ...res.data,
-}));
-console.log("FORM AFTER SET");
-  } catch (err) {
-
-    console.log(err);
-
-  }
-
-}, [API, id]);
-
-useEffect(() => {
-
-  fetchUser();
-
-}, [fetchUser]);
-
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -182,123 +160,962 @@ useEffect(() => {
   };
 
   const handleUpdate = async () => {
-  try {
-    const formData = new FormData();
-    console.log("========== FORM DATA ==========");
-if (horoscopeFile) {
-  formData.append("horoscopeFile", horoscopeFile);
-}
-for (const [key, value] of formData.entries()) {
-  console.log(key, value);
-}
+    try {
+      const formData = new FormData();
 
-console.log("===============================");
-    console.log("FORM OBJECT");
-    console.log(form);
+      Object.keys(form).forEach((key) => {
+        if (
+          [
+            "_id",
+            "__v",
+            "createdAt",
+            "updatedAt",
+            "image",
+            "profilePhotos",
+            "familyPhotos",
+            "officePhotos",
+            "interestRequests",
+            "acceptedRequests",
+            "blockedUsers",
+          ].includes(key)
+        ) {
+          return;
+        }
 
-   Object.keys(form).forEach((key) => {
-  // Don't send MongoDB/system fields
-  if (
-    [
-      "_id",
-      "__v",
-      "createdAt",
-      "updatedAt",
-
-      // Images
-      "image",
-      "profilePhotos",
-      "familyPhotos",
-      "officePhotos",
-
-      // Arrays managed by backend
-      "interestRequests",
-      "acceptedRequests",
-      "blockedUsers"
-    ].includes(key)
-  ) {
-    return;
-  }
-
-  formData.append(key, form[key] ?? "");
-});
-    if (profilePhotos) {
-      profilePhotos.forEach((photo) => {
-        formData.append("profilePhotos", photo);
+        formData.append(key, form[key] ?? "");
       });
-    }
 
-    if (familyPhotos) {
-      familyPhotos.forEach((photo) => {
-        formData.append("familyPhotos", photo);
+      if (profilePhotos.length > 0) {
+        profilePhotos.forEach((photo) => {
+          formData.append("profilePhotos", photo);
+        });
+      }
+
+      if (familyPhotos.length > 0) {
+        familyPhotos.forEach((photo) => {
+          formData.append("familyPhotos", photo);
+        });
+      }
+
+      if (officePhotos.length > 0) {
+        officePhotos.forEach((photo) => {
+          formData.append("officePhotos", photo);
+        });
+      }
+
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      if (horoscopeFile) {
+        formData.append("horoscopeFile", horoscopeFile);
+      }
+
+      await axios.put(`${API}/users/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
+
+      alert("Profile Updated Successfully ❤️");
+      navigate("/profiles");
+    } catch (err) {
+      console.log("========== FRONTEND ERROR ==========");
+      console.log(err);
+
+      if (err.response) {
+        console.log("Status:", err.response.status);
+        console.log("Response:", err.response.data);
+        alert(err.response.data.error || "Update Failed");
+      } else {
+        console.log("No response received");
+        alert(err.message);
+      }
     }
+  };
 
-    if (officePhotos) {
-      officePhotos.forEach((photo) => {
-        formData.append("officePhotos", photo);
-      });
-    }
+  return (
+    <div style={styles.page}>
+      <div style={styles.container}>
+        <h1 style={styles.title}>✏️ Edit Profile</h1>
 
-    if (imageFile) {
-      formData.append("image", imageFile);
-    }
+        <button onClick={() => navigate(-1)} style={styles.backBtn}>
+          ← Back
+        </button>
 
-    console.log("======= FormData =======");
+        <div style={styles.section}>
+          <h3>👤 Basic Information</h3>
 
-for (const pair of formData.entries()) {
-  console.log(pair[0], pair[1]);
+          <button
+            style={styles.updateBtn}
+            onClick={handleUpdate}
+          >
+            💾 Update Profile
+          </button>
+
+          <input
+            style={styles.input}
+            name="name"
+            placeholder="Name"
+            value={form.name || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="mobile"
+            placeholder="Mobile"
+            value={form.mobile || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="email"
+            placeholder="Email"
+            value={form.email || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            type="date"
+            style={styles.input}
+            name="dob"
+            value={form.dob || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="age"
+            placeholder="Age"
+            value={form.age || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="height"
+            placeholder="Height"
+            value={form.height || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="weight"
+            placeholder="Weight"
+            value={form.weight || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="gender"
+            value={form.gender || ""}
+            onChange={handleChange}
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+
+          <h3 style={styles.heading}>🖼 Main Profile Image</h3>
+
+          <input
+            type="file"
+            onChange={(e) => setImageFile(e.target.files[0])}
+          />
+
+          {form.image && (
+            <img
+              src={form.image}
+              alt="Profile"
+              style={styles.previewImage}
+            />
+          )}
+
+          <h3 style={styles.heading}>📍 Personal Details</h3>
+
+          <input
+            style={styles.input}
+            name="nativePlace"
+            placeholder="Native Place"
+            value={form.nativePlace || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="currentCity"
+            placeholder="Current City"
+            value={form.currentCity || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="district"
+            placeholder="District"
+            value={form.district || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="state"
+            placeholder="State"
+            value={form.state || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="country"
+            placeholder="Country"
+            value={form.country || ""}
+            onChange={handleChange}
+          />
+
+          <h3 style={styles.heading}>📞 Contact Details</h3>
+
+          <input
+            style={styles.input}
+            name="phone"
+            placeholder="Phone"
+            value={form.phone || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="address"
+            placeholder="Address"
+            value={form.address || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="maritalStatus"
+            value={form.maritalStatus || ""}
+            onChange={handleChange}
+          >
+            <option value="">Marital Status</option>
+            <option value="Never Married">Never Married</option>
+            <option value="Divorcee">Divorcee</option>
+            <option value="Widow">Widow</option>
+            <option value="Widower">Widower</option>
+          </select>
+
+          <input
+            style={styles.input}
+            name="languages"
+            placeholder="Languages Known"
+            value={form.languages || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="hobbies"
+            placeholder="Hobbies"
+            value={form.hobbies || ""}
+            onChange={handleChange}
+          />
+
+          <h3 style={styles.heading}>📸 Profile Photos</h3>
+
+          <input
+            type="file"
+            multiple
+            onChange={(e) => setProfilePhotos(Array.from(e.target.files))}
+          />
+
+          <div style={styles.gallery}>
+            {form.profilePhotos?.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt="Profile"
+                style={styles.galleryImage}
+              />
+            ))}
+          </div>
+
+          <h3 style={styles.heading}>🎓 Education & Career</h3>
+
+          <input
+            style={styles.input}
+            name="education"
+            placeholder="Education"
+            value={form.education || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="occupationType"
+            value={form.occupationType || ""}
+            onChange={handleChange}
+          >
+            <option value="">Occupation Type</option>
+            <option value="Job">Job</option>
+            <option value="Business">Business</option>
+            <option value="Both">Both</option>
+          </select>
+
+          <h3 style={styles.heading}>💼 Business Information</h3>
+
+          <input
+            style={styles.input}
+            name="companyName"
+            placeholder="Company Name"
+            value={form.companyName || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="businessType"
+            value={form.businessType || ""}
+            onChange={handleChange}
+          >
+            <option value="">Business Type</option>
+            <option value="Job">Job</option>
+            <option value="Business">Business</option>
+            <option value="Both">Both</option>
+          </select>
+
+          <input
+            style={styles.input}
+            name="businessCategory"
+            placeholder="Business Category"
+            value={form.businessCategory || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="businessLocation"
+            placeholder="Business Location"
+            value={form.businessLocation || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="numberOfBranches"
+            placeholder="Number of Branches"
+            value={form.numberOfBranches || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="branchLocations"
+            placeholder="Branch Locations"
+            value={form.branchLocations || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="yearsInBusiness"
+            placeholder="Years in Business"
+            value={form.yearsInBusiness || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="numberOfEmployees"
+            placeholder="Number of Employees"
+            value={form.numberOfEmployees || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="businessWebsite"
+            placeholder="Business Website"
+            value={form.businessWebsite || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="socialMedia"
+            placeholder="Social Media"
+            value={form.socialMedia || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="annualIncome"
+            placeholder="Annual Income"
+            value={form.annualIncome || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="nri"
+            value={form.nri || ""}
+            onChange={handleChange}
+          >
+            <option value="">NRI?</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+
+          <h3 style={styles.heading}>🏢 Office Photos</h3>
+
+          <input
+            type="file"
+            multiple
+            onChange={(e) => setOfficePhotos(Array.from(e.target.files))}
+          />
+
+          {form.officePhotos?.length > 0 && (
+            <div style={styles.gallery}>
+              {form.officePhotos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo}
+                  alt=""
+                  style={styles.galleryImage}
+                />
+              ))}
+            </div>
+          )}
+
+          <h3
+            style={{
+              color: "#8B0000",
+              marginTop: 35,
+              marginBottom: 15,
+              borderBottom: "2px solid #f3d5d5",
+              paddingBottom: 8,
+            }}
+          >
+            🛕 Religion & Horoscope
+          </h3>
+
+          <input
+            style={styles.input}
+            name="religion"
+            placeholder="Religion"
+            value={form.religion || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="caste"
+            placeholder="Caste"
+            value={form.caste || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="subCaste"
+            placeholder="Sub Caste"
+            value={form.subCaste || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="star"
+            placeholder="Star (Nakshatra)"
+            value={form.star || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="rashi"
+            placeholder="Rashi"
+            value={form.rashi || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="lagnam"
+            placeholder="Lagnam"
+            value={form.lagnam || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="gothram"
+            placeholder="Gothram"
+            value={form.gothram || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="dosha"
+            value={form.dosha || ""}
+            onChange={handleChange}
+          >
+            <option value="">Dosha</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+
+          <select
+            style={styles.input}
+            name="sevvaiDosham"
+            value={form.sevvaiDosham || "No"}
+            onChange={handleChange}
+          >
+            <option value="No">Sevvai Dosham - No</option>
+            <option value="Yes">Sevvai Dosham - Yes</option>
+          </select>
+
+          <select
+            style={styles.input}
+            name="rahuKethuDosham"
+            value={form.rahuKethuDosham || "No"}
+            onChange={handleChange}
+          >
+            <option value="No">Rahu Kethu Dosham - No</option>
+            <option value="Yes">Rahu Kethu Dosham - Yes</option>
+          </select>
+
+          <select
+            style={styles.input}
+            name="horoscopeAvailable"
+            value={form.horoscopeAvailable || "No"}
+            onChange={handleChange}
+          >
+            <option value="No">Horoscope Available - No</option>
+            <option value="Yes">Horoscope Available - Yes</option>
+          </select>
+
+          <input
+            type="time"
+            style={styles.input}
+            name="birthTime"
+            value={form.birthTime || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="birthPlace"
+            placeholder="Birth Place"
+            value={form.birthPlace || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="horoscopeMatchingPreference"
+            value={form.horoscopeMatchingPreference || "Preferred"}
+            onChange={handleChange}
+          >
+            <option value="Must Match">Must Match</option>
+            <option value="Preferred">Preferred</option>
+            <option value="Doesn't Matter">Doesn't Matter</option>
+          </select>
+
+          <h3 style={styles.heading}>📄 Horoscope Upload</h3>
+
+          <input
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png"
+            onChange={(e) => setHoroscopeFile(e.target.files[0])}
+          />
+
+          {form.horoscopeFile && (
+            <p style={{ color: "#666" }}>📄 Horoscope file uploaded</p>
+          )}
+
+          <h3 style={styles.heading}>🕉 Additional Religious Details</h3>
+
+          <input
+            style={styles.input}
+            name="motherTongue"
+            placeholder="Mother Tongue"
+            value={form.motherTongue || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="kuladeivam"
+            placeholder="Kuladeivam"
+            value={form.kuladeivam || ""}
+            onChange={handleChange}
+          />
+
+          <h3 style={styles.heading}>👨‍👩‍👧 Family Details</h3>
+
+          <input
+            style={styles.input}
+            name="fatherName"
+            placeholder="Father Name"
+            value={form.fatherName || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="fatherOccupation"
+            placeholder="Father Occupation"
+            value={form.fatherOccupation || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="motherName"
+            placeholder="Mother Name"
+            value={form.motherName || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="motherOccupation"
+            placeholder="Mother Occupation"
+            value={form.motherOccupation || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="brothersCount"
+            placeholder="Number of Brothers"
+            value={form.brothersCount || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="brothersMarried"
+            placeholder="Married Brothers"
+            value={form.brothersMarried || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="sistersCount"
+            placeholder="Number of Sisters"
+            value={form.sistersCount || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="sistersMarried"
+            placeholder="Married Sisters"
+            value={form.sistersMarried || ""}
+            onChange={handleChange}
+          />
+
+          <select
+            style={styles.input}
+            name="familyType"
+            value={form.familyType || ""}
+            onChange={handleChange}
+          >
+            <option value="">Family Type</option>
+            <option>Joint</option>
+            <option>Nuclear</option>
+          </select>
+
+          <select
+            style={styles.input}
+            name="familyStatus"
+            value={form.familyStatus || ""}
+            onChange={handleChange}
+          >
+            <option value="">Family Status</option>
+            <option>Middle Class</option>
+            <option>Upper Middle Class</option>
+            <option>Rich</option>
+          </select>
+
+          <h3 style={styles.heading}>👨‍👩‍👧 Family Photos</h3>
+
+          <input
+            type="file"
+            multiple
+            onChange={(e) => setFamilyPhotos(Array.from(e.target.files))}
+          />
+
+          {form.familyPhotos?.length > 0 && (
+            <div style={styles.gallery}>
+              {form.familyPhotos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo}
+                  alt=""
+                  style={styles.galleryImage}
+                />
+              ))}
+            </div>
+          )}
+
+          <h3 style={styles.heading}>❤️ Partner Preferences</h3>
+
+          <input
+            style={styles.input}
+            name="preferredAgeFrom"
+            placeholder="Preferred Age From"
+            value={form.preferredAgeFrom || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredAgeTo"
+            placeholder="Preferred Age To"
+            value={form.preferredAgeTo || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredHeight"
+            placeholder="Preferred Height"
+            value={form.preferredHeight || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredEducation"
+            placeholder="Preferred Education"
+            value={form.preferredEducation || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredOccupation"
+            placeholder="Preferred Occupation"
+            value={form.preferredOccupation || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredReligion"
+            placeholder="Preferred Religion"
+            value={form.preferredReligion || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredCaste"
+            placeholder="Preferred Caste"
+            value={form.preferredCaste || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="preferredLocation"
+            placeholder="Preferred Location"
+            value={form.preferredLocation || ""}
+            onChange={handleChange}
+          />
+
+          <textarea
+            style={styles.textarea}
+            name="expectations"
+            placeholder="Additional Expectations"
+            value={form.expectations || ""}
+            onChange={handleChange}
+          />
+
+          <h3 style={styles.heading}>🔒 Privacy Settings</h3>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              name="hideMobile"
+              checked={form.hideMobile || false}
+              onChange={handleChange}
+            />
+            Hide Mobile Number
+          </label>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              name="hideIncome"
+              checked={form.hideIncome || false}
+              onChange={handleChange}
+            />
+            Hide Annual Income
+          </label>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              name="hideCompany"
+              checked={form.hideCompany || false}
+              onChange={handleChange}
+            />
+            Hide Company Name
+          </label>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              name="hidePhotos"
+              checked={form.hidePhotos || false}
+              onChange={handleChange}
+            />
+            Hide Personal Photos
+          </label>
+
+          <select
+            style={styles.input}
+            name="profileVisibility"
+            value={form.profileVisibility || "Public"}
+            onChange={handleChange}
+          >
+            <option>Public</option>
+            <option>Members Only</option>
+            <option>Private</option>
+          </select>
+
+          <h3 style={styles.heading}>⭐ Premium</h3>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              checked={form.isPremium || false}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  isPremium: e.target.checked,
+                })
+              }
+            />
+            Premium Member
+          </label>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              checked={form.gstVerified || false}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  gstVerified: e.target.checked,
+                })
+              }
+            />
+            GST Verified
+          </label>
+
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              checked={form.businessVerified || false}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  businessVerified: e.target.checked,
+                })
+              }
+            />
+            Business Verified
+          </label>
+
+          <h3 style={styles.heading}>🌾 Assets & Property</h3>
+
+          <input
+            style={styles.input}
+            name="landAcres"
+            placeholder="Land (Acres)"
+            value={form.landAcres || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="landValue"
+            placeholder="Land Value"
+            value={form.landValue || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="house"
+            placeholder="House Details"
+            value={form.house || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
+            name="vehicle"
+            placeholder="Vehicle Details"
+            value={form.vehicle || ""}
+            onChange={handleChange}
+          />
+
+          <textarea
+            style={styles.textarea}
+            name="otherAssets"
+            placeholder="Other Assets"
+            value={form.otherAssets || ""}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-console.log("========================");
+const styles = {
+  page: {
+    background: "#fff5f7",
+    minHeight: "100vh",
+    padding: "120px 20px 40px",
+  },
 
-await axios.put(
-  `${API}/users/${id}`,
-  formData,
-  {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  }
-);
+  container: {
+    maxWidth: "800px",
+    margin: "auto",
+  },
 
-   alert("Profile Updated Successfully ❤️");
-  navigate("/profiles");
+  title: {
+    textAlign: "center",
+    color: "#8B0000",
+    marginBottom: 30,
+  },
 
-} catch (err) {
+  backBtn: {
+    padding: "10px 18px",
+    background: "#8B0000",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    cursor: "pointer",
+    marginBottom: "20px",
+    fontSize: "16px",
+    fontWeight: "600",
+  },
 
-  console.log("========== FRONTEND ERROR ==========");
-  console.log(err);
-
-  if (err.response) {
-    console.log("Status:", err.response.status);
-    console.log("Response:", err.response.data);
-    alert(err.response.data.error || "Update Failed");
-  } else {
-    console.log("No response received");
-    alert(err.message);
-  }
-
-}
-};  
-return (
-  <div style={styles.page}>
-    <div style={styles.container}>
-      <h1 style={styles.title}>✏️ Edit Profile</h1>
-      <button
-  onClick={() => navigate(-1)}
-  style={styles.backBtn}
->
-  ← Back
-</button>
-      
-
-      <div style={styles.section}>
-
-        <h3>👤 Basic Information</h3>
-        
-        <button
-  style={{
+  updateBtn: {
     marginTop: 20,
     padding: "14px",
     background: "#8B0000",
@@ -307,870 +1124,7 @@ return (
     borderRadius: "10px",
     cursor: "pointer",
     fontSize: "16px",
-    fontWeight: "bold"
-  }}
-  
-  onClick={handleUpdate}
->
-
-
-  💾 Update Profile
-  
-</button>
-
-
-        <input
-          style={styles.input}
-          name="name"
-          placeholder="Name"
-          value={form.name || ""}
-          onChange={handleChange}
-        />
-        
-
-        <input
-          style={styles.input}
-          name="mobile"
-          placeholder="Mobile"
-          value={form.mobile || ""}
-          onChange={handleChange}
-        />
-
-        
-        <input
-  style={styles.input}
-  name="email"
-  placeholder="Email"
-  value={form.email || ""}
-  onChange={handleChange}
-/>
-
-<input
-  type="date"
-  style={styles.input}
-  name="dob"
-  value={form.dob || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="age"
-  placeholder="Age"
-  value={form.age || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="height"
-  placeholder="Height"
-  value={form.height || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="weight"
-  placeholder="Weight"
-  value={form.weight || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="gender"
-  value={form.gender || ""}
-  onChange={handleChange}
->
-  <option value="">Select Gender</option>
-  <option>Male</option>
-  <option>Female</option>
-</select>
-
-<h3 style={styles.heading}>🖼 Main Profile Image</h3>
-
-<input
-  type="file"
-  onChange={(e) => setImageFile(e.target.files[0])}
-/>
-
-{form.image && (
-  <img
-    src={form.image}
-    alt="Profile"
-    style={styles.previewImage}
-  />
-)}
-
-<h3 style={styles.heading}>📍 Personal Details</h3>
-
-<input
-  style={styles.input}
-  name="nativePlace"
-  placeholder="Native Place"
-  value={form.nativePlace || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="currentCity"
-  placeholder="Current City"
-  value={form.currentCity || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="district"
-  placeholder="District"
-  value={form.district || ""}
-  onChange={handleChange}
-/>
-<input
-  style={styles.input}
-  name="state"
-  placeholder="State"
-  value={form.state || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="country"
-  placeholder="Country"
-  value={form.country || ""}
-  onChange={handleChange}
-/>
-<h3 style={styles.heading}>📞 Contact Details</h3>
-
-<input
-  style={styles.input}
-  name="phone"
-  placeholder="Phone"
-  value={form.phone || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="address"
-  placeholder="Address"
-  value={form.address || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="maritalStatus"
-  value={form.maritalStatus || ""}
-  onChange={handleChange}
->
-  <option value="">Marital Status</option>
-  <option value="Never Married">Never Married</option>
-  <option value="Divorcee">Divorcee</option>
-  <option value="Widow">Widow</option>
-  <option value="Widower">Widower</option>
-</select>
-
-<input
-  style={styles.input}
-  name="languages"
-  placeholder="Languages Known"
-  value={form.languages || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="hobbies"
-  placeholder="Hobbies"
-  value={form.hobbies || ""}
-  onChange={handleChange}
-/>
-<h3 style={styles.heading}>📸 Profile Photos</h3>
-
-<input
-  type="file"
-  multiple
-  onChange={(e) => setProfilePhotos(Array.from(e.target.files))}
-/>
-
-<div style={styles.gallery}>
-  {form.profilePhotos?.map((img, index) => (
-    <img
-      key={index}
-      src={img}      alt="Profile"
-      style={styles.galleryImage}
-    />
-  ))}
-</div>
-<h3>🎓 Education & Career</h3>
-
-<input
-  style={styles.input}
-  name="education"
-  placeholder="Education"
-  value={form.education || ""}
-  onChange={handleChange}
-/>
-
-
-<select
-  style={styles.input}
-  name="occupationType"
-  value={form.occupationType || ""}
-  onChange={handleChange}
->
-  <option value="">Occupation Type</option>
-  <option value="Job">Job</option>
-  <option value="Business">Business</option>
-  <option value="Both">Both</option>
-</select>
-
-<h3 style={styles.heading}>💼 Business Information</h3>
-
-<input
-  style={styles.input}
-  name="companyName"
-  placeholder="Company Name"
-  value={form.companyName || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="businessType"
-  value={form.businessType || ""}
-  onChange={handleChange}
->
-  <option value="">Business Type</option>
-  <option value="Job">Job</option>
-  <option value="Business">Business</option>
-  <option value="Both">Both</option>
-</select>
-
-<input
-  style={styles.input}
-  name="businessCategory"
-  placeholder="Business Category"
-  value={form.businessCategory || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="businessLocation"
-  placeholder="Business Location"
-  value={form.businessLocation || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="numberOfBranches"
-  placeholder="Number of Branches"
-  value={form.numberOfBranches || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="branchLocations"
-  placeholder="Branch Locations"
-  value={form.branchLocations || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="yearsInBusiness"
-  placeholder="Years in Business"
-  value={form.yearsInBusiness || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="numberOfEmployees"
-  placeholder="Number of Employees"
-  value={form.numberOfEmployees || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="businessWebsite"
-  placeholder="Business Website"
-  value={form.businessWebsite || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="socialMedia"
-  placeholder="Social Media"
-  value={form.socialMedia || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="annualIncome"
-  placeholder="Annual Income"
-  value={form.annualIncome || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="nri"
-  value={form.nri || ""}
-  onChange={handleChange}
->
-  <option value="">NRI?</option>
-  <option value="Yes">Yes</option>
-  <option value="No">No</option>
-</select>
-
-<h3 style={styles.heading}>🏢 Office Photos</h3>
-
-<input
-  type="file"
-  multiple
-  onChange={(e) => setOfficePhotos(Array.from(e.target.files))}
-/>
-
-{form.officePhotos?.length > 0 && (
-  <div style={styles.gallery}>
-    {form.officePhotos.map((photo, index) => (
-      <img
-        key={index}
-        src={photo}
-        alt=""
-        style={styles.galleryImage}
-      />
-    ))}
-  </div>
-)}
-{/* 🛕 Religion & Horoscope */}
-
-<h3
-  style={{
-    color: "#8B0000",
-    marginTop: 35,
-    marginBottom: 15,
-    borderBottom: "2px solid #f3d5d5",
-    paddingBottom: 8
-  }}
->
-
-  🛕 Religion & Horoscope
-</h3>
-
-<input
-  style={styles.input}
-  name="religion"
-  placeholder="Religion"
-  value={form.religion || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="caste"
-  placeholder="Caste"
-  value={form.caste || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="subCaste"
-  placeholder="Sub Caste"
-  value={form.subCaste || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="star"
-  placeholder="Star (Nakshatra)"
-  value={form.star || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="rashi"
-  placeholder="Rashi"
-  value={form.rashi || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="lagnam"
-  placeholder="Lagnam"
-  value={form.lagnam || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="gothram"
-  placeholder="Gothram"
-  value={form.gothram || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="dosha"
-  value={form.dosha || ""}
-  onChange={handleChange}
->
-  <option value="">Dosha</option>
-  <option value="Yes">Yes</option>
-  <option value="No">No</option>
-</select>
-
-<select
-  style={styles.input}
-  name="sevvaiDosham"
-  value={form.sevvaiDosham || "No"}
-  onChange={handleChange}
->
-  <option value="No">Sevvai Dosham - No</option>
-  <option value="Yes">Sevvai Dosham - Yes</option>
-</select>
-
-<select
-  style={styles.input}
-  name="rahuKethuDosham"
-  value={form.rahuKethuDosham || "No"}
-  onChange={handleChange}
->
-  <option value="No">Rahu Kethu Dosham - No</option>
-  <option value="Yes">Rahu Kethu Dosham - Yes</option>
-</select>
-
-<select
-  style={styles.input}
-  name="horoscopeAvailable"
-  value={form.horoscopeAvailable || "No"}
-  onChange={handleChange}
->
-  <option value="No">Horoscope Available - No</option>
-  <option value="Yes">Horoscope Available - Yes</option>
-</select>
-
-<input
-  type="time"
-  style={styles.input}
-  name="birthTime"
-  value={form.birthTime || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="birthPlace"
-  placeholder="Birth Place"
-  value={form.birthPlace || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="horoscopeMatchingPreference"
-  value={form.horoscopeMatchingPreference || "Preferred"}
-  onChange={handleChange}
->
-  <option value="Must Match">Must Match</option>
-  <option value="Preferred">Preferred</option>
-  <option value="Doesn't Matter">Doesn't Matter</option>
-</select>
-
-<h3 style={styles.heading}>📄 Horoscope Upload</h3>
-
-<input
-  type="file"
-  accept=".pdf,.jpg,.jpeg,.png"
-  onChange={(e) => setHoroscopeFile(e.target.files[0])}
-/>
-
-{form.horoscopeFile && (
-  <p style={{ color: "#666" }}>
-    📄 Horoscope file uploaded
-  </p>
-)}
-
-<h3 style={styles.heading}>🕉 Additional Religious Details</h3>
-
-<input
-  style={styles.input}
-  name="motherTongue"
-  placeholder="Mother Tongue"
-  value={form.motherTongue || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="kuladeivam"
-  placeholder="Kuladeivam"
-  value={form.kuladeivam || ""}
-  onChange={handleChange}
-/>
-
-<h3 style={styles.heading}>👨‍👩‍👧 Family Details</h3>
-
-<input
-  style={styles.input}
-  name="fatherName"
-  placeholder="Father Name"
-  value={form.fatherName || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="fatherOccupation"
-  placeholder="Father Occupation"
-  value={form.fatherOccupation || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="motherName"
-  placeholder="Mother Name"
-  value={form.motherName || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="motherOccupation"
-  placeholder="Mother Occupation"
-  value={form.motherOccupation || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="brothersCount"
-  placeholder="Number of Brothers"
-  value={form.brothersCount || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="brothersMarried"
-  placeholder="Married Brothers"
-  value={form.brothersMarried || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="sistersCount"
-  placeholder="Number of Sisters"
-  value={form.sistersCount || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="sistersMarried"
-  placeholder="Married Sisters"
-  value={form.sistersMarried || ""}
-  onChange={handleChange}
-/>
-
-<select
-  style={styles.input}
-  name="familyType"
-  value={form.familyType || ""}
-  onChange={handleChange}
->
-  <option value="">Family Type</option>
-  <option>Joint</option>
-  <option>Nuclear</option>
-</select>
-
-<select
-  style={styles.input}
-  name="familyStatus"
-  value={form.familyStatus || ""}
-  onChange={handleChange}
->
-  <option value="">Family Status</option>
-  <option>Middle Class</option>
-  <option>Upper Middle Class</option>
-  <option>Rich</option>
-</select>
-
-<h3 style={styles.heading}>👨‍👩‍👧 Family Photos</h3>
-
-<input
-  type="file"
-  multiple
-  onChange={(e) => setFamilyPhotos(Array.from(e.target.files))}
-/>
-
-{form.familyPhotos?.length > 0 && (
-  <div style={styles.gallery}>
-    {form.familyPhotos.map((photo, index) => (
-      <img
-        key={index}
-        src={photo}
-        alt=""
-        style={styles.galleryImage}
-      />
-    ))}
-  </div>
-)}
-
-<h3 style={styles.heading}>❤️ Partner Preferences</h3>
-
-<input
-  style={styles.input}
-  name="preferredAgeFrom"
-  placeholder="Preferred Age From"
-  value={form.preferredAgeFrom || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredAgeTo"
-  placeholder="Preferred Age To"
-  value={form.preferredAgeTo || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredHeight"
-  placeholder="Preferred Height"
-  value={form.preferredHeight || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredEducation"
-  placeholder="Preferred Education"
-  value={form.preferredEducation || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredOccupation"
-  placeholder="Preferred Occupation"
-  value={form.preferredOccupation || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredReligion"
-  placeholder="Preferred Religion"
-  value={form.preferredReligion || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredCaste"
-  placeholder="Preferred Caste"
-  value={form.preferredCaste || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="preferredLocation"
-  placeholder="Preferred Location"
-  value={form.preferredLocation || ""}
-  onChange={handleChange}
-/>
-
-<textarea
-  style={styles.textarea}
-  name="expectations"
-  placeholder="Additional Expectations"
-  value={form.expectations || ""}
-  onChange={handleChange}
-/>
-
-<h3 style={styles.heading}>🔒 Privacy Settings</h3>
-
-<label>
-  <input
-    type="checkbox"
-    name="hideMobile"
-    checked={form.hideMobile || false}
-    onChange={handleChange}
-  />
-  Hide Mobile Number
-</label>
-
-<label>
-  <input
-    type="checkbox"
-    name="hideIncome"
-    checked={form.hideIncome || false}
-    onChange={handleChange}
-  />
-  Hide Annual Income
-</label>
-
-<label>
-  <input
-    type="checkbox"
-    name="hideCompany"
-    checked={form.hideCompany || false}
-    onChange={handleChange}
-  />
-  Hide Company Name
-</label>
-
-<label>
-  <input
-    type="checkbox"
-    name="hidePhotos"
-    checked={form.hidePhotos || false}
-    onChange={handleChange}
-  />
-  Hide Personal Photos
-</label>
-
-<select
-  style={styles.input}
-  name="profileVisibility"
-  value={form.profileVisibility || "Public"}
-  onChange={handleChange}
->
-  <option>Public</option>
-  <option>Members Only</option>
-  <option>Private</option>
-</select>
-
-<h3 style={styles.heading}>⭐ Premium</h3>
-
-<label>
-  <input
-    type="checkbox"
-    checked={form.isPremium || false}
-    onChange={(e) =>
-      setForm({
-        ...form,
-        isPremium: e.target.checked
-      })
-    }
-  />
-  Premium Member
-</label>
-
-<label>
-  <input
-    type="checkbox"
-    checked={form.gstVerified || false}
-    onChange={(e)=>
-      setForm({
-        ...form,
-        gstVerified:e.target.checked
-      })
-    }
-  />
-  GST Verified
-</label>
-
-<label>
-  <input
-    type="checkbox"
-    checked={form.businessVerified || false}
-    onChange={(e)=>
-      setForm({
-        ...form,
-        businessVerified:e.target.checked
-      })
-    }
-  />
-  Business Verified
-</label>
-
-<h3 style={styles.heading}>🌾 Assets & Property</h3>
-
-<input
-  style={styles.input}
-  name="landAcres"
-  placeholder="Land (Acres)"
-  value={form.landAcres || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="landValue"
-  placeholder="Land Value"
-  value={form.landValue || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="house"
-  placeholder="House Details"
-  value={form.house || ""}
-  onChange={handleChange}
-/>
-
-<input
-  style={styles.input}
-  name="vehicle"
-  placeholder="Vehicle Details"
-  value={form.vehicle || ""}
-  onChange={handleChange}
-/>
-
-<textarea
-  style={styles.textarea}
-  name="otherAssets"
-  placeholder="Other Assets"
-  value={form.otherAssets || ""}
-  onChange={handleChange}
-/>
-
-        
-      </div>
-
-    </div>
-  </div>
-);
-}
-const styles = {
-  page: {
-    background: "#fff5f7",
-    minHeight: "100vh",
-    padding: "120px 20px 40px"
-  },
-
-  container: {
-    maxWidth: "800px",
-    margin: "auto"
-  },
-
-  title: {
-    textAlign: "center",
-    color: "#8B0000",
-    marginBottom: 30
+    fontWeight: "bold",
   },
 
   section: {
@@ -1180,73 +1134,61 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: 15,
-    boxShadow: "0 4px 15px rgba(0,0,0,0.08)"
+    boxShadow: "0 4px 15px rgba(0,0,0,0.08)",
   },
 
   input: {
     padding: 12,
     borderRadius: 10,
     border: "1px solid #ddd",
-    fontSize: 15
+    fontSize: 15,
   },
+
   heading: {
-  color: "#8B0000",
-  marginTop: 20,
-  marginBottom: 10,
-},
+    color: "#8B0000",
+    marginTop: 20,
+    marginBottom: 10,
+  },
 
-textarea: {
-  padding: 12,
-  borderRadius: 10,
-  border: "1px solid #ddd",
-  fontSize: 15,
-  minHeight: 120,
-  resize: "vertical",
-},
+  textarea: {
+    padding: 12,
+    borderRadius: 10,
+    border: "1px solid #ddd",
+    fontSize: 15,
+    minHeight: 120,
+    resize: "vertical",
+  },
 
-previewImage: {
-  width: 180,
-  height: 180,
-  objectFit: "cover",
-  borderRadius: 15,
-  marginTop: 10,
-},
+  previewImage: {
+    width: 180,
+    height: 180,
+    objectFit: "cover",
+    borderRadius: 15,
+    marginTop: 10,
+  },
 
-gallery: {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(150px,1fr))",
-  gap: 15,
-  marginTop: 15,
-},
+  gallery: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(150px,1fr))",
+    gap: 15,
+    marginTop: 15,
+  },
 
-galleryImage: {
-  width: "100%",
-  height: 170,
-  objectFit: "cover",
-  borderRadius: 12,
-  boxShadow: "0 4px 10px rgba(0,0,0,.15)",
-},
+  galleryImage: {
+    width: "100%",
+    height: 170,
+    objectFit: "cover",
+    borderRadius: 12,
+    boxShadow: "0 4px 10px rgba(0,0,0,.15)",
+  },
 
-backBtn: {
-  padding: "10px 18px",
-  background: "#8B0000",
-  color: "#fff",
-  border: "none",
-  borderRadius: "10px",
-  cursor: "pointer",
-  marginBottom: "20px",
-  fontSize: "16px",
-  fontWeight: "600"
-},
-
-checkbox: {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  fontSize: "15px",
-  marginBottom: "10px",
-},
-
-
+  checkbox: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    fontSize: "15px",
+    marginBottom: "10px",
+  },
 };
+
 export default EditProfile;
