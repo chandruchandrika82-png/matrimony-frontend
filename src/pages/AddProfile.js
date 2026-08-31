@@ -154,10 +154,13 @@ function AddProfile() {
       officePhotos.forEach((photo) => formData.append("officePhotos", photo));
 
       await axios.post(`${API}/users`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       alert("Profile Added Successfully 💍");
+
       setForm(initialForm);
       setImageFile(null);
       setProfilePhotos([]);

@@ -1,32 +1,37 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function InterestRequests() {
   const navigate = useNavigate();
-
   const [requests, setRequests] = useState([]);
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
-
- useEffect(() => {
-  fetchRequests();
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
-
-  const fetchRequests = async () => {
+  const loggedInUser = (() => {
     try {
-      const res = await axios.get(
-        `https://matrimony-backend-1-ri82.onrender.com/api/users/${loggedInUser._id}`
-      );
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  })();
 
-      if (res.data.interestRequests?.length > 0) {
+  const API = "https://matrimony-backend-zbvm.onrender.com/api";
+
+  const fetchRequests = useCallback(async () => {
+    if (!loggedInUser?._id) {
+      setRequests([]);
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${API}/users/${loggedInUser._id}`);
+
+      const interestIds = res.data.interestRequests || [];
+
+      if (interestIds.length > 0) {
         const users = await Promise.all(
-          res.data.interestRequests.map(async (id) => {
-            const user = await axios.get(
-              `https://matrimony-backend-1-ri82.onrender.com/api/users/${id}`
-            );
-            return user.data;
+          interestIds.map(async (id) => {
+            const userRes = await axios.get(`${API}/users/${id}`);
+            return userRes.data;
           })
         );
 
@@ -36,56 +41,58 @@ function InterestRequests() {
       }
     } catch (err) {
       console.log(err);
+      setRequests([]);
     }
-  };
+  }, [API, loggedInUser?._id]);
+
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
 
   const acceptRequest = async (senderId) => {
     try {
+      if (!loggedInUser?._id) return;
+
       await axios.put(
-        `https://matrimony-backend-1-ri82.onrender.com/api/users/${loggedInUser._id}/accept/${senderId}`
+        `${API}/users/${loggedInUser._id}/accept/${senderId}`
       );
 
       alert("❤️ Request Accepted");
       fetchRequests();
     } catch (err) {
       console.log(err);
+      alert(err?.response?.data?.error || "Accept failed");
     }
   };
 
   const rejectRequest = async (senderId) => {
     try {
+      if (!loggedInUser?._id) return;
+
       await axios.put(
-        `https://matrimony-backend-1-ri82.onrender.com/api/users/${loggedInUser._id}/reject/${senderId}`
+        `${API}/users/${loggedInUser._id}/reject/${senderId}`
       );
 
       alert("❌ Request Rejected");
       fetchRequests();
     } catch (err) {
       console.log(err);
+      alert(err?.response?.data?.error || "Reject failed");
     }
   };
 
   return (
     <div style={styles.container}>
-        
-
       <div style={styles.headerRow}>
+        <button onClick={() => navigate(-1)} style={styles.backBtn}>
+          ← Back
+        </button>
 
-  <button
-    onClick={() => navigate(-1)}
-    style={styles.backBtn}
-  >
-    ← Back
-  </button>
+        <div style={styles.headingCard}>
+          <h1 style={styles.heading}>📩 Interest Requests</h1>
+        </div>
 
-  <div style={styles.headingCard}>
-    <h1 style={styles.heading}>
-      📩 Interest Requests
-    </h1>
-  </div>
-
-  <div style={{ width: 100 }}></div>
-
+        <div style={{ width: 100 }} />
       </div>
 
       {requests.length === 0 ? (
@@ -97,8 +104,7 @@ function InterestRequests() {
           </h2>
 
           <p style={{ color: "#666" }}>
-            When someone shows interest in your profile,
-            you'll see their request here.
+            When someone shows interest in your profile, you'll see their request here.
           </p>
 
           <button
@@ -110,24 +116,18 @@ function InterestRequests() {
         </div>
       ) : (
         requests.map((user) => (
-          <div
-            key={user._id}
-            style={styles.card}
-          >
+          <div key={user._id} style={styles.card}>
             <img
-              src={
-                user.image ||
-                "https://placehold.co/120x120?text=No+Image"
-              }
+              src={user.image || "https://placehold.co/120x120?text=No+Image"}
               alt={user.name}
               style={styles.image}
             />
 
             <div style={{ flex: 1 }}>
-              <h2>{user.name}</h2>
-
-              <p>
-                {user.age} Years • {user.currentCity}
+              <h2 style={{ margin: 0 }}>{user.name}</h2>
+              <p style={{ marginTop: 8 }}>
+                {user.age ? `${user.age} Years` : "Age not mentioned"} •{" "}
+                {user.currentCity || "Location not mentioned"}
               </p>
 
               <div style={{ marginTop: 15 }}>
@@ -149,52 +149,52 @@ function InterestRequests() {
           </div>
         ))
       )}
-
     </div>
   );
 }
 
 const styles = {
+  container: {
+    minHeight: "100vh",
+    padding: "100px 40px 40px",
+    background: "linear-gradient(to right, #ffe4ec, #fff7fb)",
+  },
 
-container: {
-  minHeight: "100vh",
-  padding: "100px 40px 40px",
-  background: "linear-gradient(to right, #746031f5, #ffe4ea)",
-},
+  headerRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 20,
+    flexWrap: "wrap",
+    marginBottom: 30,
+  },
 
- 
-
-backBtn: {
-  position: "fixed",
-  top: "95px",
-  left: "25px",
-  zIndex: 1001,
-
-  background: "#8B0000",
-  color: "#fff",
-  border: "none",
-  padding: "12px 22px",
-  borderRadius: "10px",
-  cursor: "pointer",
-  fontWeight: "bold",
-  boxShadow: "0 5px 15px rgba(0,0,0,0.25)"
-},
+  backBtn: {
+    background: "#8B0000",
+    color: "#fff",
+    border: "none",
+    padding: "12px 22px",
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.15)",
+  },
 
   headingCard: {
-  width: "fit-content",
-  margin: "20px auto 40px",
-  background: "#fff",
-  padding: "18px 35px",
-  borderRadius: 20,
-  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-},
+    width: "fit-content",
+    margin: "0 auto",
+    background: "#fff",
+    padding: "18px 35px",
+    borderRadius: 20,
+    boxShadow: "0 8px 20px rgba(0,0,0,0.10)",
+  },
 
   heading: {
-  margin: 0,
-  color: "#8B0000",
-  fontSize: 34,
-  fontWeight: "bold",
-},
+    margin: 0,
+    color: "#8B0000",
+    fontSize: 34,
+    fontWeight: "bold",
+  },
 
   emptyCard: {
     maxWidth: 550,
