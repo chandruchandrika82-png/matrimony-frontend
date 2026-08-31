@@ -4,21 +4,18 @@ function Navbar() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
     navigate("/login");
-
-    // 🔥 ensures UI refresh after logout
     window.location.reload();
   };
 
   return (
     <div style={styles.navbar}>
-      
       {/* LOGO */}
       <div style={styles.logoContainer}>
         <img
@@ -28,13 +25,12 @@ function Navbar() {
         />
 
         <h2 style={styles.logoText}>
-          Digi Ghatak
+          Namakkal Matrimony
         </h2>
       </div>
 
       {/* MENU */}
       <div style={styles.links}>
-        
         <Link to="/" style={styles.link}>
           Home
         </Link>
@@ -42,12 +38,6 @@ function Navbar() {
         <Link to="/profiles" style={styles.link}>
           Profiles
         </Link>
-
-        {token && (
-        <Link to="/my-profile" style={styles.link}>
-          My Profile
-        </Link>
-        )}
 
         <Link to="/interested" style={styles.link}>
           Interested
@@ -66,17 +56,20 @@ function Navbar() {
           </>
         ) : (
           <>
-  <span style={styles.userName}>
-    👋 Hi, {user?.name}
-  </span>
+            <Link
+              to={`/profile/${user?._id}`}
+              style={styles.userNameLink}
+            >
+              👋 Hi, {user?.name || "User"}
+            </Link>
 
-  <button
-    onClick={logout}
-    style={styles.logoutBtn}
-  >
-    Logout
-  </button>
-</>
+            <button
+              onClick={logout}
+              style={styles.logoutBtn}
+            >
+              Logout
+            </button>
+          </>
         )}
       </div>
     </div>
@@ -100,37 +93,33 @@ const styles = {
     WebkitBackdropFilter: "blur(10px)",
     borderBottom: "1px solid rgba(255,255,255,0.15)",
     zIndex: 999,
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   },
-  userName: {
-  color: "#8B0000",
-  fontWeight: "bold",
-  fontSize: "16px"
-},
+
   logoContainer: {
     display: "flex",
     alignItems: "center",
-    gap: "12px"
+    gap: "12px",
   },
 
   logoImage: {
     width: "50px",
     height: "50px",
     borderRadius: "50%",
-    objectFit: "cover"
+    objectFit: "cover",
   },
 
   logoText: {
     color: "#8B0000",
     fontSize: "24px",
     fontWeight: "700",
-    margin: 0
+    margin: 0,
   },
 
   links: {
     display: "flex",
     alignItems: "center",
-    gap: "25px"
+    gap: "25px",
   },
 
   link: {
@@ -138,7 +127,15 @@ const styles = {
     textDecoration: "none",
     fontSize: "16px",
     fontWeight: "600",
-    transition: "0.3s"
+    transition: "0.3s",
+  },
+
+  userNameLink: {
+    color: "#8B0000",
+    textDecoration: "none",
+    fontSize: "16px",
+    fontWeight: "700",
+    transition: "0.3s",
   },
 
   registerBtn: {
@@ -147,7 +144,7 @@ const styles = {
     padding: "10px 18px",
     borderRadius: "10px",
     textDecoration: "none",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
 
   logoutBtn: {
@@ -157,8 +154,8 @@ const styles = {
     padding: "10px 18px",
     borderRadius: "10px",
     cursor: "pointer",
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 };
 
 export default Navbar;

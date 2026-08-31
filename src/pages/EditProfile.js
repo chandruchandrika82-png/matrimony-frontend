@@ -126,6 +126,13 @@ profileVisibility: "Public",
 isPremium: false,
 gstVerified: false,
 businessVerified: false,
+  image: "",
+  profilePhotos: [],
+  familyPhotos: [],
+  officePhotos: [],
+  dosha: "",
+  preferredStar: "",
+  horoscopeFile: "",
 });
   const [imageFile, setImageFile] = useState(null);
   const [profilePhotos, setProfilePhotos] = useState([]);
@@ -166,12 +173,15 @@ useEffect(() => {
 
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    });
+    const { name, value, type, checked } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
-const handleUpdate = async () => {
+
+  const handleUpdate = async () => {
   try {
     const formData = new FormData();
     console.log("========== FORM DATA ==========");
@@ -1006,12 +1016,7 @@ return (
     type="checkbox"
     name="hideMobile"
     checked={form.hideMobile || false}
-    onChange={(e) =>
-      setForm({
-        ...form,
-        hideMobile: e.target.checked
-      })
-    }
+    onChange={handleChange}
   />
   Hide Mobile Number
 </label>
@@ -1021,12 +1026,7 @@ return (
     type="checkbox"
     name="hideIncome"
     checked={form.hideIncome || false}
-    onChange={(e) =>
-      setForm({
-        ...form,
-        hideIncome: e.target.checked
-      })
-    }
+    onChange={handleChange}
   />
   Hide Annual Income
 </label>
@@ -1036,12 +1036,7 @@ return (
     type="checkbox"
     name="hideCompany"
     checked={form.hideCompany || false}
-    onChange={(e) =>
-      setForm({
-        ...form,
-        hideCompany: e.target.checked
-      })
-    }
+    onChange={handleChange}
   />
   Hide Company Name
 </label>
@@ -1051,12 +1046,7 @@ return (
     type="checkbox"
     name="hidePhotos"
     checked={form.hidePhotos || false}
-    onChange={(e) =>
-      setForm({
-        ...form,
-        hidePhotos: e.target.checked
-      })
-    }
+    onChange={handleChange}
   />
   Hide Personal Photos
 </label>

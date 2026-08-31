@@ -3,876 +3,651 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 function ProfileDetails() {
-
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const API_ORIGIN = "https://matrimony-backend-1-ri82.onrender.com";
+  const API = `${API_ORIGIN}/api`;
+
   const [user, setUser] = useState(null);
 
-  const API = "https://matrimony-backend-1-ri82.onrender.com/api";
-  const fetchUser = useCallback(async () => {
-
+  const currentUser = (() => {
     try {
-
-      const res = await axios.get(`${API}/users/${id}`);
-
-      setUser(res.data);
-
-    } catch (err) {
-
-      console.log(err);
-
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
     }
+  })();
 
-  }, [id]);
+  const isOwner = currentUser?._id === user?._id;
+
+  const resolveUrl = (value) => {
+    if (!value) return null;
+    if (value.startsWith("http")) return value;
+    return `${API_ORIGIN}${value}`;
+  };
+
+  const formatValue = (value, fallback = "Not Mentioned") => {
+    if (value === null || value === undefined || value === "") return fallback;
+    return value;
+  };
+
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/users/${id}`);
+      setUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [API, id]);
 
   useEffect(() => {
-
     fetchUser();
-
   }, [fetchUser]);
+
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this profile?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${API}/users/${id}`);
+
+      if (isOwner) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+
+      alert("Profile deleted successfully");
+      navigate("/profiles");
+    } catch (err) {
+      console.log(err);
+      alert(err?.response?.data?.error || "Failed to delete profile");
+    }
+  };
+
+  const InfoCard = ({ label, value }) => (
+    <div
+      style={styles.infoCard}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.transform = "translateY(-4px)")
+      }
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.transform = "translateY(0px)")
+      }
+    >
+      <strong style={styles.infoLabel}>{label}</strong>
+      <p style={styles.infoValue}>{value}</p>
+    </div>
+  );
 
   if (!user) {
     return (
-      <h2 style={{ textAlign: "center", marginTop: 120 }}>
-        Loading...
-      </h2>
+      <div style={styles.loadingWrap}>
+        <div style={styles.loadingCard}>Loading...</div>
+      </div>
     );
   }
 
+  const profileImage =
+    resolveUrl(user.image) || "https://placehold.co/300x320?text=No+Image";
+
+  const profilePhotos = user.profilePhotos || [];
+  const familyPhotos = user.familyPhotos || [];
+  const officePhotos = user.officePhotos || [];
+
+  const badges = [
+    user.registerAs ? { text: user.registerAs, style: styles.pillNeutral } : null,
+    user.profileVisibility
+      ? { text: user.profileVisibility, style: styles.pillNeutral }
+      : null,
+    user.isPremium ? { text: "Premium", style: styles.pillPremium } : null,
+    user.businessVerified
+      ? { text: "Business Verified", style: styles.pillVerified }
+      : null,
+    user.gstVerified ? { text: "GST Verified", style: styles.pillVerified } : null,
+    user.nri === "Yes" ? { text: "NRI", style: styles.pillNri } : null,
+  ].filter(Boolean);
+
+  const personalCards = [
+    ["Gender", user.gender],
+    ["Age", user.age],
+    ["Date Of Birth", user.dob],
+    ["Height", user.height],
+    ["Weight", user.weight],
+    ["Native Place", user.nativePlace],
+    ["Current City", user.currentCity],
+    ["District", user.district],
+    ["State", user.state],
+    ["Country", user.country],
+    ["Marital Status", user.maritalStatus],
+    ["Languages", user.languages],
+    ["Hobbies", user.hobbies],
+  ];
+
+  const careerCards = [
+    ["Education", user.education],
+    ["Occupation Type", user.occupationType || user.occupation],
+    ["Company Name", user.hideCompany ? "Hidden" : user.companyName],
+    ["Business Type", user.businessType],
+    ["Business Category", user.businessCategory],
+    ["Business Location", user.businessLocation],
+    ["Number of Branches", user.numberOfBranches],
+    ["Branch Locations", user.branchLocations],
+    ["Years in Business", user.yearsInBusiness],
+    ["Number of Employees", user.numberOfEmployees],
+    ["Business Website", user.businessWebsite],
+    ["Annual Income", user.hideIncome ? "Hidden" : user.annualIncome],
+    ["Social Media", user.socialMedia],
+    ["NRI", user.nri],
+  ];
+
+  const familyCards = [
+    ["Father Name", user.fatherName],
+    ["Father Occupation", user.fatherOccupation],
+    ["Mother Name", user.motherName],
+    ["Mother Occupation", user.motherOccupation],
+    ["Brothers", user.brothersCount],
+    ["Married Brothers", user.brothersMarried],
+    ["Sisters", user.sistersCount],
+    ["Married Sisters", user.sistersMarried],
+    ["Family Type", user.familyType],
+    ["Family Status", user.familyStatus],
+  ];
+
+  const religionCards = [
+    ["Religion", user.religion],
+    ["Caste", user.caste],
+    ["Sub Caste", user.subCaste],
+    ["Mother Tongue", user.motherTongue],
+    ["Kuladeivam", user.kuladeivam],
+  ];
+
+  const horoscopeCards = [
+    ["Rashi", user.rashi],
+    ["Star / Nakshatra", user.star],
+    ["Lagnam", user.lagnam],
+    ["Gothram", user.gothram],
+    ["Dosha", user.dosha],
+    ["Sevvai Dosham", user.sevvaiDosham],
+    ["Rahu Kethu Dosham", user.rahuKethuDosham || user.raguKethuDosham],
+    ["Horoscope Available", user.horoscopeAvailable],
+    ["Horoscope Matching Preference", user.horoscopeMatchingPreference],
+    ["Birth Time", user.birthTime],
+    ["Birth Place", user.birthPlace],
+  ];
+
+  const partnerCards = [
+    [
+      "Preferred Age",
+      user.preferredAgeFrom && user.preferredAgeTo
+        ? `${user.preferredAgeFrom} - ${user.preferredAgeTo} Years`
+        : "",
+    ],
+    ["Preferred Height", user.preferredHeight],
+    ["Preferred Education", user.preferredEducation],
+    ["Preferred Occupation", user.preferredOccupation],
+    ["Preferred Religion", user.preferredReligion],
+    ["Preferred Caste", user.preferredCaste],
+    ["Preferred Location", user.preferredLocation],
+    ["Preferred Rashi", user.preferredRashi],
+    ["Preferred Star", user.preferredStar],
+    ["Accept Sevvai Dosham", user.acceptSevvaiDosham],
+    ["Horoscope Matching Required", user.horoscopeMatchingRequired],
+    ["Additional Expectations", user.expectations],
+  ];
+
+  const assetCards = [
+    ["Land (Acres)", user.landAcres],
+    ["Land Value", user.landValue],
+    ["House", user.house],
+    ["Vehicle", user.vehicle],
+    ["Other Assets", user.otherAssets],
+  ];
+
+  const contactCards = [
+    ["Mobile", user.hideMobile ? "Hidden" : user.mobile],
+    ["Email", user.email],
+    ["Address", user.address],
+  ];
+
   return (
-
     <div style={styles.page}>
-      <button
-        onClick={() => navigate(-1)}
-        style={styles.backBtn}
-      >
-        ← Back
-      </button>
-      <div style={styles.cover}>
+      <div style={styles.contentWrap}>
+        <div style={styles.actionBar}>
+          <button onClick={() => navigate(-1)} style={styles.backBtn}>
+            ← Back
+          </button>
 
-      </div>
-      {/* HERO CARD */}
-      <div style={styles.card}>
-
-        <img
-          src={
-            user.image
-              ? user.image.startsWith("http")
-                ? user.image
-                : `https://matrimony-backend-1-ri82.onrender.com${user.image}`
-              : "https://placehold.co/300x320?text=No+Image"
-          }
-          alt="profile"
-          style={styles.image}
-        />
-
-        <h1 style={styles.name}>
-          {user.name}
-        </h1>
-
-        <p style={styles.subText}>
-          {user.age} yrs • {user.currentCity || user.nativePlace || "Not Mentioned"}
-        </p>
-
-        <p style={styles.subText}>
-          👩 {user.gender || "Not Mentioned"}
-        </p>
-
-        <p style={styles.subText}>
-          💼 {user.occupation || "Not Mentioned"}
-        </p>
-
-        <p style={styles.subText}>
-          📍 {user.currentCity || "Not Mentioned"}
-        </p>
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "10px",
-            flexWrap: "wrap",
-            marginTop: "20px"
-          }}
-        >
-
-          <span style={styles.verifyBadge}>
-            ⭐ Premium
-          </span>
-
-          {user.businessVerified && (
-            <span style={styles.verifyBadge}>
-              🏢 Business Verified
-            </span>
-          )}
-
-          {user.gstVerified && (
-            <span style={styles.verifyBadge}>
-              ✅ GST Verified
-            </span>
-          )}
-
-          {user.nri === "Yes" && (
-            <span style={styles.verifyBadge}>
-              🌍 NRI
-            </span>
-          )}
-
-        </div>
-
-      </div>
-
-      {/* PROFILE PHOTO GALLERY */}
-      <div style={styles.section}>
-        <h2 style={styles.heading}>📸 Profile Photos</h2>
-
-        <div style={styles.gallery}>
-          {user.profilePhotos && user.profilePhotos.length > 0 ? (
-            user.profilePhotos.map((photo, index) => (
-
-              <img
-                key={index}
-                src={
-                  photo.startsWith("http")
-                    ? photo
-                    : `https://matrimony-backend-1-ri82.onrender.com${photo}`
-                }
-                alt={`Profile ${index + 1}`}
-                style={styles.galleryImage}
-              />
-
-            ))
-          ) : (
-            <p>No Profile Photos Uploaded</p>
+          {isOwner && (
+            <button onClick={handleDelete} style={styles.actionBtnDanger}>
+              🗑 Delete Profile
+            </button>
           )}
         </div>
-      </div>
 
-      {/* PERSONAL DETAILS */}
-      <div style={styles.section}>
+        <div style={styles.cover} />
 
-        <h2 style={styles.heading}>
-          📌 Personal Details
-        </h2>
+        <div style={styles.heroCard}>
+          <img src={profileImage} alt="profile" style={styles.heroImage} />
 
-        <div style={styles.grid}>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Gender</strong>
-            <p>{user.gender || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Date Of Birth</strong>
-            <p>{user.dob || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Birth Time</strong>
-            <p>{user.birthTime || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Birth Place</strong>
-            <p>{user.birthPlace || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Native Place</strong>
-            <p>{user.nativePlace || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Current City</strong>
-            <p>{user.currentCity || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>District</strong>
-            <p>{user.district || "Not Mentioned"}</p>
-          </div>
-          <div style={styles.infoCard}>
-            <strong>State</strong>
-            <p>{user.state || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Country</strong>
-            <p>{user.country || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Height</strong>
-            <p>{user.height || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Weight</strong>
-            <p>{user.weight || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Marital Status</strong>
-            <p>{user.maritalStatus || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Languages</strong>
-            <p>{user.languages || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Hobbies</strong>
-            <p>{user.hobbies || "Not Mentioned"}</p>
-          </div>
-        </div>
-
-      </div>
-
-      {/* CAREER */}
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          🎓 Education & Career
-        </h2>
-
-        <div style={styles.grid}>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Education</strong>
-            <p>{user.education || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Profession</strong>
-            <p>{user.occupation || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Annual Income</strong>
-            <p>{user.annualIncome || "Not Mentioned"}</p>
-          </div>
-          <div style={styles.infoCard}>
-            <strong>Occupation Type</strong>
-            <p>{user.occupationType || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Company Name</strong>
-            <p>{user.companyName || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Business Category</strong>
-            <p>{user.businessCategory || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Business Type</strong>
-            <p>{user.businessType || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Years in Business</strong>
-            <p>{user.yearsInBusiness || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Employees</strong>
-            <p>{user.numberOfEmployees || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Branch Locations</strong>
-            <p>{user.branchLocations || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Business Website</strong>
-            <p>{user.businessWebsite || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>NRI</strong>
-            <p>{user.nri || "No"}</p>
-          </div>
-        </div>
-
-      </div>
-
-      {/* FAMILY */}
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          👨‍👩‍👧 Family Details
-        </h2>
-
-        <div style={styles.grid}>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Father Name</strong>
-            <p>{user.fatherName || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Mother Name</strong>
-            <p>{user.motherName || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Father Occupation</strong>
-            <p>{user.fatherOccupation || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Mother Occupation</strong>
-            <p>{user.motherOccupation || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Brothers</strong>
-            <p>{user.brothersCount ?? "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Married Brothers</strong>
-            <p>{user.brothersMarried ?? "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Sisters</strong>
-            <p>{user.sistersCount ?? "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Married Sisters</strong>
-            <p>{user.sistersMarried ?? "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Family Type</strong>
-            <p>{user.familyType || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Family Status</strong>
-            <p>{user.familyStatus || "Not Mentioned"}</p>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* PARTNER PREFERENCES */}
-
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          ❤️ Partner Preferences
-        </h2>
-
-        <div style={styles.grid}>
-
-          <div style={styles.infoCard}>
-            <strong>Preferred Age</strong>
-            <p>
-              {user.preferredAgeFrom && user.preferredAgeTo
-                ? `${user.preferredAgeFrom} - ${user.preferredAgeTo} Years`
-                : "Not Mentioned"}
+          <div style={styles.heroContent}>
+            <h1 style={styles.name}>{user.name}</h1>
+            <p style={styles.heroLine}>
+              {user.age ? `${user.age} yrs` : "Age not mentioned"} •{" "}
+              {user.currentCity ||
+                user.nativePlace ||
+                user.district ||
+                "Location not mentioned"}
             </p>
-          </div>
 
-          <div style={styles.infoCard}>
-            <strong>Preferred Height</strong>
-            <p>{user.preferredHeight || "Not Mentioned"}</p>
-          </div>
+            <p style={styles.heroLine}>👩 {user.gender || "Not Mentioned"}</p>
+            <p style={styles.heroLine}>📍 {user.currentCity || "Not Mentioned"}</p>
 
-          <div style={styles.infoCard}>
-            <strong>Preferred Education</strong>
-            <p>{user.preferredEducation || "Not Mentioned"}</p>
+            <div style={styles.badgeRow}>
+              {badges.map((badge, index) => (
+                <span key={index} style={badge.style}>
+                  {badge.text}
+                </span>
+              ))}
+            </div>
           </div>
-
-          <div style={styles.infoCard}>
-            <strong>Preferred Occupation</strong>
-            <p>{user.preferredOccupation || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Preferred Religion</strong>
-            <p>{user.preferredReligion || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Preferred Caste</strong>
-            <p>{user.preferredCaste || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Preferred Location</strong>
-            <p>{user.preferredLocation || "Not Mentioned"}</p>
-          </div>
-
         </div>
 
-      </div>
-
-      {/* ASSETS & PROPERTIES */}
-
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          🏡 Assets & Properties
-        </h2>
-
-        <div style={styles.grid}>
-
-          <div style={styles.infoCard}>
-            <strong>Land (Acres)</strong>
-            <p>{user.landAcres || "Not Mentioned"}</p>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>📌 Personal Details</h2>
+          <div style={styles.grid}>
+            {personalCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
           </div>
-
-          <div style={styles.infoCard}>
-            <strong>Land Value</strong>
-            <p>{user.landValue || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>House</strong>
-            <p>{user.house || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Vehicle</strong>
-            <p>{user.vehicle || "Not Mentioned"}</p>
-          </div>
-
-          <div style={styles.infoCard}>
-            <strong>Other Assets</strong>
-            <p>{user.otherAssets || "Not Mentioned"}</p>
-          </div>
-
         </div>
 
-      </div>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>🎓 Education & Career</h2>
+          <div style={styles.grid}>
+            {careerCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
+          </div>
+        </div>
 
-      {/* HOROSCOPE DOCUMENT */}
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>👨‍👩‍👧 Family Details</h2>
+          <div style={styles.grid}>
+            {familyCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
+          </div>
+        </div>
 
-      <div style={styles.section}>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>🕉 Religion & Additional Details</h2>
+          <div style={styles.grid}>
+            {religionCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
+          </div>
+        </div>
 
-        <h2 style={styles.heading}>
-          📄 Horoscope Document
-        </h2>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>🔮 Horoscope Details</h2>
+          <div style={styles.grid}>
+            {horoscopeCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
+          </div>
+        </div>
 
-        {user.horoscopeFile ? (
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>📄 Horoscope Document</h2>
+          {user.horoscopeFile ? (
+            <a
+              href={resolveUrl(user.horoscopeFile)}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={styles.fileLink}
+            >
+              📎 View Uploaded Horoscope
+            </a>
+          ) : (
+            <p style={styles.emptyNote}>No Horoscope Uploaded</p>
+          )}
+        </div>
 
-          <a
-            href={user.horoscopeFile}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#8B0000",
-              fontWeight: "bold",
-              textDecoration: "none"
-            }}
-          >
-            📎 View Uploaded Horoscope
-          </a>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>❤️ Partner Preferences</h2>
+          <div style={styles.grid}>
+            {partnerCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
+          </div>
+        </div>
 
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>🏡 Assets & Property</h2>
+          <div style={styles.grid}>
+            {assetCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
+          </div>
+        </div>
+
+        {!user.hidePhotos ? (
+          <>
+            <div style={styles.section}>
+              <h2 style={styles.sectionTitle}>📸 Profile Photos</h2>
+              <div style={styles.photoGrid}>
+                {profilePhotos.length > 0 ? (
+                  profilePhotos.map((photo, index) => (
+                    <img
+                      key={index}
+                      src={resolveUrl(photo)}
+                      alt={`Profile ${index + 1}`}
+                      style={styles.galleryImage}
+                    />
+                  ))
+                ) : (
+                  <p style={styles.emptyNote}>No Profile Photos Uploaded</p>
+                )}
+              </div>
+            </div>
+
+            <div style={styles.section}>
+              <h2 style={styles.sectionTitle}>👨‍👩‍👧 Family Photos</h2>
+              <div style={styles.photoGrid}>
+                {familyPhotos.length > 0 ? (
+                  familyPhotos.map((photo, index) => (
+                    <img
+                      key={index}
+                      src={resolveUrl(photo)}
+                      alt={`Family ${index + 1}`}
+                      style={styles.galleryImage}
+                    />
+                  ))
+                ) : (
+                  <p style={styles.emptyNote}>No Family Photos Uploaded</p>
+                )}
+              </div>
+            </div>
+
+            <div style={styles.section}>
+              <h2 style={styles.sectionTitle}>🏢 Office Photos</h2>
+              <div style={styles.photoGrid}>
+                {officePhotos.length > 0 ? (
+                  officePhotos.map((photo, index) => (
+                    <img
+                      key={index}
+                      src={resolveUrl(photo)}
+                      alt={`Office ${index + 1}`}
+                      style={styles.galleryImage}
+                    />
+                  ))
+                ) : (
+                  <p style={styles.emptyNote}>No Office Photos Uploaded</p>
+                )}
+              </div>
+            </div>
+          </>
         ) : (
-
-          <p>No Horoscope Uploaded</p>
-
+          <div style={styles.section}>
+            <h2 style={styles.sectionTitle}>📸 Photos</h2>
+            <p style={styles.emptyNote}>Photos are hidden by privacy settings.</p>
+          </div>
         )}
 
-      </div>
-
-
-      {/* HOROSCOPE */}
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          🔮 Horoscope Details
-        </h2>
-
-        <div style={styles.grid}>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Zodiac</strong>
-            <p>{user.zodiac || "Not Mentioned"}</p>
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>📞 Contact Details</h2>
+          <div style={styles.grid}>
+            {contactCards.map(([label, value]) => (
+              <InfoCard key={label} label={label} value={formatValue(value)} />
+            ))}
           </div>
-
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Star / Nakshatra</strong>
-            <p>{user.star || "Not Mentioned"}</p>
-          </div>
-
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Rashi</strong>
-            <p>{user.rashi || "Not Mentioned"}</p>
-          </div>
-
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Dosha</strong>
-            <p>{user.dosha || "Not Mentioned"}</p>
-          </div>
-
-
         </div>
-
       </div>
-
-
-      {/* FAMILY PHOTO GALLERY */}
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          👨‍👩‍👧 Family Photos
-        </h2>
-
-        <div style={styles.gallery}>
-
-          {user.familyPhotos && user.familyPhotos.length > 0 ? (
-
-            user.familyPhotos.map((photo, index) => (
-
-              <img
-                key={index}
-                src={
-                  photo.startsWith("http")
-                    ? photo
-                    : `https://matrimony-backend-1-ri82.onrender.com${photo}`
-                }
-                alt={`Family ${index + 1}`}
-                style={styles.galleryImage}
-              />
-
-            ))
-
-          ) : (
-
-            <p>No Family Photos Uploaded</p>
-
-          )}
-
-        </div>
-
-      </div>
-
-
-      {/* OFFICE PHOTO GALLERY */}
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          🏢 Office Photos
-        </h2>
-
-        <div style={styles.gallery}>
-
-          {user.officePhotos && user.officePhotos.length > 0 ? (
-
-            user.officePhotos.map((photo, index) => (
-
-              <img
-                key={index}
-                src={
-                  photo.startsWith("http")
-                    ? photo
-                    : `https://matrimony-backend-1-ri82.onrender.com${photo}`
-                }
-                alt={`Office ${index + 1}`}
-                style={styles.galleryImage}
-              />
-
-            ))
-
-          ) : (
-
-            <p>No Office Photos Uploaded</p>
-
-          )}
-
-        </div>
-
-
-
-      </div>
-      {/* CONTACT */}
-      <div style={styles.section}>
-
-        <h2 style={styles.heading}>
-          📞 Contact Details
-        </h2>
-
-        <div style={styles.grid}>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Mobile</strong>
-            <p>{user.mobile || "Not Mentioned"}</p>
-          </div>
-
-          <div
-            style={styles.infoCard}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "translateY(-5px)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "translateY(0px)")
-            }
-          >
-            <strong>Address</strong>
-            <p>{user.address || "Not Mentioned"}</p>
-          </div>
-
-        </div>
-
-      </div>
-      </div> 
-      );
+    </div>
+  );
 }
 
-      const styles = {
-
-        page: {
-        background: "linear-gradient(to bottom right, #fff0f5, #ffe4ec)",
-      minHeight: "100vh",
-      padding: "120px 20px 80px"
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "#ffe4ec",
+    padding: "0 20px 80px",
   },
 
-      cover: {
-        height: "320px",
-      backgroundImage:
+  contentWrap: {
+    paddingTop: "92px",
+  },
+
+  actionBar: {
+    maxWidth: "1100px",
+    margin: "0 auto 18px",
+    display: "flex",
+    justifyContent: "flex-start",
+    gap: "14px",
+    flexWrap: "wrap",
+    padding: "14px 18px",
+    background: "#fff",
+    borderRadius: "16px",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+    position: "relative",
+    zIndex: 5,
+  },
+
+  backBtn: {
+    padding: "12px 22px",
+    background: "#8B0000",
+    color: "#fff",
+    border: "none",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: "700",
+    boxShadow: "0 8px 18px rgba(139,0,0,0.18)",
+  },
+
+  actionBtnDanger: {
+    padding: "12px 22px",
+    background: "#dc3545",
+    color: "#fff",
+    border: "none",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: "700",
+    boxShadow: "0 8px 18px rgba(220,53,69,0.18)",
+  },
+
+  cover: {
+    maxWidth: "1100px",
+    height: "260px",
+    margin: "0 auto",
+    borderRadius: "34px",
+    backgroundImage:
       "url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1974&auto=format&fit=crop')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      borderBottomLeftRadius: "40px",
-      borderBottomRightRadius: "40px"
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    boxShadow: "0 18px 40px rgba(0,0,0,0.10)",
   },
 
-      card: {
-        background: "rgba(255,255,255,0.92)",
-      backdropFilter: "blur(10px)",
-      maxWidth: "850px",
-      margin: "-120px auto 0",
-      padding: "40px",
-      borderRadius: "25px",
-      textAlign: "center",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-      position: "relative",
-      zIndex: 2
+  heroCard: {
+    maxWidth: "900px",
+    margin: "0 auto",
+    marginTop: "-96px",
+    background: "#fff",
+    borderRadius: "26px",
+    padding: "34px",
+    boxShadow: "0 16px 35px rgba(0,0,0,0.12)",
+    textAlign: "center",
+    position: "relative",
+    zIndex: 2,
   },
 
-      image: {
-        width: "220px",
-      height: "220px",
-      borderRadius: "50%",
-      objectFit: "cover",
-      border: "6px solid #ffe1ec",
-      boxShadow: "0 10px 25px rgba(0,0,0,0.15)"
+  heroImage: {
+    width: "180px",
+    height: "180px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "6px solid #ffe1ec",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+    marginTop: "-104px",
+    background: "#fff",
   },
 
-      name: {
-        marginTop: "20px",
-      fontSize: "42px",
-      color: "#8B0000"
+  heroContent: {
+    marginTop: "18px",
   },
 
-      subText: {
-        color: "#666",
-      fontSize: "18px"
+  name: {
+    margin: "12px 0 8px",
+    fontSize: "clamp(30px, 4vw, 42px)",
+    color: "#8B0000",
   },
 
-      badge: {
-        marginTop: "15px",
-      display: "inline-block",
-      background: "#ff4d6d",
-      color: "white",
-      padding: "10px 18px",
-      borderRadius: "30px",
-      fontWeight: "600"
+  heroLine: {
+    color: "#666",
+    fontSize: "16px",
+    margin: "8px 0",
   },
 
-      section: {
-        background: "#fff",
-      maxWidth: "850px",
-      margin: "30px auto",
-      padding: "30px",
-      borderRadius: "20px",
-      boxShadow: "0 6px 18px rgba(0,0,0,0.06)"
+  badgeRow: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "10px",
+    flexWrap: "wrap",
+    marginTop: "18px",
   },
 
-      heading: {
-        marginBottom: "25px",
-      color: "#8B0000"
+  pillPremium: {
+    background: "#8B0000",
+    color: "#fff",
+    padding: "8px 14px",
+    borderRadius: "999px",
+    fontWeight: "700",
+    fontSize: "13px",
   },
 
-      grid: {
-        display: "grid",
-      gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-      gap: "20px"
+  pillVerified: {
+    background: "#1f8f4a",
+    color: "#fff",
+    padding: "8px 14px",
+    borderRadius: "999px",
+    fontWeight: "700",
+    fontSize: "13px",
   },
 
-      infoCard: {
-        background: "#fff0f3",
-      padding: "20px",
-      borderRadius: "15px",
-      transition: "0.3s",
-      cursor: "pointer"
+  pillNri: {
+    background: "#007bff",
+    color: "#fff",
+    padding: "8px 14px",
+    borderRadius: "999px",
+    fontWeight: "700",
+    fontSize: "13px",
   },
 
-      gallery: {
-        display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-      gap: "15px",
-      marginTop: "20px"
-},
+  pillNeutral: {
+    background: "#f7e9ee",
+    color: "#8B0000",
+    padding: "8px 14px",
+    borderRadius: "999px",
+    fontWeight: "700",
+    fontSize: "13px",
+  },
 
-      galleryImage: {
-        width: "100%",
-      height: "220px",
-      objectFit: "cover",
-      borderRadius: "15px",
-      boxShadow: "0 6px 15px rgba(0,0,0,0.15)",
-      transition: "0.3s",
-      cursor: "pointer"
-},
+  section: {
+    maxWidth: "1100px",
+    margin: "28px auto 0",
+    background: "#fff",
+    borderRadius: "22px",
+    padding: "28px",
+    boxShadow: "0 10px 24px rgba(0,0,0,0.06)",
+  },
 
-      backBtn: {
-        padding: "10px 18px",
-      background: "#8B0000",
-      color: "#fff",
-      border: "none",
-      borderRadius: "10px",
-      cursor: "pointer",
-      marginBottom: "20px",
-      fontSize: "16px",
-      fontWeight: "600"
-},
+  sectionTitle: {
+    margin: "0 0 22px",
+    color: "#8B0000",
+    fontSize: "clamp(22px, 3vw, 30px)",
+  },
 
-      verifyBadge: {
-        background: "#8B0000",
-      color: "#fff",
-      padding: "8px 15px",
-      borderRadius: "25px",
-      fontWeight: "bold",
-      fontSize: "14px",
-},
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "16px",
+  },
 
+  infoCard: {
+    background: "#fff0f3",
+    padding: "18px",
+    borderRadius: "16px",
+    transition: "0.25s",
+    cursor: "default",
+    boxShadow: "0 6px 16px rgba(0,0,0,0.04)",
+  },
+
+  infoLabel: {
+    display: "block",
+    color: "#8B0000",
+    fontSize: "14px",
+    marginBottom: "8px",
+  },
+
+  infoValue: {
+    margin: 0,
+    color: "#2b2325",
+    fontSize: "15px",
+    fontWeight: 500,
+    lineHeight: 1.6,
+  },
+
+  photoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: "16px",
+  },
+
+  galleryImage: {
+    width: "100%",
+    height: "220px",
+    objectFit: "cover",
+    borderRadius: "16px",
+    boxShadow: "0 6px 15px rgba(0,0,0,0.12)",
+    background: "#f3f3f3",
+  },
+
+  fileLink: {
+    display: "inline-block",
+    color: "#8B0000",
+    fontWeight: "bold",
+    textDecoration: "none",
+    background: "#fff0f3",
+    padding: "12px 16px",
+    borderRadius: "14px",
+  },
+
+  emptyNote: {
+    margin: 0,
+    color: "#666",
+    fontSize: "15px",
+  },
+
+  loadingWrap: {
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#ffe4ec",
+  },
+
+  loadingCard: {
+    padding: "18px 26px",
+    background: "#fff",
+    borderRadius: "16px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+    color: "#8B0000",
+    fontWeight: 700,
+  },
 };
 
-      export default ProfileDetails;
+export default ProfileDetails;
