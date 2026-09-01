@@ -376,7 +376,7 @@ function Profiles() {
           {sortedUsers.length > 0 ? (
             sortedUsers.map((user) => {
               const interested = isInterested(user);
-              const isOwnProfile = loggedInUser?._id === user._id;
+              
 
               return (
                 <div key={user._id} style={styles.card}>

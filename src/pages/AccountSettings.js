@@ -30,7 +30,6 @@ function AccountSettings() {
     confirmPassword: "",
   });
 
-  const [otpMode, setOtpMode] = useState(null); // "mobile" | "email" | null
   const [otpForm, setOtpForm] = useState({
     mobileOtp: "",
     emailOtp: "",
@@ -116,8 +115,6 @@ function AccountSettings() {
 
   const sendOtp = async (type) => {
     try {
-      setOtpMode(type);
-
       const payload =
         type === "mobile"
           ? { type: "mobile", value: otpForm.newMobile || profile.mobile }
@@ -133,8 +130,7 @@ function AccountSettings() {
 
   const verifyOtp = async (type) => {
     try {
-      const otp =
-        type === "mobile" ? otpForm.mobileOtp : otpForm.emailOtp;
+      const otp = type === "mobile" ? otpForm.mobileOtp : otpForm.emailOtp;
 
       const payload =
         type === "mobile"
@@ -245,7 +241,11 @@ function AccountSettings() {
               placeholder="Email"
             />
 
-            <button onClick={saveProfile} style={styles.primaryBtn} disabled={savingProfile}>
+            <button
+              onClick={saveProfile}
+              style={styles.primaryBtn}
+              disabled={savingProfile}
+            >
               {savingProfile ? "Saving..." : "Save Profile"}
             </button>
           </div>
@@ -263,7 +263,10 @@ function AccountSettings() {
             />
 
             <div style={styles.row}>
-              <button onClick={() => sendOtp("mobile")} style={styles.secondaryBtn}>
+              <button
+                onClick={() => sendOtp("mobile")}
+                style={styles.secondaryBtn}
+              >
                 Send OTP
               </button>
               <button
@@ -284,7 +287,9 @@ function AccountSettings() {
               placeholder="Enter mobile OTP"
             />
 
-            {mobileVerified && <p style={styles.verifiedText}>Mobile verified ✅</p>}
+            {mobileVerified && (
+              <p style={styles.verifiedText}>Mobile verified ✅</p>
+            )}
           </div>
 
           <div style={styles.section}>
@@ -300,7 +305,10 @@ function AccountSettings() {
             />
 
             <div style={styles.row}>
-              <button onClick={() => sendOtp("email")} style={styles.secondaryBtn}>
+              <button
+                onClick={() => sendOtp("email")}
+                style={styles.secondaryBtn}
+              >
                 Send OTP
               </button>
               <button
@@ -321,7 +329,9 @@ function AccountSettings() {
               placeholder="Enter email OTP"
             />
 
-            {emailVerified && <p style={styles.verifiedText}>Email verified ✅</p>}
+            {emailVerified && (
+              <p style={styles.verifiedText}>Email verified ✅</p>
+            )}
           </div>
 
           <div style={styles.section}>
