@@ -9,27 +9,17 @@ function Navbar() {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     navigate("/login");
     window.location.reload();
   };
 
   return (
     <div style={styles.navbar}>
-      {/* LOGO */}
       <div style={styles.logoContainer}>
-        <img
-          src="/logo.png"
-          alt="logo"
-          style={styles.logoImage}
-        />
-
-        <h2 style={styles.logoText}>
-          Namakkal Matrimony
-        </h2>
+        <img src="/logo.png" alt="logo" style={styles.logoImage} />
+        <h2 style={styles.logoText}>Matrimony</h2>
       </div>
 
-      {/* MENU */}
       <div style={styles.links}>
         <Link to="/" style={styles.link}>
           Home
@@ -39,11 +29,12 @@ function Navbar() {
           Profiles
         </Link>
 
-        <Link to="/interested" style={styles.link}>
-          Interested
-        </Link>
+        {token && (
+          <Link to="/interested" style={styles.link}>
+            Interested
+          </Link>
+        )}
 
-        {/* AUTH SECTION */}
         {!token ? (
           <>
             <Link to="/login" style={styles.link}>
@@ -56,17 +47,14 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link
-              to={`/profile/${user?._id}`}
-              style={styles.userNameLink}
+            <span
+              onClick={() => navigate("/account-settings")}
+              style={styles.userName}
             >
-              👋 Hi, {user?.name || "User"}
-            </Link>
+              👋 Hi, {user?.name}
+            </span>
 
-            <button
-              onClick={logout}
-              style={styles.logoutBtn}
-            >
+            <button onClick={logout} style={styles.logoutBtn}>
               Logout
             </button>
           </>
@@ -75,8 +63,6 @@ function Navbar() {
     </div>
   );
 }
-
-/* ================= STYLES ================= */
 
 const styles = {
   navbar: {
@@ -120,6 +106,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "25px",
+    flexWrap: "wrap",
   },
 
   link: {
@@ -130,14 +117,6 @@ const styles = {
     transition: "0.3s",
   },
 
-  userNameLink: {
-    color: "#8B0000",
-    textDecoration: "none",
-    fontSize: "16px",
-    fontWeight: "700",
-    transition: "0.3s",
-  },
-
   registerBtn: {
     background: "#ff4d6d",
     color: "white",
@@ -145,6 +124,13 @@ const styles = {
     borderRadius: "10px",
     textDecoration: "none",
     fontWeight: "bold",
+  },
+
+  userName: {
+    color: "#8B0000",
+    fontWeight: "bold",
+    fontSize: "16px",
+    cursor: "pointer",
   },
 
   logoutBtn: {

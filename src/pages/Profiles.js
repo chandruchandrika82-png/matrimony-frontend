@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -86,25 +86,36 @@ function Profiles() {
   const [maritalStatus, setMaritalStatus] = useState("");
   const [nri, setNri] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [showEditIcons, setShowEditIcons] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/users`);
-      console.log(res.data);
       setUsers(res.data);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [API]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const isInterested = useCallback(
+    (user) => {
+      if (!loggedInUser?._id) return false;
+
+      return user.interestRequests?.some(
+        (id) => id.toString() === loggedInUser._id
+      );
+    },
+    [loggedInUser?._id]
+  );
 
   const sendInterest = async (receiverId) => {
     try {
-      const loggedInUser = JSON.parse(localStorage.getItem("user"));
-
       if (!loggedInUser) {
         alert("Please login first.");
         navigate("/login");
@@ -112,10 +123,10 @@ function Profiles() {
       }
 
       const senderId = loggedInUser._id;
+      const res = await axios.put(`${API}/users/${receiverId}/interest/${senderId}`);
 
-      await axios.put(`${API}/users/${receiverId}/interest/${senderId}`);
-
-      alert("❤️ Interest request sent!");
+      alert(res?.data?.message || "❤️ Interest updated!");
+      fetchUsers();
     } catch (err) {
       console.log("ERROR:", err);
       console.log("STATUS:", err.response?.status);
@@ -123,6 +134,10 @@ function Profiles() {
 
       alert(err.response?.data?.error || err.message);
     }
+  };
+
+  const goToAddProfile = () => {
+    navigate("/my-profile");
   };
 
   const filteredUsers = users.filter((user) => {
@@ -142,10 +157,8 @@ function Profiles() {
         user.education?.toLowerCase().includes(education.toLowerCase())) &&
       (occupationType === "" ||
         user.occupationType?.toLowerCase().includes(occupationType.toLowerCase())) &&
-      (star === "" ||
-        user.star?.toLowerCase().includes(star.toLowerCase())) &&
-      (rashi === "" ||
-        user.rashi?.toLowerCase().includes(rashi.toLowerCase())) &&
+      (star === "" || user.star?.toLowerCase().includes(star.toLowerCase())) &&
+      (rashi === "" || user.rashi?.toLowerCase().includes(rashi.toLowerCase())) &&
       (maritalStatus === "" || user.maritalStatus === maritalStatus) &&
       (nri === "" || user.nri === nri)
     );
@@ -167,7 +180,9 @@ function Profiles() {
       sortedUsers.sort((a, b) => Number(b.isPremium) - Number(a.isPremium));
       break;
     case "verified":
-      sortedUsers.sort((a, b) => Number(b.businessVerified) - Number(a.businessVerified));
+      sortedUsers.sort(
+        (a, b) => Number(b.businessVerified) - Number(a.businessVerified)
+      );
       break;
     case "name":
       sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
@@ -180,23 +195,32 @@ function Profiles() {
     <div style={styles.page}>
       <div style={styles.container}>
         <div style={styles.topBar}>
-          <div>
-            <h1 style={styles.title}>💍 Find Your Match</h1>
-            <p style={styles.subtitle}>
-              Browse genuine profiles and connect with meaningful matches.
-            </p>
-          </div>
-
-          <div style={styles.headerActions}>
+          <div style={styles.leftTop}>
             <button onClick={() => navigate(-1)} style={styles.backBtn}>
               ← Back
             </button>
 
+            <div>
+              <h1 style={styles.title}>💍 Find Your Match</h1>
+              <p style={styles.subtitle}>
+                Browse genuine profiles and connect with meaningful matches.
+              </p>
+            </div>
+          </div>
+
+          <div style={styles.headerActions}>
+            <button onClick={goToAddProfile} style={styles.actionBtn}>
+              ➕ Add Profile
+            </button>
+
             <button
-              onClick={() => navigate("/interest-requests")}
-              style={styles.viewRequestsBtn}
+              onClick={() => setShowEditIcons((prev) => !prev)}
+              style={{
+                ...styles.actionBtn,
+                background: showEditIcons ? "#d63b8d" : "#8B0000",
+              }}
             >
-              📩 Interest Requests
+              ✏️ {showEditIcons ? "Hide Edit" : "Edit Profile"}
             </button>
           </div>
         </div>
@@ -350,60 +374,85 @@ function Profiles() {
 
         <div style={styles.grid}>
           {sortedUsers.length > 0 ? (
-            sortedUsers.map((user) => (
-              <div key={user._id} style={styles.card}>
-                <div style={styles.imageWrap}>
-                  <img
-                    src={
-                      user.image
-                        ? user.image
-                        : "https://placehold.co/300x320?text=No+Image"
-                    }
-                    style={styles.image}
-                    alt="profile"
-                  />
+            sortedUsers.map((user) => {
+              const interested = isInterested(user);
+              const isOwnProfile = loggedInUser?._id === user._id;
 
-                  <div style={styles.badgeRow}>
-                    {user.isPremium && (
-                      <span style={styles.premiumBadge}>Premium</span>
+              return (
+                <div key={user._id} style={styles.card}>
+                  <div style={styles.imageWrap}>
+                    <img
+                      src={
+                        user.image
+                          ? user.image
+                          : "https://placehold.co/300x320?text=No+Image"
+                      }
+                      style={styles.image}
+                      alt="profile"
+                    />
+
+                    <div style={styles.badgeRow}>
+                      {user.isPremium && (
+                        <span style={styles.premiumBadge}>Premium</span>
+                      )}
+                      {(user.businessVerified || user.gstVerified) && (
+                        <span style={styles.verifiedBadge}>Verified</span>
+                      )}
+                    </div>
+
+                    {showEditIcons && (
+  <button
+    onClick={() => navigate(`/edit/${user._id}`)}
+    style={styles.editIconBtn}
+    title="Edit profile"
+  >
+    ✏️
+  </button>
+)}
+                  </div>
+
+                  <div style={styles.cardContent}>
+                    <h3 style={styles.name}>{user.name}</h3>
+
+                    <p style={styles.info}>
+                      {user.age ? `${user.age} yrs` : "--"} •{" "}
+                      {user.currentCity ||
+                        user.nativePlace ||
+                        user.district ||
+                        "Location not mentioned"}
+                    </p>
+
+                    <p style={styles.religion}>
+                       {user.religion || "Not Mentioned"}
+                    </p>
+
+                    {interested && (
+                      <p style={styles.interestedBadge}>❤️ Interested</p>
                     )}
-                    {(user.businessVerified || user.gstVerified) && (
-                      <span style={styles.verifiedBadge}>Verified</span>
-                    )}
+
+                    <div style={styles.buttons}>
+                      <Link to={`/profile/${user._id}`} style={styles.viewBtn}>
+                        View
+                      </Link>
+
+                      <button
+                        onClick={() => sendInterest(user._id)}
+                        style={{
+                          ...styles.interestBtn,
+                          background: interested ? "#ff4d6d" : "#fff",
+                          color: interested ? "#fff" : "#8B0000",
+                          border: interested
+                            ? "1px solid #ff4d6d"
+                            : "1px solid #8B0000",
+                        }}
+                      >
+                        {interested ? "❤️ Interested" : "♡ Interested"}
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <div style={styles.cardContent}>
-                  <h3 style={styles.name}>{user.name}</h3>
-
-                  <p style={styles.info}>
-                    {user.age ? `${user.age} yrs` : "--"} •{" "}
-                    {user.currentCity || user.nativePlace || user.district || "Location not mentioned"}
-                  </p>
-
-
-                  {user.interested && (
-                    <p style={styles.interestedBadge}>❤️ Interested</p>
-                  )}
-
-                  <div style={styles.buttons}>
-                    <Link to={`/profile/${user._id}`} style={styles.viewBtn}>
-                      View
-                    </Link>
-
-                    <button
-                      onClick={() => sendInterest(user._id)}
-                      style={{
-                        ...styles.interestBtn,
-                        background: user.interested ? "#bbb" : "#d63b8d",
-                      }}
-                    >
-                      {user.interested ? "Saved" : "❤️ Interested"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div style={styles.emptyState}>
               <h3 style={styles.emptyTitle}>No profiles found</h3>
@@ -434,10 +483,17 @@ const styles = {
   topBar: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-end",
+    alignItems: "center",
     gap: "20px",
     flexWrap: "wrap",
     marginBottom: "24px",
+  },
+
+  leftTop: {
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+    flexWrap: "wrap",
   },
 
   title: {
@@ -470,7 +526,7 @@ const styles = {
     fontWeight: "600",
   },
 
-  viewRequestsBtn: {
+  actionBtn: {
     padding: "10px 18px",
     background: "#8B0000",
     color: "#fff",
@@ -598,6 +654,24 @@ const styles = {
     boxShadow: "0 6px 14px rgba(0,0,0,0.15)",
   },
 
+  editIconBtn: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    width: 42,
+    height: 42,
+    borderRadius: "50%",
+    border: "none",
+    background: "#fff",
+    color: "#8B0000",
+    cursor: "pointer",
+    boxShadow: "0 8px 18px rgba(0,0,0,0.18)",
+    fontSize: 18,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   cardContent: {
     padding: 20,
   },
@@ -656,9 +730,7 @@ const styles = {
 
   interestBtn: {
     padding: "10px 16px",
-    border: "none",
     borderRadius: 10,
-    color: "white",
     cursor: "pointer",
     fontWeight: 700,
   },
