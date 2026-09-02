@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const stateOptions = [
   "",
@@ -59,6 +59,7 @@ const religionOptions = ["", "Hindu", "Muslim", "Christian", "Sikh", "Jain", "Ot
 
 function Profiles() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const API = "https://matrimony-backend-zbvm.onrender.com/api";
   // const API = "http://localhost:5000/api";
@@ -70,6 +71,8 @@ function Profiles() {
   const [userState, setUserState] = useState("");
   const [district, setDistrict] = useState("");
   const [religion, setReligion] = useState("");
+  const [gender, setGender] = useState("");
+  const [motherTongue, setMotherTongue] = useState("");
   const [caste, setCaste] = useState("");
   const [education, setEducation] = useState("");
   const [occupationType, setOccupationType] = useState("");
@@ -79,6 +82,17 @@ function Profiles() {
   const [nri, setNri] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [showEditIcons, setShowEditIcons] = useState(false);
+  
+
+useEffect(() => {
+  if (location.state) {
+    setMinAge(location.state.minAge || "");
+    setMaxAge(location.state.maxAge || "");
+    setReligion(location.state.religion || "");
+    setMotherTongue(location.state.motherTongue || "");
+    setGender(location.state.gender || "");   
+  }
+}, [location.state]);
 
   const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
 
@@ -136,6 +150,8 @@ function Profiles() {
   const filteredUsers = users.filter((user) => {
     return (
       user.name?.toLowerCase().includes(search.toLowerCase()) &&
+      (gender === "" ||
+        user.gender?.toLowerCase() === gender.toLowerCase()) &&
       (minAge === "" || Number(user.age) >= Number(minAge)) &&
       (maxAge === "" || Number(user.age) <= Number(maxAge)) &&
       (userState === "" ||
@@ -155,7 +171,11 @@ function Profiles() {
       (star === "" || user.star?.toLowerCase().includes(star.toLowerCase())) &&
       (rashi === "" || user.rashi?.toLowerCase().includes(rashi.toLowerCase())) &&
       (maritalStatus === "" || user.maritalStatus === maritalStatus) &&
-      (nri === "" || user.nri === nri)
+      (nri === "" || user.nri === nri) &&
+(motherTongue === "" ||
+ user.motherTongue
+   ?.toLowerCase()
+   .includes(motherTongue.toLowerCase()))
     );
   });
 
@@ -284,6 +304,15 @@ function Profiles() {
               onChange={(e) => setMaxAge(e.target.value)}
               style={styles.filterInput}
             />
+            <select
+  value={gender}
+  onChange={(e) => setGender(e.target.value)}
+  style={styles.filterInput}
+>
+  <option value="">Gender</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+</select>
 
             <select
               value={userState}
@@ -321,8 +350,22 @@ function Profiles() {
                 <option key={r} value={r}>
                   {r}
                 </option>
+                
               ))}
             </select>
+            <select
+  value={motherTongue}
+  onChange={(e) => setMotherTongue(e.target.value)}
+  style={styles.filterInput}
+>
+  <option value="">Mother Tongue</option>
+  <option value="Tamil">Tamil</option>
+  <option value="Malayalam">Malayalam</option>
+  <option value="Telugu">Telugu</option>
+  <option value="Kannada">Kannada</option>
+  <option value="Hindi">Hindi</option>
+  <option value="English">English</option>
+</select>
 
             <input
               placeholder="Caste"

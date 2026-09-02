@@ -5,14 +5,22 @@ function Home() {
   const navigate = useNavigate();
 
   const [lookingFor, setLookingFor] = useState("Woman");
-  const [ageFrom, setAgeFrom] = useState("22");
-  const [ageTo, setAgeTo] = useState("27");
-  const [religion, setReligion] = useState("");
-  const [motherTongue, setMotherTongue] = useState("");
+const [ageFrom, setAgeFrom] = useState("22");
+const [ageTo, setAgeTo] = useState("27");
+const [religion, setReligion] = useState("");
+const [motherTongue, setMotherTongue] = useState("");
 
-  const beginSearch = () => {
-    navigate("/profiles");
-  };
+const beginSearch = () => {
+  navigate("/profiles", {
+    state: {
+      gender: lookingFor === "Woman" ? "Female" : "Male",
+      minAge: ageFrom,
+      maxAge: ageTo,
+      religion,
+      motherTongue,
+    },
+  });
+};
 
   return (
     <div style={styles.page}>
@@ -20,13 +28,7 @@ function Home() {
         <div style={styles.overlay} />
 
         <div style={styles.heroInner}>
-          <div style={styles.brandBlock}>
-            <div style={styles.brandLogo}>♥</div>
-            <div>
-              <h1 style={styles.brandTitle}>Namakkal Matrimony</h1>
-              <p style={styles.brandSubTitle}>Trusted matrimonial platform</p>
-            </div>
-          </div>
+          {/* Brand Block Removed - Navbar already displays logo and title */}
 
           <div style={styles.heroContent}>
             <h2 style={styles.heroTitle}>
@@ -235,43 +237,6 @@ const styles = {
     padding: "18px 24px 40px",
   },
 
-  brandBlock: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 14,
-    background: "rgba(255,255,255,0.9)",
-    backdropFilter: "blur(8px)",
-    borderRadius: 18,
-    padding: "12px 16px",
-    boxShadow: "0 10px 24px rgba(0,0,0,0.08)",
-  },
-
-  brandLogo: {
-    width: 46,
-    height: 46,
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#fff",
-    color: "#8B0000",
-    fontSize: 22,
-    fontWeight: 900,
-  },
-
-  brandTitle: {
-    margin: 0,
-    fontSize: 24,
-    color: "#8B0000",
-    fontWeight: 900,
-    lineHeight: 1.1,
-  },
-
-  brandSubTitle: {
-    margin: "4px 0 0",
-    color: "#5f5b60",
-    fontSize: 13,
-  },
 
   heroContent: {
     textAlign: "center",
@@ -281,7 +246,7 @@ const styles = {
   heroTitle: {
     margin: 0,
     color: "#fff",
-    fontSize: "clamp(34px, 4vw, 62px)",
+    fontSize: "clamp(34px, 4vw, 42px)",
     lineHeight: 1.12,
     fontWeight: 700,
     textShadow: "0 6px 18px rgba(0,0,0,0.22)",

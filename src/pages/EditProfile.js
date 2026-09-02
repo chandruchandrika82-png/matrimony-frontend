@@ -234,6 +234,25 @@ function EditProfile() {
     }
   };
 
+  const handleDelete = async () => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this profile?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(`${API}/users/${id}`);
+
+    alert("Profile deleted successfully.");
+
+    navigate("/profiles");
+  } catch (err) {
+    console.log(err);
+    alert("Failed to delete profile.");
+  }
+};
+
   return (
     <div style={styles.page}>
       <div style={styles.container}>
@@ -1079,6 +1098,27 @@ function EditProfile() {
             value={form.otherAssets || ""}
             onChange={handleChange}
           />
+          <textarea
+  style={styles.textarea}
+  name="otherAssets"
+  placeholder="Other Assets"
+  value={form.otherAssets || ""}
+  onChange={handleChange}
+/>
+<hr
+  style={{
+    marginTop: "40px",
+    marginBottom: "20px",
+    border: "1px solid #eee",
+  }}
+/>
+
+<button
+  onClick={handleDelete}
+  style={styles.deleteBtn}
+>
+  🗑 Delete Profile
+</button>
         </div>
       </div>
     </div>
@@ -1189,6 +1229,19 @@ const styles = {
     fontSize: "15px",
     marginBottom: "10px",
   },
+
+  deleteBtn: {
+  marginTop: 10,
+  width: "100%",
+  padding: "15px",
+  background: "#8B0000",
+  color: "#fff",
+  border: "none",
+  borderRadius: "10px",
+  fontSize: "16px",
+  fontWeight: "bold",
+  cursor: "pointer",
+},
 };
 
 export default EditProfile;
