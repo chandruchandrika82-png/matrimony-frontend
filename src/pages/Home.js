@@ -1,102 +1,203 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+
+  const [lookingFor, setLookingFor] = useState("Woman");
+  const [ageFrom, setAgeFrom] = useState("22");
+  const [ageTo, setAgeTo] = useState("27");
+  const [religion, setReligion] = useState("");
+  const [motherTongue, setMotherTongue] = useState("");
+
+  const beginSearch = () => {
+    navigate("/profiles");
+  };
+
   return (
     <div style={styles.page}>
-      <div style={styles.hero}>
-        <div style={styles.overlay}>
-          <h1 style={styles.title}>Find Your Perfect Match 💍</h1>
+      <section style={styles.hero}>
+        <div style={styles.overlay} />
 
-          <p style={styles.subtitle}>
-            Trusted Namakkal Matrimony platform for meaningful and genuine connections
-          </p>
-
-          <div style={styles.buttons}>
-            <Link to="/profiles">
-              <button style={styles.btnPrimary}>Browse Profiles</button>
-            </Link>
-
-            <Link to="/add-profile">
-              <button style={styles.btnSecondary}>Create Profile</button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div style={styles.aboutSection}>
-        <h2 style={styles.aboutTitle}>About Namakkal Matrimony</h2>
-
-        <p style={styles.aboutText}>
-          Namakkal Matrimony is a modern matrimony platform designed to help people
-          discover meaningful relationships with trust, privacy, and simplicity.
-          We believe every journey to marriage should begin with genuine
-          connections and family values.
-        </p>
-
-        <div style={styles.features}>
-          <div style={styles.card}>
-            <h3>🔒 Trusted Profiles</h3>
-            <p>Safe and genuine matchmaking experience.</p>
+        <div style={styles.heroInner}>
+          <div style={styles.brandBlock}>
+            <div style={styles.brandLogo}>♥</div>
+            <div>
+              <h1 style={styles.brandTitle}>Namakkal Matrimony</h1>
+              <p style={styles.brandSubTitle}>Trusted matrimonial platform</p>
+            </div>
           </div>
 
-          <div style={styles.card}>
-            <h3>💖 Meaningful Connections</h3>
-            <p>Find compatible partners with shared values.</p>
+          <div style={styles.heroContent}>
+            <h2 style={styles.heroTitle}>
+              Find Someone Special. Build a Beautiful Future.
+            </h2>
+
+            <p style={styles.heroText}>
+              Trusted matrimonial profiles from Namakkal and surrounding communities.
+            </p>
+
+            <div style={styles.searchCard}>
+              <div style={styles.searchGrid}>
+                <div style={styles.field}>
+                  <label style={styles.label}>I’m looking for a</label>
+                  <select
+                    value={lookingFor}
+                    onChange={(e) => setLookingFor(e.target.value)}
+                    style={styles.input}
+                  >
+                    <option value="Woman">Woman</option>
+                    <option value="Man">Man</option>
+                  </select>
+                </div>
+
+                <div style={styles.field}>
+                  <label style={styles.label}>aged</label>
+                  <select
+                    value={ageFrom}
+                    onChange={(e) => setAgeFrom(e.target.value)}
+                    style={styles.input}
+                  >
+                    {Array.from({ length: 23 }, (_, i) => i + 18).map((age) => (
+                      <option key={age} value={age}>
+                        {age}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={styles.field}>
+                  <label style={styles.label}>to</label>
+                  <select
+                    value={ageTo}
+                    onChange={(e) => setAgeTo(e.target.value)}
+                    style={styles.input}
+                  >
+                    {Array.from({ length: 18 }, (_, i) => i + 21).map((age) => (
+                      <option key={age} value={age}>
+                        {age}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={styles.field}>
+                  <label style={styles.label}>of religion</label>
+                  <select
+                    value={religion}
+                    onChange={(e) => setReligion(e.target.value)}
+                    style={styles.input}
+                  >
+                    <option value="">Select</option>
+                    <option value="Hindu">Hindu</option>
+                    <option value="Muslim">Muslim</option>
+                    <option value="Christian">Christian</option>
+                    <option value="Sikh">Sikh</option>
+                    <option value="Jain">Jain</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div style={styles.fieldWide}>
+                  <label style={styles.label}>and mother tongue</label>
+                  <select
+                    value={motherTongue}
+                    onChange={(e) => setMotherTongue(e.target.value)}
+                    style={styles.input}
+                  >
+                    <option value="">Select</option>
+                    <option value="Tamil">Tamil</option>
+                    <option value="Malayalam">Malayalam</option>
+                    <option value="Telugu">Telugu</option>
+                    <option value="Kannada">Kannada</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="English">English</option>
+                  </select>
+                </div>
+
+                <button onClick={beginSearch} style={styles.beginBtn}>
+                  Let&apos;s Begin
+                </button>
+              </div>
+            </div>
+
+            <div style={styles.trustBar}>
+              <div style={styles.trustItem}>Fastest Growing Matchmaking Service</div>
+              <div style={styles.trustDivider} />
+              <div style={styles.trustItem}>
+                <span style={styles.star}>★ ★ ★ ★ ★</span>
+                Ratings trusted by families
+              </div>
+              <div style={styles.trustDivider} />
+              <div style={styles.trustItem}>Success stories across communities</div>
+            </div>
+
+            <div style={styles.quickCta}>
+              <div>
+                <h3 style={styles.quickCtaTitle}>Ready to begin your journey?</h3>
+                <p style={styles.quickCtaText}>
+                  Create your profile, explore matches, and connect with meaningful people.
+                </p>
+              </div>
+
+              <div style={styles.quickCtaButtons}>
+                <button onClick={() => navigate("/profiles")} style={styles.ctaPrimary}>
+                  Browse Profiles
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style={styles.infoSection}>
+        <div style={styles.sectionHeader}>
+          <span style={styles.sectionTag}>Why Families Trust Us</span>
+          <h3 style={styles.sectionTitle}>A safe and elegant way to connect</h3>
+        </div>
+
+        <div style={styles.infoGrid}>
+          <div style={styles.infoCard}>
+            <span style={styles.infoIcon}>🛡️</span>
+            <h4 style={styles.infoTitle}>Verified Profiles</h4>
+            <p style={styles.infoText}>Profiles checked for authenticity.</p>
           </div>
 
-          <div style={styles.card}>
-            <h3>🌍 Modern Platform</h3>
-            <p>Simple, elegant, and user-friendly experience.</p>
+          <div style={styles.infoCard}>
+            <span style={styles.infoIcon}>👨‍👩‍👧</span>
+            <h4 style={styles.infoTitle}>Family Friendly</h4>
+            <p style={styles.infoText}>Designed for individuals and families.</p>
+          </div>
+
+          <div style={styles.infoCard}>
+            <span style={styles.infoIcon}>🔒</span>
+            <h4 style={styles.infoTitle}>Privacy Protected</h4>
+            <p style={styles.infoText}>Your contact information stays private.</p>
+          </div>
+
+          <div style={styles.infoCard}>
+            <span style={styles.infoIcon}>❤️</span>
+            <h4 style={styles.infoTitle}>Genuine Connections</h4>
+            <p style={styles.infoText}>Connect with people looking for marriage.</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div style={styles.successSection}>
-        <h2 style={styles.successTitle}>❤️ Success Story</h2>
-
-        <div style={styles.storyGrid}>
-          <div style={styles.storyCard}>
-            <img
-              src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1170&auto=format&fit=crop"
-              alt="couple"
-              style={styles.storyImage}
-            />
-
-            <h3 style={{ marginTop: 15 }}>Arjun & Meera</h3>
-
-            <p>Married on 12 Apr 2025</p>
-
-            <button style={styles.storyBtn}>View Story</button>
+      <section style={styles.statsSection}>
+        <div style={styles.statsCard}>
+          <div style={styles.statsText}>
+            <strong>10,000+</strong> Profiles
+          </div>
+          <div style={styles.statsDivider} />
+          <div style={styles.statsText}>
+            <strong>2,500+</strong> Interests Sent
+          </div>
+          <div style={styles.statsDivider} />
+          <div style={styles.statsText}>
+            <strong>500+</strong> Successful Matches
           </div>
         </div>
-      </div>
-
-      <div style={styles.statsSection}>
-        <div>
-          <h2>10K+</h2>
-          <p>Profiles</p>
-        </div>
-
-        <div>
-          <h2>5K+</h2>
-          <p>Successful Matches</p>
-        </div>
-
-        <div>
-          <h2>100%</h2>
-          <p>Trusted Platform</p>
-        </div>
-      </div>
-
-      <div style={styles.footer}>
-        <h2>📞 Contact Information</h2>
-        <p>Phone: +91 1234567890</p>
-        <p>Email: namakkalmatrimony@gmail.com</p>
-        <p>Address: Namakkal, Tamil Nadu</p>
-        <p style={{ marginTop: 20 }}>
-          © 2026 Namakkal Matrimony. All rights reserved.
-        </p>
-      </div>
+      </section>
     </div>
   );
 }
@@ -104,175 +205,334 @@ function Home() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#ffe4ec",
-    paddingTop: "88px",
+    background: "#fff8fb",
+    overflowX: "hidden",
+    color: "#3a2a2a",
   },
 
   hero: {
-    minHeight: "calc(90vh - 88px)",
+    position: "relative",
+    minHeight: "100vh",
     backgroundImage:
-      "url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1974&auto=format&fit=crop')",
+      "url('https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1600&q=80')",
     backgroundSize: "cover",
     backgroundPosition: "center",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "24px 20px 40px",
-    boxSizing: "border-box",
+    paddingTop: 84,
   },
 
   overlay: {
-    background: "rgba(255,255,255,0.95)",
-    padding: "42px",
-    borderRadius: "24px",
-    textAlign: "left",
-    width: "100%",
-    maxWidth: "760px",
-    boxShadow: "0 18px 40px rgba(0,0,0,0.08)",
+    position: "absolute",
+    inset: 0,
+    background:
+      "linear-gradient(180deg, rgba(208, 92, 136, 0.42) 0%, rgba(153, 22, 58, 0.66) 48%, rgba(18, 18, 18, 0.58) 100%)",
   },
 
-  title: {
-    fontSize: "clamp(42px, 4.5vw, 64px)",
-    margin: "0 0 14px",
-    fontWeight: "800",
-    color: "#9a0000",
-    lineHeight: 1.05,
-    maxWidth: "620px",
-  },
-
-  subtitle: {
-    fontSize: "18px",
-    marginBottom: "34px",
-    lineHeight: "1.7",
-    color: "#5e4d52",
-    maxWidth: "580px",
-  },
-
-  buttons: {
-    display: "flex",
-    justifyContent: "flex-start",
-    gap: "16px",
-    flexWrap: "wrap",
-  },
-
-  btnPrimary: {
-    padding: "14px 28px",
-    background: "#8B0000",
-    color: "white",
-    border: "none",
-    borderRadius: "12px",
-    fontSize: "16px",
-    cursor: "pointer",
-    fontWeight: "700",
-  },
-
-  btnSecondary: {
-    padding: "14px 28px",
-    background: "#ff4d6d",
-    color: "white",
-    border: "none",
-    borderRadius: "12px",
-    fontSize: "16px",
-    cursor: "pointer",
-    fontWeight: "700",
-  },
-
-  aboutSection: {
-    padding: "80px 20px",
-    textAlign: "center",
-    background: "#fff7fb",
-  },
-
-  aboutTitle: {
-    fontSize: "38px",
-    color: "#8B0000",
-    marginBottom: "20px",
-  },
-
-  aboutText: {
-    maxWidth: "800px",
+  heroInner: {
+    position: "relative",
+    zIndex: 1,
+    maxWidth: 1320,
     margin: "0 auto",
-    fontSize: "18px",
-    lineHeight: "1.8",
-    color: "#333",
+    padding: "18px 24px 40px",
   },
 
-  features: {
-    marginTop: "50px",
+  brandBlock: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 14,
+    background: "rgba(255,255,255,0.9)",
+    backdropFilter: "blur(8px)",
+    borderRadius: 18,
+    padding: "12px 16px",
+    boxShadow: "0 10px 24px rgba(0,0,0,0.08)",
+  },
+
+  brandLogo: {
+    width: 46,
+    height: 46,
+    borderRadius: "50%",
     display: "flex",
+    alignItems: "center",
     justifyContent: "center",
-    gap: "25px",
-    flexWrap: "wrap",
-  },
-
-  card: {
-    background: "#ffffff",
-    padding: "30px",
-    borderRadius: "18px",
-    width: "280px",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-  },
-
-  successSection: {
-    padding: "80px 20px",
     background: "#fff",
-    textAlign: "center",
-  },
-
-  successTitle: {
-    fontSize: "38px",
     color: "#8B0000",
-    marginBottom: "40px",
+    fontSize: 22,
+    fontWeight: 900,
   },
 
-  storyGrid: {
+  brandTitle: {
+    margin: 0,
+    fontSize: 24,
+    color: "#8B0000",
+    fontWeight: 900,
+    lineHeight: 1.1,
+  },
+
+  brandSubTitle: {
+    margin: "4px 0 0",
+    color: "#5f5b60",
+    fontSize: 13,
+  },
+
+  heroContent: {
+    textAlign: "center",
+    paddingTop: 44,
+  },
+
+  heroTitle: {
+    margin: 0,
+    color: "#fff",
+    fontSize: "clamp(34px, 4vw, 62px)",
+    lineHeight: 1.12,
+    fontWeight: 700,
+    textShadow: "0 6px 18px rgba(0,0,0,0.22)",
+    maxWidth: 1060,
+    marginInline: "auto",
+  },
+
+  heroText: {
+    margin: "16px auto 0",
+    maxWidth: 860,
+    color: "#fff",
+    fontSize: "clamp(16px, 1.8vw, 21px)",
+    lineHeight: 1.55,
+    fontWeight: 500,
+    textShadow: "0 4px 12px rgba(0,0,0,0.18)",
+  },
+
+  searchCard: {
+    margin: "34px auto 0",
+    maxWidth: 1140,
+    background: "rgba(25, 18, 24, 0.60)",
+    border: "1px solid rgba(255,255,255,0.18)",
+    borderRadius: 20,
+    padding: 16,
+    backdropFilter: "blur(12px)",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.22)",
+  },
+
+  searchGrid: {
+    display: "grid",
+    gridTemplateColumns: "1.05fr 0.8fr 0.8fr 1fr 1.5fr 0.95fr",
+    gap: 12,
+    alignItems: "end",
+  },
+
+  field: {
+    textAlign: "left",
+  },
+
+  fieldWide: {
+    textAlign: "left",
+  },
+
+  label: {
+    display: "block",
+    color: "#fff",
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: 700,
+  },
+
+  input: {
+    width: "100%",
+    height: 46,
+    borderRadius: 8,
+    border: "1px solid rgba(255,255,255,0.85)",
+    background: "#fff",
+    padding: "0 12px",
+    fontSize: 15,
+    outline: "none",
+    boxSizing: "border-box",
+    color: "#222",
+  },
+
+  beginBtn: {
+    height: 46,
+    border: "none",
+    borderRadius: 8,
+    background: "#58b7d4",
+    color: "#fff",
+    fontWeight: 800,
+    cursor: "pointer",
+    fontSize: 16,
+    boxShadow: "0 10px 18px rgba(0,0,0,0.18)",
+  },
+
+  trustBar: {
+    marginTop: 18,
+    background: "rgba(0,0,0,0.84)",
+    color: "#fff",
+    padding: "16px 18px",
     display: "flex",
     justifyContent: "center",
-    gap: "25px",
+    alignItems: "center",
+    gap: 18,
+    flexWrap: "wrap",
+    borderRadius: 0,
+  },
+
+  trustItem: {
+    fontSize: 16,
+    fontWeight: 600,
+  },
+
+  trustDivider: {
+    width: 1,
+    height: 20,
+    background: "rgba(255,255,255,0.35)",
+  },
+
+  star: {
+    color: "#ffd84d",
+    marginRight: 8,
+    letterSpacing: 2,
+  },
+
+  quickCta: {
+    marginTop: 18,
+    background: "#ffffff",
+    borderRadius: 24,
+    padding: "28px 30px",
+    color: "#3a2a2a",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 20,
+    flexWrap: "wrap",
+    boxShadow: "0 18px 40px rgba(139,0,0,0.10)",
+    border: "1px solid #f0d6de",
+  },
+
+  quickCtaTitle: {
+    margin: 0,
+    fontSize: 30,
+    fontWeight: 900,
+    color: "#8B0000",
+  },
+
+  quickCtaText: {
+    margin: "10px 0 0",
+    maxWidth: 760,
+    lineHeight: 1.7,
+    fontSize: 16,
+    color: "#5f5050",
+  },
+
+  quickCtaButtons: {
+    display: "flex",
+    gap: 12,
     flexWrap: "wrap",
   },
 
-  storyCard: {
-    background: "#fff",
-    borderRadius: "18px",
-    overflow: "hidden",
-    width: "260px",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-    paddingBottom: "20px",
-  },
-
-  storyImage: {
-    width: "100%",
-    height: "260px",
-    objectFit: "cover",
-  },
-
-  storyBtn: {
-    padding: "10px 18px",
-    background: "#ff4d6d",
-    color: "white",
+  ctaPrimary: {
+    padding: "13px 20px",
+    borderRadius: 12,
     border: "none",
-    borderRadius: "8px",
+    background: "#8B0000",
+    color: "#fff",
+    fontWeight: 900,
     cursor: "pointer",
-    marginTop: "10px",
+    boxShadow: "0 10px 18px rgba(139,0,0,0.18)",
+  },
+
+  sectionHeader: {
+    textAlign: "center",
+    marginBottom: 22,
+  },
+
+  sectionTag: {
+    display: "inline-block",
+    padding: "8px 14px",
+    borderRadius: 999,
+    background: "#ffe3ea",
+    color: "#8B0000",
+    fontWeight: 800,
+    fontSize: 13,
+    marginBottom: 12,
+  },
+
+  sectionTitle: {
+    margin: 0,
+    color: "#8B0000",
+    fontSize: "clamp(24px, 2.8vw, 36px)",
+    lineHeight: 1.2,
+    fontWeight: 900,
+  },
+
+  infoSection: {
+    maxWidth: 1320,
+    margin: "0 auto",
+    padding: "54px 24px 0",
+  },
+
+  infoGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+    gap: 18,
+  },
+
+  infoCard: {
+    background: "#fff",
+    borderRadius: 20,
+    border: "1px solid #f1dde1",
+    padding: 24,
+    boxShadow: "0 12px 28px rgba(0,0,0,0.06)",
+  },
+
+  infoIcon: {
+    display: "inline-flex",
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+    background: "#fff0f4",
+    fontSize: 24,
+    marginBottom: 16,
+  },
+
+  infoTitle: {
+    margin: "0 0 10px",
+    fontSize: 22,
+    color: "#8B0000",
+    fontWeight: 800,
+  },
+
+  infoText: {
+    margin: 0,
+    color: "#66575a",
+    lineHeight: 1.7,
+    fontSize: 15,
   },
 
   statsSection: {
-    background: "#8B0000",
-    color: "white",
-    padding: "60px 20px",
-    display: "flex",
-    justifyContent: "space-around",
-    textAlign: "center",
-    flexWrap: "wrap",
+    maxWidth: 1320,
+    margin: "0 auto",
+    padding: "28px 24px 70px",
   },
 
-  footer: {
-    background: "#111",
-    color: "white",
-    textAlign: "center",
-    padding: "50px 20px",
-    lineHeight: "2",
+  statsCard: {
+    background: "linear-gradient(135deg, #8B0000, #d63b8d)",
+    borderRadius: 24,
+    padding: "20px 24px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 18,
+    flexWrap: "wrap",
+    color: "#fff",
+    boxShadow: "0 18px 40px rgba(139,0,0,0.22)",
+  },
+
+  statsText: {
+    fontSize: 18,
+    fontWeight: 700,
+  },
+
+  statsDivider: {
+    width: 1,
+    height: 22,
+    background: "rgba(255,255,255,0.35)",
   },
 };
 

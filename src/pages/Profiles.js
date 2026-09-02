@@ -55,15 +55,7 @@ const districtOptions = [
   "Virudhunagar",
 ];
 
-const religionOptions = [
-  "",
-  "Hindu",
-  "Muslim",
-  "Christian",
-  "Sikh",
-  "Jain",
-  "Other",
-];
+const religionOptions = ["", "Hindu", "Muslim", "Christian", "Sikh", "Jain", "Other"];
 
 function Profiles() {
   const navigate = useNavigate();
@@ -123,7 +115,9 @@ function Profiles() {
       }
 
       const senderId = loggedInUser._id;
-      const res = await axios.put(`${API}/users/${receiverId}/interest/${senderId}`);
+      const res = await axios.put(
+        `${API}/users/${receiverId}/interest/${senderId}`
+      );
 
       alert(res?.data?.message || "❤️ Interest updated!");
       fetchUsers();
@@ -131,7 +125,6 @@ function Profiles() {
       console.log("ERROR:", err);
       console.log("STATUS:", err.response?.status);
       console.log("DATA:", err.response?.data);
-
       alert(err.response?.data?.error || err.message);
     }
   };
@@ -156,7 +149,9 @@ function Profiles() {
       (education === "" ||
         user.education?.toLowerCase().includes(education.toLowerCase())) &&
       (occupationType === "" ||
-        user.occupationType?.toLowerCase().includes(occupationType.toLowerCase())) &&
+        user.occupationType?.toLowerCase().includes(
+          occupationType.toLowerCase()
+        )) &&
       (star === "" || user.star?.toLowerCase().includes(star.toLowerCase())) &&
       (rashi === "" || user.rashi?.toLowerCase().includes(rashi.toLowerCase())) &&
       (maritalStatus === "" || user.maritalStatus === maritalStatus) &&
@@ -191,6 +186,10 @@ function Profiles() {
       break;
   }
 
+  const totalCount = users.length;
+  const premiumCount = users.filter((u) => u.isPremium).length;
+  const verifiedCount = users.filter((u) => u.businessVerified || u.gstVerified).length;
+
   return (
     <div style={styles.page}>
       <div style={styles.container}>
@@ -201,6 +200,7 @@ function Profiles() {
             </button>
 
             <div>
+              <div style={styles.pagePill}>Trusted Matrimony Profiles</div>
               <h1 style={styles.title}>💍 Find Your Match</h1>
               <p style={styles.subtitle}>
                 Browse genuine profiles and connect with meaningful matches.
@@ -222,6 +222,21 @@ function Profiles() {
             >
               ✏️ {showEditIcons ? "Hide Edit" : "Edit Profile"}
             </button>
+          </div>
+        </div>
+
+        <div style={styles.summaryRow}>
+          <div style={styles.summaryCard}>
+            <strong>{totalCount}</strong>
+            <span>Total Profiles</span>
+          </div>
+          <div style={styles.summaryCard}>
+            <strong>{premiumCount}</strong>
+            <span>Premium Members</span>
+          </div>
+          <div style={styles.summaryCard}>
+            <strong>{verifiedCount}</strong>
+            <span>Verified Profiles</span>
           </div>
         </div>
 
@@ -376,7 +391,6 @@ function Profiles() {
           {sortedUsers.length > 0 ? (
             sortedUsers.map((user) => {
               const interested = isInterested(user);
-              
 
               return (
                 <div key={user._id} style={styles.card}>
@@ -401,14 +415,14 @@ function Profiles() {
                     </div>
 
                     {showEditIcons && (
-  <button
-    onClick={() => navigate(`/edit/${user._id}`)}
-    style={styles.editIconBtn}
-    title="Edit profile"
-  >
-    ✏️
-  </button>
-)}
+                      <button
+                        onClick={() => navigate(`/edit/${user._id}`)}
+                        style={styles.editIconBtn}
+                        title="Edit profile"
+                      >
+                        ✏️
+                      </button>
+                    )}
                   </div>
 
                   <div style={styles.cardContent}>
@@ -421,6 +435,11 @@ function Profiles() {
                         user.district ||
                         "Location not mentioned"}
                     </p>
+
+                    <div style={styles.metaRow}>
+                      <span style={styles.metaChip}>🕒 {user.maritalStatus || "NA"}</span>
+                      <span style={styles.metaChip}>📍 {user.state || "NA"}</span>
+                    </div>
 
                     <p style={styles.religion}>
                        {user.religion || "Not Mentioned"}
@@ -470,14 +489,15 @@ function Profiles() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#ffe4ec",
-    padding: "20px",
+    background: "#fff8fb",
+    padding: "22px",
+    color: "#3a2a2a",
   },
 
   container: {
-    maxWidth: "1450px",
+    maxWidth: 1450,
     margin: "0 auto",
-    paddingTop: "90px",
+    paddingTop: "96px",
   },
 
   topBar: {
@@ -486,7 +506,7 @@ const styles = {
     alignItems: "center",
     gap: "20px",
     flexWrap: "wrap",
-    marginBottom: "24px",
+    marginBottom: "18px",
   },
 
   leftTop: {
@@ -496,11 +516,24 @@ const styles = {
     flexWrap: "wrap",
   },
 
+  pagePill: {
+    display: "inline-flex",
+    alignItems: "center",
+    padding: "8px 14px",
+    borderRadius: 999,
+    background: "#ffe3ea",
+    color: "#8B0000",
+    fontSize: 13,
+    fontWeight: 800,
+    marginBottom: 8,
+  },
+
   title: {
     margin: 0,
     color: "#8B0000",
-    fontSize: 42,
-    fontWeight: 800,
+    fontSize: 30,
+    fontWeight: 900,
+    lineHeight: 1.1,
   },
 
   subtitle: {
@@ -520,10 +553,11 @@ const styles = {
     background: "#8B0000",
     color: "#fff",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "12px",
     cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: 700,
+    boxShadow: "0 10px 18px rgba(139,0,0,0.15)",
   },
 
   actionBtn: {
@@ -531,17 +565,36 @@ const styles = {
     background: "#8B0000",
     color: "#fff",
     border: "none",
-    borderRadius: "10px",
+    borderRadius: "12px",
     cursor: "pointer",
-    fontSize: "16px",
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: 700,
+    boxShadow: "0 10px 18px rgba(139,0,0,0.15)",
+  },
+
+  summaryRow: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: 14,
+    marginBottom: 18,
+  },
+
+  summaryCard: {
+    background: "#fff",
+    border: "1px solid #f1dde1",
+    borderRadius: 20,
+    padding: "16px 18px",
+    boxShadow: "0 10px 24px rgba(0,0,0,0.06)",
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
   },
 
   searchCard: {
     background: "#fff",
-    padding: "22px",
-    borderRadius: "24px",
-    marginBottom: "22px",
+    padding: 22,
+    borderRadius: 24,
+    marginBottom: 22,
     boxShadow: "0 10px 24px rgba(0,0,0,0.08)",
     border: "1px solid #f4d8df",
   },
@@ -577,7 +630,7 @@ const styles = {
     textAlign: "center",
     marginBottom: 18,
     fontSize: 24,
-    fontWeight: 800,
+    fontWeight: 900,
   },
 
   filtersGrid: {
@@ -609,7 +662,7 @@ const styles = {
     background: "#fff",
     borderRadius: 22,
     overflow: "hidden",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+    boxShadow: "0 12px 28px rgba(0,0,0,0.08)",
     border: "1px solid #f4d8df",
   },
 
@@ -678,15 +731,35 @@ const styles = {
 
   name: {
     fontSize: 24,
-    fontWeight: 800,
+    fontWeight: 900,
     marginBottom: 10,
     color: "#8B0000",
   },
 
   info: {
     color: "#666",
-    marginBottom: 8,
+    marginBottom: 10,
     fontSize: 15,
+  },
+
+  metaRow: {
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    marginBottom: 10,
+  },
+
+  metaChip: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "7px 10px",
+    borderRadius: 999,
+    background: "#fff6f8",
+    color: "#6a5459",
+    border: "1px solid #f1dde1",
+    fontSize: 13,
+    fontWeight: 700,
   },
 
   religion: {
@@ -701,7 +774,7 @@ const styles = {
     display: "inline-block",
     padding: "6px 14px",
     borderRadius: 20,
-    fontWeight: 600,
+    fontWeight: 700,
     marginBottom: 18,
     fontSize: 14,
   },
@@ -725,14 +798,16 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: 700,
+    fontWeight: 800,
+    boxShadow: "0 10px 18px rgba(139,0,0,0.12)",
   },
 
   interestBtn: {
     padding: "10px 16px",
     borderRadius: 10,
     cursor: "pointer",
-    fontWeight: 700,
+    fontWeight: 800,
+    boxShadow: "0 10px 18px rgba(0,0,0,0.06)",
   },
 
   emptyState: {

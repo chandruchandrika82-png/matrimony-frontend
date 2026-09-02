@@ -27,18 +27,88 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/profiles" element={<ProtectedRoute><Profiles /></ProtectedRoute>} />
-        <Route path="/my-profile" element={<ProtectedRoute><AddProfile /></ProtectedRoute>} />
-        <Route path="/profile/:id" element={<ProtectedRoute><ProfileDetails /></ProtectedRoute>} />
-        <Route path="/interested" element={<ProtectedRoute><InterestedProfiles /></ProtectedRoute>} />
-        <Route path="/saved" element={<ProtectedRoute><SavedProfiles /></ProtectedRoute>} />
-        <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+        <Route
+          path="/profiles"
+          element={
+            <ProtectedRoute>
+              <Profiles />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute>
+              <AddProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/:id"
+          element={
+            <ProtectedRoute>
+              <ProfileDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/interested"
+          element={
+            <ProtectedRoute>
+              <InterestedProfiles />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/saved"
+          element={
+            <ProtectedRoute>
+              <SavedProfiles />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/:id"
+          element={
+            <ProtectedRoute>
+              <Chat />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/edit/:id" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-        <Route path="/my-dashboard" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />
-        <Route path="/interest-requests" element={<ProtectedRoute><InterestRequests /></ProtectedRoute>} />
-        <Route path="/account-settings" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
+        <Route
+          path="/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-dashboard"
+          element={
+            <ProtectedRoute>
+              <MyProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/interest-requests"
+          element={
+            <ProtectedRoute>
+              <InterestRequests />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account-settings"
+          element={
+            <ProtectedRoute>
+              <AccountSettings />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
