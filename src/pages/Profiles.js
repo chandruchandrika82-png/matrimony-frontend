@@ -214,36 +214,48 @@ useEffect(() => {
     <div style={styles.page}>
       <div style={styles.container}>
         <div style={styles.topBar}>
-          <div style={styles.leftTop}>
-            <button onClick={() => navigate(-1)} style={styles.backBtn}>
-              ← Back
-            </button>
+  <div style={styles.leftSection}>
+    <button
+      onClick={() => navigate(-1)}
+      style={styles.backBtn}
+    >
+      ← Back
+    </button>
 
-            <div>
-              <div style={styles.pagePill}>Trusted Matrimony Profiles</div>
-              <h1 style={styles.title}>💍 Find Your Match</h1>
-              <p style={styles.subtitle}>
-                Browse genuine profiles and connect with meaningful matches.
-              </p>
-            </div>
-          </div>
+    <div style={styles.titleSection}>
+      <div style={styles.pagePill}>
+        Trusted Matrimony Profiles
+      </div>
 
-          <div style={styles.headerActions}>
-            <button onClick={goToAddProfile} style={styles.actionBtn}>
-              ➕ Add Profile
-            </button>
+      <h1 style={styles.title}>
+         Find Your Match
+      </h1>
 
-            <button
-              onClick={() => setShowEditIcons((prev) => !prev)}
-              style={{
-                ...styles.actionBtn,
-                background: showEditIcons ? "#d63b8d" : "#8B0000",
-              }}
-            >
-              ✏️ {showEditIcons ? "Hide Edit" : "Edit Profile"}
-            </button>
-          </div>
-        </div>
+      <p style={styles.subtitle}>
+        Browse genuine profiles and connect with meaningful matches.
+      </p>
+    </div>
+  </div>
+
+  <div style={styles.headerActions}>
+    <button
+      onClick={goToAddProfile}
+      style={styles.actionBtn}
+    >
+      ➕ Add Profile
+    </button>
+
+    <button
+      onClick={() => setShowEditIcons((prev) => !prev)}
+      style={{
+        ...styles.actionBtn,
+        background: showEditIcons ? "#d63b8d" : "#8B0000",
+      }}
+    >
+      ✏️ {showEditIcons ? "Hide Edit" : "Edit Profile"}
+    </button>
+  </div>
+</div>
 
         <div style={styles.summaryRow}>
           <div style={styles.summaryCard}>
@@ -544,13 +556,12 @@ const styles = {
   },
 
   topBar: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
-    flexWrap: "wrap",
-    marginBottom: "18px",
-  },
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  marginBottom: 25,
+  flexWrap: "wrap",
+},
 
   leftTop: {
     display: "flex",
