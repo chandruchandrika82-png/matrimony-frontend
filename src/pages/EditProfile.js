@@ -10,7 +10,6 @@ function EditProfile() {
 
   const [form, setForm] = useState({
     name: "",
-    mobile: "",
     email: "",
     age: "",
     gender: "",
@@ -62,7 +61,6 @@ function EditProfile() {
     sevvaiDosham: "No",
     rahuKethuDosham: "No",
     horoscopeAvailable: "No",
-    horoscopeMatchingPreference: "Preferred",
 
     motherTongue: "",
     kuladeivam: "",
@@ -280,13 +278,6 @@ function EditProfile() {
             onChange={handleChange}
           />
 
-          <input
-            style={styles.input}
-            name="mobile"
-            placeholder="Mobile"
-            value={form.mobile || ""}
-            onChange={handleChange}
-          />
 
           <input
             style={styles.input}
@@ -735,16 +726,7 @@ function EditProfile() {
             onChange={handleChange}
           />
 
-          <select
-            style={styles.input}
-            name="horoscopeMatchingPreference"
-            value={form.horoscopeMatchingPreference || "Preferred"}
-            onChange={handleChange}
-          >
-            <option value="Must Match">Must Match</option>
-            <option value="Preferred">Preferred</option>
-            <option value="Doesn't Matter">Doesn't Matter</option>
-          </select>
+          
 
           <h3 style={styles.heading}>📄 Horoscope Upload</h3>
 
@@ -1098,13 +1080,7 @@ function EditProfile() {
             value={form.otherAssets || ""}
             onChange={handleChange}
           />
-          <textarea
-  style={styles.textarea}
-  name="otherAssets"
-  placeholder="Other Assets"
-  value={form.otherAssets || ""}
-  onChange={handleChange}
-/>
+          
 <hr
   style={{
     marginTop: "40px",

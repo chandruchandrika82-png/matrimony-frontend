@@ -8,7 +8,6 @@ const API = "https://matrimony-backend-zbvm.onrender.com/api";
 const initialForm = {
   // Personal
   name: "",
-  mobile: "",
   email: "",
   password: "",
   age: "",
@@ -55,7 +54,6 @@ const initialForm = {
   birthTime: "",
   birthPlace: "",
   horoscopeAvailable: "No",
-  horoscopeMatchingPreference: "Preferred",
   sevvaiDosham: "No",
   rahuKethuDosham: "No",
 
@@ -199,13 +197,6 @@ const handleSubmit = async () => {
     onChange={handleChange}
   />
 
-  <input
-    style={styles.input}
-    name="mobile"
-    placeholder="Mobile Number"
-    value={form.mobile}
-    onChange={handleChange}
-  />
 
   <input
     style={styles.input}
@@ -694,16 +685,6 @@ const handleSubmit = async () => {
     onChange={handleChange}
   />
 
-  <select
-    style={styles.input}
-    name="horoscopeMatchingPreference"
-    value={form.horoscopeMatchingPreference}
-    onChange={handleChange}
-  >
-    <option value="Must Match">Must Match</option>
-    <option value="Preferred">Preferred</option>
-    <option value="Doesn't Matter">Doesn't Matter</option>
-  </select>
 
   <h4 style={styles.subHeading}>📄 Horoscope File</h4>
 
