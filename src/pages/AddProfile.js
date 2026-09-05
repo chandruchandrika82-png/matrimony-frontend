@@ -138,7 +138,7 @@ const handleSubmit = async () => {
 
     // Profile Photo
     if (imageFile) {
-      formData.append("profilePhoto", imageFile);
+      formData.append("image", imageFile);
     }
 
     // Profile Photos
@@ -171,9 +171,15 @@ const handleSubmit = async () => {
     navigate("/profiles");
 
   } catch (err) {
-    console.error(err);
-    alert("Failed to save profile.");
+  console.log(err);
+
+  if (err.response) {
+    console.log(err.response.data);
+    alert(JSON.stringify(err.response.data));
+  } else {
+    alert(err.message);
   }
+}
 };
   return (
   <div style={styles.page}>
@@ -1007,6 +1013,7 @@ const handleSubmit = async () => {
         ============================ */}
 
         <button
+         type="button"
           style={styles.button}
           onClick={handleSubmit}
         >
