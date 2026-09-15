@@ -1,12 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { API } from "../config/api";
 
 function Login() {
   const navigate = useNavigate();
 
-  const API = "https://matrimony-backend-zbvm.onrender.com/api";
-  // const API = "http://localhost:5000/api";
 
   const [form, setForm] = useState({
     email: "",

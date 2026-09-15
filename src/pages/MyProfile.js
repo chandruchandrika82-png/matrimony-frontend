@@ -1,105 +1,25 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API, resolveMediaUrl } from "../config/api";
+import "./MyProfile.css";
 
 function MyProfile() {
   const navigate = useNavigate();
+  const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+  const [profile, setProfile] = useState(null);
 
-  const API = "https://matrimony-backend-zbvm.onrender.com/api";
+  useEffect(() => { if (!storedUser?._id) { navigate("/login"); return; } axios.get(`${API}/users/${storedUser._id}`).then((response) => setProfile(response.data)).catch(() => setProfile(false)); }, [navigate, storedUser?._id]);
+  if (profile === null) return <main className="dashboard-page"><div className="dashboard-shell dashboard-status">Loading your profile...</div></main>;
+  if (!profile) return <main className="dashboard-page"><div className="dashboard-shell dashboard-status">We could not load your profile.</div></main>;
 
-  const [profile, setProfile] = useState({});
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    console.log("Logged in user:", user);
-    console.log("User ID:", user?._id);
-
-    if (!user) return;
-
-    axios
-      .get(`${API}/users/${user._id}`)
-      .then((res) => {
-        console.log("Profile data:", res.data);
-        setProfile(res.data);
-      })
-      .catch((err) => {
-        console.log("Error:", err);
-      });
-  }, []);
-
-  return (
-    <div style={styles.container}>
-      <h1>👤 My Profile</h1>
-
-      <div style={styles.card}>
-        <img
-          src={
-            profile.image
-              ? profile.image
-              : "https://via.placeholder.com/150"
-          }
-          alt="Profile"
-          style={styles.image}
-        />
-
-        <h2>{profile.name || "No Name"}</h2>
-
-        <p><strong>Email:</strong> {profile.email || "--"}</p>
-        <p><strong>Mobile:</strong> {profile.mobile || "--"}</p>
-        <p><strong>Age:</strong> {profile.age || "--"}</p>
-        <p><strong>Gender:</strong> {profile.gender || "--"}</p>
-        <p><strong>Religion:</strong> {profile.religion || "--"}</p>
-        <p><strong>Caste:</strong> {profile.caste || "--"}</p>
-        <p><strong>Education:</strong> {profile.education || "--"}</p>
-        <p><strong>Occupation:</strong> {profile.occupation || "--"}</p>
-
-        <button
-          style={styles.button}
-          onClick={() => navigate(`/edit-profile/${profile._id}`)}
-        >
-          ✏️ Edit Profile
-        </button>
-      </div>
-    </div>
-  );
+  const completion = [profile.name, profile.age, profile.gender, profile.district, profile.religion, profile.education, profile.image].filter(Boolean).length;
+  const completionPercent = Math.round((completion / 7) * 100);
+  return <main className="dashboard-page"><div className="dashboard-shell">
+    <header className="dashboard-header"><div><p>My account</p><h1>Welcome back</h1></div><button onClick={() => navigate(`/edit/${profile._id}`)}>Edit profile</button></header>
+    <section className="dashboard-main"><img src={resolveMediaUrl(profile.image) || "https://placehold.co/300x360?text=Add+a+photo"} alt={profile.name || "Your profile"} /><div><p className="dashboard-kicker">Your Namakkal Matrimony profile</p><h2>{profile.name || "Complete your profile"}</h2><p>{[profile.age && `${profile.age} years`, profile.currentCity || profile.district || "Tamil Nadu", profile.maritalStatus].filter(Boolean).join(" | ") || "Add your details to help us find compatible matches."}</p><div className="dashboard-buttons"><button onClick={() => navigate(`/profile/${profile._id}`)}>Preview profile</button><button onClick={() => navigate("/profiles")}>Browse profiles</button></div></div></section>
+    <section className="dashboard-grid"><article className="completion-card"><p>Profile completion</p><strong>{completionPercent}%</strong><div><span style={{ width: `${completionPercent}%` }} /></div><small>Complete your personal, family, and preference details for better matches.</small></article><article><p>Interest requests</p><strong>Review people who want to connect.</strong><button onClick={() => navigate("/interest-requests")}>View requests</button></article><article><p>Saved profiles</p><strong>Keep track of the profiles you are considering.</strong><button onClick={() => navigate("/interested")}>View shortlist</button></article></section>
+  </div></main>;
 }
-
-const styles = {
-  container: {
-    padding: "120px 20px",
-    background: "#fff5f7",
-    minHeight: "100vh",
-    textAlign: "center",
-  },
-
-  card: {
-    maxWidth: "500px",
-    margin: "30px auto",
-    background: "#fff",
-    padding: "30px",
-    borderRadius: "20px",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
-  },
-
-  image: {
-    width: "150px",
-    height: "150px",
-    borderRadius: "50%",
-    objectFit: "cover",
-    marginBottom: "20px",
-  },
-
-  button: {
-    marginTop: "20px",
-    padding: "12px 25px",
-    border: "none",
-    borderRadius: "10px",
-    background: "#8B0000",
-    color: "#fff",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-};
 
 export default MyProfile;

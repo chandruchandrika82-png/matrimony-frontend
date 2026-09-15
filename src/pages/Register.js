@@ -1,12 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { API } from "../config/api";
 
 function Register() {
   const navigate = useNavigate();
 
-  const API = "https://matrimony-backend-zbvm.onrender.com/api";
-  // const API = "http://localhost:5000/api";
 
   const [form, setForm] = useState({
     name: "",
@@ -46,7 +45,7 @@ function Register() {
       alert("Registered successfully 💖");
 
       // direct to profile details form
-      navigate("/add-profile");
+      navigate("/my-profile");
     } catch (err) {
       console.error(err);
       alert(err?.response?.data?.error || "Register Failed");

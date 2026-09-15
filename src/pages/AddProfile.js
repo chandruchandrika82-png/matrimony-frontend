@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API } from "../config/api";
 
-const API = "https://matrimony-backend-zbvm.onrender.com/api";
-// const API = "http://localhost:5000/api";
 
 const initialForm = {
   // Personal
@@ -92,7 +91,7 @@ const initialForm = {
   otherAssets: "",
 
   // Contact
-  phone: "",
+  mobile: "",
   address: "",
 
   // Privacy
@@ -117,6 +116,17 @@ function AddProfile() {
   const [familyPhotos, setFamilyPhotos] = useState([]);
   const [officePhotos, setOfficePhotos] = useState([]);
   const [horoscopeFile, setHoroscopeFile] = useState(null);
+  const [account, setAccount] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (!storedUser?._id) {
+      navigate("/login");
+      return;
+    }
+    setAccount(storedUser);
+    setForm((current) => ({ ...current, name: storedUser.name || "", email: storedUser.email || "" }));
+  }, [navigate]);
   const handleChange = (e) => {
   const { name, value, type, checked } = e.target;
 
@@ -159,13 +169,15 @@ const handleSubmit = async () => {
       formData.append("horoscopeFile", horoscopeFile);
     }
 
-    await axios.post(`${API}/users`, formData, {
+    if (!account?._id) return;
+    const response = await axios.put(`${API}/users/${account._id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    alert("Profile Added Successfully!");
+    localStorage.setItem("user", JSON.stringify(response.data));
+    alert("Profile saved successfully!");
     navigate("/profiles");
 
   } catch (err) {
@@ -968,9 +980,9 @@ const handleSubmit = async () => {
 
           <input
             style={styles.input}
-            name="phone"
+    name="mobile"
             placeholder="Phone Number"
-            value={form.phone}
+    value={form.mobile}
             onChange={handleChange}
           />
 

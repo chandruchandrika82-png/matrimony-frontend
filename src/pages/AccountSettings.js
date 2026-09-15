@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API } from "../config/api";
 
 function AccountSettings() {
   const navigate = useNavigate();
-  const API = "https://matrimony-backend-zbvm.onrender.com/api";
 
   const loggedInUser = useMemo(() => {
     try {
@@ -63,7 +63,7 @@ function AccountSettings() {
     };
 
     fetchProfile();
-  }, [API, loggedInUser?._id, navigate]);
+  }, [loggedInUser?._id, navigate]);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;

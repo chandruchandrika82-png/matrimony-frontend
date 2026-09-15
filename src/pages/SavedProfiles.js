@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { API, resolveMediaUrl } from "../config/api";
 
 function SavedProfiles() {
   const [users, setUsers] = useState([]);
@@ -12,7 +13,7 @@ function SavedProfiles() {
   const fetchSavedUsers = async () => {
     try {
       const res = await axios.get(
-        "https://matrimony-backend-1-ri82.onrender.com/api/users"
+        `${API}/users`
       );
 
       // ✅ Only interested users
@@ -37,7 +38,7 @@ function SavedProfiles() {
         {users.map(user => (
           <div key={user._id} style={styles.card}>
             <img
-              src={user.image}
+              src={resolveMediaUrl(user.image) || "https://placehold.co/300x320?text=No+Image"}
               style={styles.image}
               alt="profile"
             />

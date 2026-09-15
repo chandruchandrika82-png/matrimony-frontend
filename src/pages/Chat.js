@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { API, resolveMediaUrl } from "../config/api";
 
 function Chat() {
   const { id } = useParams();
 
-  const currentUser = "You";
+  const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+  const currentUserId = currentUser?._id;
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
@@ -13,13 +15,11 @@ function Chat() {
 
   const bottomRef = useRef(null);
 
-  const API = "https://matrimony-backend-1-ri82.onrender.com/api";
-
   // FETCH MESSAGES
   const fetchMessages = useCallback(async () => {
     try {
       const res = await axios.get(
-        `${API}/messages/${currentUser}/${id}`
+        `${API}/messages/${currentUserId}/${id}`
       );
 
       setMessages(res.data);
@@ -33,7 +33,7 @@ function Chat() {
     } catch (err) {
       console.log(err);
     }
-  }, [id]);
+  }, [id, currentUserId]);
 
   // AUTO REFRESH
   useEffect(() => {
@@ -60,7 +60,7 @@ function Chat() {
 
     try {
       await axios.post(`${API}/messages`, {
-        sender: currentUser,
+        sender: currentUserId,
         receiver: id,
         text,
       });
@@ -88,7 +88,7 @@ function Chat() {
                 user?.image
                   ? user.image.startsWith("http")
                     ? user.image
-                    : `https://matrimony-backend-1-ri82.onrender.com${user.image}`
+                    : resolveMediaUrl(user.image)
                   : "https://via.placeholder.com/100"
               }
               alt="profile"
@@ -114,7 +114,7 @@ function Chat() {
 
           {messages.map((msg, index) => {
 
-            const isMe = msg.sender === currentUser;
+            const isMe = msg.sender === currentUserId || msg.sender?._id === currentUserId;
 
             return (
               <div

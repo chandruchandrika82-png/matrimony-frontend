@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { API } from "../config/api";
 
 function EditProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const API = "https://matrimony-backend-zbvm.onrender.com/api";
 
   const [form, setForm] = useState({
     name: "",
@@ -107,7 +107,7 @@ function EditProfile() {
     vehicle: "",
     otherAssets: "",
 
-    phone: "",
+    mobile: "",
     address: "",
 
     hideMobile: false,
@@ -142,7 +142,7 @@ function EditProfile() {
     } catch (err) {
       console.log(err);
     }
-  }, [API, id]);
+  }, [id]);
 
   useEffect(() => {
     fetchUser();
@@ -391,9 +391,9 @@ function EditProfile() {
 
           <input
             style={styles.input}
-            name="phone"
+            name="mobile"
             placeholder="Phone"
-            value={form.phone || ""}
+            value={form.mobile || ""}
             onChange={handleChange}
           />
 
