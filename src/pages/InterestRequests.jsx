@@ -5,7 +5,6 @@ import {
   FaSearch,
   FaClock,
   FaCheckCircle,
-  FaTimesCircle,
   FaUserFriends,
 } from "react-icons/fa";
 
@@ -46,8 +45,9 @@ setMyProfile(me);
   };
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+  loadUsers();
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   const receivedRequests = useMemo(() => {
   if (!myProfile) return [];
