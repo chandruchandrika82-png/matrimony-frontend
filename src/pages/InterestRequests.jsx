@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaSearch,
   FaClock,
@@ -12,6 +12,7 @@ import { API, resolveMediaUrl } from "../config/api";
 import "./Profiles.css";
 
 function InterestRequests() {
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
   const token = localStorage.getItem("token");
 
@@ -143,21 +144,22 @@ setMyProfile(me);
 
         <header className="directory-header">
 
-          <div>
+  <div>
+    <button
+      className="back-button"
+      onClick={() => navigate(-1)}
+    >
+      ← Back
+    </button>
 
-            
+    <h1>Interest Requests</h1>
 
-            <h1>
-              Interest Requests
-            </h1>
+    <p>
+      View received, sent and accepted interests.
+    </p>
+  </div>
 
-            <p>
-              View received, sent and accepted interests.
-            </p>
-
-          </div>
-
-        </header>
+</header>
 
         <div
           style={{

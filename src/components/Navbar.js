@@ -23,7 +23,7 @@ function Navbar() {
           <Link to="/">Home</Link>
           <Link to="/profiles">Profiles</Link>
           {token && <Link to="/interest-requests">Requests</Link>}
-          {token && <Link to="/interested">Shortlist</Link>}
+          {token && <Link to="/interested">❤️ Favorite</Link>}
         </nav>
         <div className="nav-actions">
           {token ? <><button className="account-link" onClick={() => navigate("/my-dashboard")}>{user?.name || "My account"}</button><button className="logout-link" onClick={logout}>Log out</button></> : <><Link className="login-link" to="/login">Log in</Link><Link className="join-link" to="/register">Create profile</Link></>}

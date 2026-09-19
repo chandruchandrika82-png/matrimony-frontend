@@ -43,8 +43,17 @@ function Home() {
         </div>
       </section>
       <section className="process-section"><div className="home-container process-layout"><div><p className="section-kicker">A considered journey</p><h2>Start with a profile that feels like you.</h2></div><ol className="process-list"><li><strong>Create your profile</strong><span>Share only the details you are comfortable showing.</span></li><li><strong>Find compatible profiles</strong><span>Use Tamil Nadu-focused filters and partner preferences.</span></li><li><strong>Connect with confidence</strong><span>Send an interest first, then start a conversation when it is accepted.</span></li></ol></div></section>
-      <section className="home-container final-cta"><div><p className="section-kicker">Begin when you are ready</p><h2>Take the first step toward a meaningful partnership.</h2></div><button type="button" onClick={() => navigate("/register")}>Create a profile</button></section>
-    </main>
+<section className="home-container final-cta">
+  <div className="final-cta-content">
+    <p className="section-kicker">
+      Begin when you are ready
+    </p>
+
+    <h2>
+      Take the first step toward a meaningful partnership.
+    </h2>
+  </div>
+</section>    </main>
   );
 }
 
