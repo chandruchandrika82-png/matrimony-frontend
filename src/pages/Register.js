@@ -33,11 +33,13 @@ function Register() {
     }
 
     try {
-      const res = await axios.post(`${API}/register`, {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-      });
+  console.log("API URL =", API);
+
+  const res = await axios.post(`${API}/register`, {
+    name: form.name,
+    email: form.email,
+    password: form.password,
+  });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -47,9 +49,17 @@ function Register() {
       // direct to profile details form
       navigate("/my-profile");
     } catch (err) {
-      console.error(err);
-      alert(err?.response?.data?.error || "Register Failed");
-    }
+  console.log("FULL ERROR:", err);
+
+  if (err.response) {
+    console.log("STATUS:", err.response.status);
+    console.log("DATA:", err.response.data);
+  } else {
+    console.log("NO RESPONSE FROM SERVER");
+  }
+
+  alert(err.response?.data?.error || err.message);
+}
   };
 
   return (
