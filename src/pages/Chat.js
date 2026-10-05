@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { API, resolveMediaUrl } from "../config/api";
+import PageBack from "../components/PageBack";
 
 function Chat() {
   const { id } = useParams();
@@ -74,12 +75,13 @@ function Chat() {
   };
 
   return (
-    <div style={styles.page}>
+    <div className="member-chat" style={styles.page}>
 
       <div style={styles.chatContainer}>
 
         {/* HEADER */}
         <div style={styles.header}>
+          <PageBack fallback="/interest-requests" />
 
           <div style={styles.userInfo}>
 
@@ -101,7 +103,7 @@ function Chat() {
               </h2>
 
               <p style={styles.online}>
-                🟢 Online
+                Private conversation
               </p>
             </div>
 
@@ -166,6 +168,7 @@ function Chat() {
             type="text"
             placeholder="Type your message..."
             value={text}
+            aria-label="Message"
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" && sendMessage()
@@ -174,6 +177,8 @@ function Chat() {
           />
 
           <button
+            aria-label="Send message"
+            title="Send message"
             onClick={sendMessage}
             style={styles.sendBtn}
           >

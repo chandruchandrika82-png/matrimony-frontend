@@ -19,3 +19,26 @@
   background:#8c1c32;
   color:#fff;
 }
+.profile-card-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+}
+
+.favorite-button{
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    font-size:24px;
+    color:#888;
+    transition:.2s;
+}
+
+.favorite-button:hover{
+    transform:scale(1.15);
+}
+
+.favorite-active{
+    color:#d81b60;
+}

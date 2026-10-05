@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "../config/api";
 
@@ -192,8 +192,9 @@ const handleSubmit = async () => {
 }
 };
   return (
-  <div style={styles.page}>
+  <div className="member-editor" style={styles.page}>
     <div style={styles.container}>
+      <header className="editor-heading"><Link to="/my-dashboard">Back to my account</Link><p className="section-kicker">YOUR NAMAKKAL MATRIMONY PROFILE</p><h1>Tell your story</h1></header>
       {/* =========================
     SECTION 1 : PERSONAL DETAILS
 ========================= */}

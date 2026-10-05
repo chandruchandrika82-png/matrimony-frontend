@@ -252,7 +252,7 @@ function EditProfile() {
 };
 
   return (
-    <div style={styles.page}>
+    <div className="member-editor" style={styles.page}>
       <div style={styles.container}>
         <h1 style={styles.title}>✏️ Edit Profile</h1>
 

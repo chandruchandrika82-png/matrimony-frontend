@@ -192,14 +192,14 @@ function AccountSettings() {
 
   if (loading) {
     return (
-      <div style={styles.page}>
+      <div className="member-settings" style={styles.page}>
         <div style={styles.card}>Loading...</div>
       </div>
     );
   }
 
   return (
-    <div style={styles.page}>
+    <div className="member-settings" style={styles.page}>
       <div style={styles.wrapper}>
         <button onClick={() => navigate(-1)} style={styles.backBtn}>
           ← Back

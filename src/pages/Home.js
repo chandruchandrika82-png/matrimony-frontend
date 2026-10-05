@@ -1,60 +1,25 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FiArrowRight, FiSearch, FiShield, FiUsers, FiMapPin, FiHeart } from "react-icons/fi";
 import "./Home.css";
 
-const religions = ["Hindu", "Muslim", "Christian", "Jain", "Other"];
-const languages = ["Tamil", "Malayalam", "Telugu", "Kannada", "Hindi", "English"];
-
-function Home() {
+export default function Home() {
   const navigate = useNavigate();
-  const [lookingFor, setLookingFor] = useState("Woman");
-  const [ageFrom, setAgeFrom] = useState("22");
-  const [ageTo, setAgeTo] = useState("27");
+  const [gender, setGender] = useState("Female");
+  const [minAge, setMinAge] = useState("22");
+  const [maxAge, setMaxAge] = useState("30");
   const [religion, setReligion] = useState("");
   const [motherTongue, setMotherTongue] = useState("Tamil");
-
-  const beginSearch = () => {
-    navigate("/profiles", { state: { gender: lookingFor === "Woman" ? "Female" : "Male", minAge: ageFrom, maxAge: ageTo, religion, motherTongue } });
-  };
-
-  return (
-    <main className="home-page">
-      <section className="hero-section">
-        <div className="hero-overlay" />
-        <div className="home-container hero-content">
-          <p className="eyebrow">A trusted Tamil Nadu matrimonial service</p>
-          <h1>Meaningful matches, with your family at the heart of every step.</h1>
-          <p className="hero-copy">Discover compatible profiles from Namakkal and across Tamil Nadu in a respectful, private space.</p>
-          <form className="match-form" onSubmit={(event) => { event.preventDefault(); beginSearch(); }}>
-            <div className="match-field"><label htmlFor="lookingFor">Looking for</label><select id="lookingFor" value={lookingFor} onChange={(event) => setLookingFor(event.target.value)}><option value="Woman">A woman</option><option value="Man">A man</option></select></div>
-            <div className="match-field"><label htmlFor="ageFrom">Age</label><div className="age-selects"><select id="ageFrom" value={ageFrom} onChange={(event) => setAgeFrom(event.target.value)}>{Array.from({ length: 43 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}</select><span>to</span><select aria-label="Maximum age" value={ageTo} onChange={(event) => setAgeTo(event.target.value)}>{Array.from({ length: 43 }, (_, index) => index + 18).map((age) => <option key={age} value={age}>{age}</option>)}</select></div></div>
-            <div className="match-field"><label htmlFor="religion">Religion</label><select id="religion" value={religion} onChange={(event) => setReligion(event.target.value)}><option value="">Any religion</option>{religions.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
-            <div className="match-field"><label htmlFor="language">Mother tongue</label><select id="language" value={motherTongue} onChange={(event) => setMotherTongue(event.target.value)}><option value="">Any language</option>{languages.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
-            <button className="search-button" type="submit">Search profiles</button>
-          </form>
-        </div>
-      </section>
-      <section className="home-container confidence-section">
-        <div className="section-heading"><p className="section-kicker">Built for serious intentions</p><h2>A straightforward way for families to find a good match.</h2></div>
-        <div className="confidence-grid">
-          <article><span>01</span><h3>Profile privacy</h3><p>Members choose what photos and contact information are visible.</p></article>
-          <article><span>02</span><h3>Family-friendly</h3><p>Register for yourself or support a son, daughter, relative, or friend.</p></article>
-          <article><span>03</span><h3>Local discovery</h3><p>Search by Namakkal, district, native place, language, education, and more.</p></article>
-        </div>
-      </section>
-      <section className="process-section"><div className="home-container process-layout"><div><p className="section-kicker">A considered journey</p><h2>Start with a profile that feels like you.</h2></div><ol className="process-list"><li><strong>Create your profile</strong><span>Share only the details you are comfortable showing.</span></li><li><strong>Find compatible profiles</strong><span>Use Tamil Nadu-focused filters and partner preferences.</span></li><li><strong>Connect with confidence</strong><span>Send an interest first, then start a conversation when it is accepted.</span></li></ol></div></section>
-<section className="home-container final-cta">
-  <div className="final-cta-content">
-    <p className="section-kicker">
-      Begin when you are ready
-    </p>
-
-    <h2>
-      Take the first step toward a meaningful partnership.
-    </h2>
-  </div>
-</section>    </main>
-  );
+  const [error, setError] = useState("");
+  const ages = Array.from({ length: 43 }, (_, i) => i + 18);
+  function search(event) {
+    event.preventDefault();
+    if (+minAge > +maxAge) { setError("Minimum age must be lower than or equal to maximum age."); return; }
+    navigate("/profiles", { state: { gender, minAge, maxAge, religion, motherTongue } });
+  }
+  return <main className="home-page"><section className="hero-section"><img className="hero-photo" src="/tamil-wedding-hero.png" alt="Tamil bride and groom wearing traditional wedding attire and flower garlands" fetchPriority="high" /><div className="hero-shade" /><div className="home-container hero-content"><p className="hero-kicker">ROOTED IN FAMILY. OPEN TO POSSIBILITY.</p><h1>Namakkal<br />Matrimony</h1><p className="hero-copy">A meaningful connection.<br />A new chapter, together.</p><p className="hero-description">Meet people who share your values, from Namakkal and across Tamil Nadu.</p><Link to={localStorage.getItem("token") ? "/profiles" : "/register"} className="home-primary">{localStorage.getItem("token") ? "Find your match" : "Create your profile"}<FiArrowRight /></Link></div><span className="hero-caption">For the journey that matters.</span></section>
+    <section className="search-band"><div className="home-container"><div className="search-heading"><FiSearch /><h2>Find someone who feels right for you</h2></div><form className="match-form" onSubmit={search}><label>Looking for<select value={gender} onChange={e => setGender(e.target.value)}><option value="Female">A bride</option><option value="Male">A groom</option></select></label><fieldset className="age-field"><legend>Age range</legend><div><select aria-label="Minimum age" value={minAge} onChange={e => { setMinAge(e.target.value); setError(""); }}>{ages.map(age => <option key={age}>{age}</option>)}</select><span>to</span><select aria-label="Maximum age" value={maxAge} onChange={e => { setMaxAge(e.target.value); setError(""); }}>{ages.map(age => <option key={age}>{age}</option>)}</select></div></fieldset><label>Religion<select value={religion} onChange={e => setReligion(e.target.value)}><option value="">Any religion</option>{["Hindu", "Muslim", "Christian", "Jain", "Other"].map(v => <option key={v}>{v}</option>)}</select></label><label>Mother tongue<select value={motherTongue} onChange={e => setMotherTongue(e.target.value)}><option value="">Any language</option>{["Tamil", "Malayalam", "Telugu", "Kannada", "Hindi", "English"].map(v => <option key={v}>{v}</option>)}</select></label><button className="home-primary" type="submit"><FiSearch />Search profiles</button></form>{error && <p className="form-error" role="alert">{error}</p>}</div></section>
+    <section className="home-container confidence-section"><div className="home-section-heading"><div><p className="section-kicker">A PERSONAL APPROACH</p><h2>Shared values.<br />Lasting possibilities.</h2></div><p>Finding a life partner is personal. Make space for the details, the conversations, and the family connections that matter to you.</p></div><div className="confidence-grid">{[[FiMapPin, "Closer to your roots", "Discover profiles by district, native place, language, and education."], [FiShield, "Privacy in your hands", "Choose how your photos and contact details are shared."], [FiUsers, "Family comes naturally", "Create a profile for yourself or someone in your family."]].map(([Icon, title, description]) => <article key={title}><Icon /><h3>{title}</h3><p>{description}</p></article>)}</div></section>
+    <section className="process-section"><div className="home-container"><p className="section-kicker">YOUR NEXT CHAPTER</p><h2>A connection begins<br />with a simple hello.</h2><ol className="process-list"><li><span>01</span><h3>Tell your story</h3><p>Add your personal details, family background, and partner preferences.</p></li><li><span>02</span><h3>Explore your possibilities</h3><p>Discover profiles and save the people you would like to get to know.</p></li><li><span>03</span><h3>Make a connection</h3><p>Send an interest and begin a conversation once it is accepted.</p></li></ol></div></section>
+    <section className="home-container final-cta"><FiHeart /><p className="section-kicker">BEGIN AT YOUR OWN PACE</p><h2>Your story deserves<br />a beautiful next chapter.</h2><Link className="home-primary" to={localStorage.getItem("token") ? "/profiles" : "/register"}>{localStorage.getItem("token") ? "Explore profiles" : "Join Namakkal Matrimony"}<FiArrowRight /></Link></section></main>;
 }
-
-export default Home;
