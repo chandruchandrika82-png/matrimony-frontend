@@ -173,6 +173,7 @@ function EditProfile() {
             "familyPhotos",
             "officePhotos",
             "interestRequests",
+            "favoriteProfiles",
             "acceptedRequests",
             "blockedUsers",
           ].includes(key)
