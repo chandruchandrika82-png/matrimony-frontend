@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "../config/api";
+import "./ProfileSave.css";
 
 
 const initialForm = {
@@ -117,6 +118,8 @@ function AddProfile() {
   const [officePhotos, setOfficePhotos] = useState([]);
   const [horoscopeFile, setHoroscopeFile] = useState(null);
   const [account, setAccount] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -136,6 +139,9 @@ function AddProfile() {
   }));
 };
 const handleSubmit = async () => {
+  if (saving) return;
+  setSaveError("");
+  setSaving(true);
   try {
     const formData = new FormData();
 
@@ -170,25 +176,19 @@ const handleSubmit = async () => {
     }
 
     if (!account?._id) return;
-    const response = await axios.put(`${API}/users/${account._id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.put(`${API}/users/${account._id}`, formData);
 
     localStorage.setItem("user", JSON.stringify(response.data));
     alert("Profile saved successfully!");
     navigate("/profiles");
 
   } catch (err) {
-  console.log(err);
-
-  if (err.response) {
-    console.log(err.response.data);
-    alert(JSON.stringify(err.response.data));
-  } else {
-    alert(err.message);
-  }
+  const message = err.response?.data?.error;
+  setSaveError(typeof message === "string" ? message : !err.response
+    ? "Unable to reach the server. Please check your connection and try again."
+    : "Your profile could not be saved. The photo upload service may be unavailable. Try saving without photos, or contact the administrator.");
+} finally {
+  setSaving(false);
 }
 };
   return (
@@ -1006,8 +1006,11 @@ const handleSubmit = async () => {
             Save Button
         ============================ */}
 
+        {saveError && <p role="alert" className="profile-save-error">{saveError}</p>}
         <button
          type="button"
+          disabled={saving}
+          aria-busy={saving}
           style={styles.button}
           onClick={handleSubmit}
         >
