@@ -1,7 +1,10 @@
 const configuredApiUrl = process.env.REACT_APP_API_URL;
+const defaultApiUrl = process.env.NODE_ENV === "production"
+  ? "https://matrimony-backend-1-ri82.onrender.com/api"
+  : "http://localhost:5000/api";
 
 export const API = (
-  configuredApiUrl || "http://localhost:5000/api"
+  configuredApiUrl || defaultApiUrl
 ).replace(/\/$/, "");
 
 export const API_ORIGIN = API.replace(/\/api$/, "");
