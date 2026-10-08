@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { API } from "../config/api";
+import JobDetails from "../components/JobDetails";
 
 function EditProfile() {
   const { id } = useParams();
@@ -32,6 +33,10 @@ function EditProfile() {
     occupationType: "",
 
     companyName: "",
+    jobType: "",
+    jobCategory: "",
+    jobLocation: "",
+    jobExperience: "",
     businessType: "",
     annualIncome: "",
 
@@ -476,15 +481,8 @@ function EditProfile() {
             <option value="Both">Both</option>
           </select>
 
-          <h3 style={styles.heading}>💼 Business Information</h3>
 
-          <input
-            style={styles.input}
-            name="companyName"
-            placeholder="Company Name"
-            value={form.companyName || ""}
-            onChange={handleChange}
-          />
+          <JobDetails form={form} onChange={handleChange} inputStyle={styles.input} />
 
           <select
             style={styles.input}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API } from "../config/api";
 import "./ProfileSave.css";
+import JobDetails from "../components/JobDetails";
 
 
 const initialForm = {
@@ -27,6 +28,10 @@ const initialForm = {
   occupationType: "",
   nri: "No",
   companyName: "",
+  jobType: "",
+  jobCategory: "",
+  jobLocation: "",
+  jobExperience: "",
   businessType: "",
   annualIncome: "",
   businessLocation: "",
@@ -346,6 +351,8 @@ const handleSubmit = async () => {
     onChange={handleChange}
   >
     <option value="">Occupation Type</option>
+    <option value="Job">Job</option>
+    <option value="Both">Both</option>
     <option value="Private Job">Private Job</option>
     <option value="Government Job">Government Job</option>
     <option value="Business">Business</option>
@@ -373,13 +380,7 @@ const handleSubmit = async () => {
     <option value="No">NRI - No</option>
     <option value="Yes">NRI - Yes</option>
   </select>
-  <input
-    style={styles.input}
-    name="companyName"
-    placeholder="Company Name"
-    value={form.companyName}
-    onChange={handleChange}
-  />
+  <JobDetails form={form} onChange={handleChange} inputStyle={styles.input} />
 
   <select
     style={styles.input}

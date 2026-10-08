@@ -6,7 +6,7 @@ import "./ProfileDetails.css";
 
 const groups = [
   ["Personal details", [["Age", "age"], ["Gender", "gender"], ["Marital status", "maritalStatus"], ["Height", "height"], ["Native place", "nativePlace"], ["Current city", "currentCity"], ["District", "district"], ["Mother tongue", "motherTongue"]]],
-  ["Education and work", [["Education", "education"], ["Occupation", "occupationType"], ["Company", "companyName"], ["Annual income", "annualIncome"], ["NRI", "nri"]]],
+  ["Education and work", [["Education", "education"], ["Occupation", "occupationType"], ["Company", "companyName"], ["Job type", "jobType"], ["Job category", "jobCategory"], ["Job location", "jobLocation"], ["Experience (years)", "jobExperience"], ["Annual income", "annualIncome"], ["NRI", "nri"]]],
   ["Family", [["Family type", "familyType"], ["Family status", "familyStatus"], ["Father's occupation", "fatherOccupation"], ["Mother's occupation", "motherOccupation"], ["Brothers", "brothersCount"], ["Sisters", "sistersCount"]]],
   ["Religion and horoscope", [["Religion", "religion"], ["Community", "caste"], ["Sub community", "subCaste"], ["Rashi", "rashi"], ["Star", "star"], ["Dosham", "dosha"], ["Horoscope available", "horoscopeAvailable"]]],
   ["Partner preferences", [["Preferred age", "preferredAge"], ["Preferred education", "preferredEducation"], ["Preferred occupation", "preferredOccupation"], ["Preferred location", "preferredLocation"], ["Additional expectations", "expectations"]]],
