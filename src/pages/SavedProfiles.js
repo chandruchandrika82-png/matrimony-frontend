@@ -1,7 +1,8 @@
+import { useLanguage } from "../Language";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import PageBack from "../components/PageBack";
+
 import {
   FaHeart,
   FaMapMarkerAlt,
@@ -9,10 +10,12 @@ import {
   FaBriefcase,
 } from "react-icons/fa";
 
-import { API, resolveMediaUrl } from "../config/api";
+import { API } from "../config/api";
+import ProfilePhotos from "../components/ProfilePhotos";
 import "./Profiles.css";
 
 function SavedProfiles() {
+  const { t } = useLanguage();
   const currentUser = JSON.parse(
     localStorage.getItem("user") || "null"
   );
@@ -74,22 +77,18 @@ function SavedProfiles() {
   return (
     <main className="directory-page">
       <div className="directory-shell">
-        <PageBack />
+        
 
         <header className="directory-header">
           <div>
-            <h1>❤️ Saved Profiles</h1>
+            <h1>{t("❤️ Saved Profiles")}</h1>
 
-            <p>
-              Your favourite Namakkal Matrimony matches.
-            </p>
+            <p>{t("Your favourite Namakkal Matrimony matches.")}</p>
           </div>
         </header>
 
         {loading ? (
-          <div className="directory-status">
-            Loading...
-          </div>
+          <div className="directory-status">{t("Loading...")}</div>
         ) : (
           <div className="profile-grid">
 
@@ -102,11 +101,9 @@ function SavedProfiles() {
                   color="#8B0000"
                 />
 
-                <h2>No Saved Profiles</h2>
+                <h2>{t("No Saved Profiles")}</h2>
 
-                <p>
-                  You haven't added any profiles to favourites yet.
-                </p>
+                <p>{t("You haven't added any profiles to favourites yet.")}</p>
 
               </div>
 
@@ -117,24 +114,7 @@ function SavedProfiles() {
                   key={profile._id}
                   className="directory-card"
                 >
-                  <Link
-                    to={`/profile/${profile._id}`}
-                    className="card-image-link"
-                  >
-                    <img
-                      src={
-                        resolveMediaUrl(profile.image) ||
-                        "https://placehold.co/480x540?text=Photo"
-                      }
-                      alt={profile.name}
-                    />
-
-                    <span>
-                      {profile.profileVisibility === "Private"
-                        ? "Private Profile"
-                        : "Member Profile"}
-                    </span>
-                  </Link>
+                  <ProfilePhotos profile={profile} />
 
                   <div className="directory-card-body">
 
@@ -146,7 +126,7 @@ function SavedProfiles() {
                         <FaMapMarkerAlt />{" "}
                         {[
                           profile.age &&
-                            `${profile.age} years`,
+                            `${profile.age} ${t("years")}`,
                           profile.currentCity ||
                             profile.district,
                         ]
@@ -158,22 +138,20 @@ function SavedProfiles() {
 
                     <p className="profile-meta">
                       <FaGraduationCap />{" "}
-                      {profile.education || "Not Updated"}
+                      {profile.education || t("Not Updated")}
 
                       <br />
 
                       <FaBriefcase />{" "}
-                      {profile.occupationType ||
-                        "Not Updated"}
+                      {t(profile.occupationType) ||
+                        t("Not Updated")}
                     </p>
 
                     <div className="card-actions">
 
                       <Link
                         to={`/profile/${profile._id}`}
-                      >
-                        View Profile
-                      </Link>
+                      >{t("View Profile")}</Link>
 
                       <button
                         className="interest-button"
@@ -184,9 +162,7 @@ function SavedProfiles() {
                           background: "#d32f2f",
                           color: "#fff",
                         }}
-                      >
-                        Remove
-                      </button>
+                      >{t("Remove")}</button>
 
                     </div>
 

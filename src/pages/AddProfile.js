@@ -1,5 +1,8 @@
+import { useLanguage } from "../Language";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  useNavigate,
+} from "react-router-dom";
 import axios from "axios";
 import { API } from "../config/api";
 import "./ProfileSave.css";
@@ -113,6 +116,7 @@ const initialForm = {
 };
 
 function AddProfile() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [form, setForm] = useState(initialForm);
@@ -152,7 +156,7 @@ const handleSubmit = async () => {
 
     // എല്ലാ text fields add ചെയ്യുക
     Object.keys(form).forEach((key) => {
-      formData.append(key, form[key]);
+      formData.append(key, key === "hideMobile" ? false : form[key]);
     });
 
     // Profile Photo
@@ -199,18 +203,27 @@ const handleSubmit = async () => {
   return (
   <div className="member-editor" style={styles.page}>
     <div style={styles.container}>
-      <header className="editor-heading"><Link to="/my-dashboard">Back to my account</Link><p className="section-kicker">YOUR NAMAKKAL MATRIMONY PROFILE</p><h1>Tell your story</h1></header>
+      <header className="editor-heading"><p className="section-kicker">{t("YOUR NAMAKKAL MATRIMONY PROFILE")}</p><h1>{t("Tell your story")}</h1></header>
       {/* =========================
     SECTION 1 : PERSONAL DETAILS
 ========================= */}
 
 <div style={styles.section}>
-  <h3 style={styles.heading}>👤 Personal Details</h3>
+
+
+  <h3 style={styles.heading}>{t("👤 Personal Details")}</h3>
+<input
+    style={styles.input}
+    name="motherTongue"
+    placeholder={t("Mother Tongue")}
+    value={form.motherTongue}
+    onChange={handleChange}
+  />
 
   <input
     style={styles.input}
     name="name"
-    placeholder="Full Name"
+    placeholder={t("Full Name")}
     value={form.name}
     onChange={handleChange}
   />
@@ -220,7 +233,7 @@ const handleSubmit = async () => {
     style={styles.input}
     name="email"
     type="email"
-    placeholder="Email Address"
+    placeholder={t("Email Address")}
     value={form.email}
     onChange={handleChange}
   />
@@ -229,7 +242,7 @@ const handleSubmit = async () => {
     style={styles.input}
     name="password"
     type="password"
-    placeholder="Password"
+    placeholder={t("Password")}
     value={form.password}
     onChange={handleChange}
   />
@@ -238,7 +251,7 @@ const handleSubmit = async () => {
     style={styles.input}
     name="age"
     type="number"
-    placeholder="Age"
+    placeholder={t("Age")}
     value={form.age}
     onChange={handleChange}
   />
@@ -249,9 +262,9 @@ const handleSubmit = async () => {
     value={form.gender}
     onChange={handleChange}
   >
-    <option value="">Select Gender</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
+    <option value="">{t("Select Gender")}</option>
+    <option value="Male">{t("Male")}</option>
+    <option value="Female">{t("Female")}</option>
   </select>
 
   <input
@@ -265,7 +278,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="height"
-    placeholder="Height"
+    placeholder={t("Height")}
     value={form.height}
     onChange={handleChange}
   />
@@ -273,7 +286,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="weight"
-    placeholder="Weight"
+    placeholder={t("Weight")}
     value={form.weight}
     onChange={handleChange}
   />
@@ -281,7 +294,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="nativePlace"
-    placeholder="Native Place"
+    placeholder={t("Native Place")}
     value={form.nativePlace}
     onChange={handleChange}
   />
@@ -289,7 +302,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="currentCity"
-    placeholder="Current City"
+    placeholder={t("Current City")}
     value={form.currentCity}
     onChange={handleChange}
   />
@@ -297,7 +310,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="district"
-    placeholder="District"
+    placeholder={t("District")}
     value={form.district}
     onChange={handleChange}
   />
@@ -305,7 +318,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="state"
-    placeholder="State"
+    placeholder={t("State")}
     value={form.state}
     onChange={handleChange}
   />
@@ -313,7 +326,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="country"
-    placeholder="Country"
+    placeholder={t("Country")}
     value={form.country}
     onChange={handleChange}
   />
@@ -324,22 +337,22 @@ const handleSubmit = async () => {
     value={form.maritalStatus}
     onChange={handleChange}
   >
-    <option value="">Marital Status</option>
-    <option value="Never Married">Never Married</option>
-    <option value="Divorced">Divorced</option>
-    <option value="Widowed">Widowed</option>
+    <option value="">{t("Marital Status")}</option>
+    <option value="Never Married">{t("Never Married")}</option>
+    <option value="Divorced">{t("Divorced")}</option>
+    <option value="Widowed">{t("Widowed")}</option>
   </select>
   </div>
  
   {/* ================= CAREER ================= */}
 
 <div style={styles.section}>
-  <h3 style={styles.heading}>🎓Education & Career </h3>
+  <h3 style={styles.heading}>{t("🎓Education & Career")}</h3>
 
   <input
     style={styles.input}
     name="education"
-    placeholder="Highest Education"
+    placeholder={t("Highest Education")}
     value={form.education}
     onChange={handleChange}
   />
@@ -350,23 +363,23 @@ const handleSubmit = async () => {
     value={form.occupationType}
     onChange={handleChange}
   >
-    <option value="">Occupation Type</option>
-    <option value="Job">Job</option>
-    <option value="Both">Both</option>
-    <option value="Private Job">Private Job</option>
-    <option value="Government Job">Government Job</option>
-    <option value="Business">Business</option>
-    <option value="Self Employed">Self Employed</option>
-    <option value="Professional">Professional</option>
-    <option value="Farmer">Farmer</option>
-    <option value="Student">Student</option>
-    <option value="Other">Other</option>
+    <option value="">{t("Occupation Type")}</option>
+    <option value="Job">{t("Job")}</option>
+    <option value="Both">{t("Both")}</option>
+    <option value="Private Job">{t("Private Job")}</option>
+    <option value="Government Job">{t("Government Job")}</option>
+    <option value="Business">{t("Business")}</option>
+    <option value="Self Employed">{t("Self Employed")}</option>
+    <option value="Professional">{t("Professional")}</option>
+    <option value="Farmer">{t("Farmer")}</option>
+    <option value="Student">{t("Student")}</option>
+    <option value="Other">{t("Other")}</option>
   </select>
 
   <input
     style={styles.input}
     name="annualIncome"
-    placeholder="Annual Income"
+    placeholder={t("Annual Income")}
     value={form.annualIncome}
     onChange={handleChange}
   />
@@ -377,8 +390,8 @@ const handleSubmit = async () => {
     value={form.nri}
     onChange={handleChange}
   >
-    <option value="No">NRI - No</option>
-    <option value="Yes">NRI - Yes</option>
+    <option value="No">{t("NRI - No")}</option>
+    <option value="Yes">{t("NRI - Yes")}</option>
   </select>
   <JobDetails form={form} onChange={handleChange} inputStyle={styles.input} />
 
@@ -388,22 +401,22 @@ const handleSubmit = async () => {
     value={form.businessType}
     onChange={handleChange}
   >
-    <option value="">Business Type</option>
-    <option value="Manufacturing">Manufacturing</option>
-    <option value="Wholesale">Wholesale</option>
-    <option value="Retail">Retail</option>
-    <option value="IT">IT</option>
-    <option value="Construction">Construction</option>
-    <option value="Finance">Finance</option>
-    <option value="Healthcare">Healthcare</option>
-    <option value="Education">Education</option>
-    <option value="Other">Other</option>
+    <option value="">{t("Business Type")}</option>
+    <option value="Manufacturing">{t("Manufacturing")}</option>
+    <option value="Wholesale">{t("Wholesale")}</option>
+    <option value="Retail">{t("Retail")}</option>
+    <option value="IT">{t("IT")}</option>
+    <option value="Construction">{t("Construction")}</option>
+    <option value="Finance">{t("Finance")}</option>
+    <option value="Healthcare">{t("Healthcare")}</option>
+    <option value="Education">{t("Education")}</option>
+    <option value="Other">{t("Other")}</option>
   </select>
 
   <input
     style={styles.input}
     name="businessCategory"
-    placeholder="Business Category"
+    placeholder={t("Business Category")}
     value={form.businessCategory}
     onChange={handleChange}
   />
@@ -411,7 +424,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="businessLocation"
-    placeholder="Business Location"
+    placeholder={t("Business Location")}
     value={form.businessLocation}
     onChange={handleChange}
   />
@@ -419,7 +432,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="businessWebsite"
-    placeholder="Business Website"
+    placeholder={t("Business Website")}
     value={form.businessWebsite}
     onChange={handleChange}
   />
@@ -427,7 +440,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="yearsInBusiness"
-    placeholder="Years In Business"
+    placeholder={t("Years In Business")}
     value={form.yearsInBusiness}
     onChange={handleChange}
   />
@@ -435,7 +448,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="numberOfEmployees"
-    placeholder="Number of Employees"
+    placeholder={t("Number of Employees")}
     value={form.numberOfEmployees}
     onChange={handleChange}
   />
@@ -443,7 +456,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="numberOfBranches"
-    placeholder="Number of Branches"
+    placeholder={t("Number of Branches")}
     value={form.numberOfBranches}
     onChange={handleChange}
   />
@@ -451,7 +464,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="branchLocations"
-    placeholder="Branch Locations"
+    placeholder={t("Branch Locations")}
     value={form.branchLocations}
     onChange={handleChange}
   />
@@ -459,7 +472,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="socialMedia"
-    placeholder="Social Media Link"
+    placeholder={t("Social Media Link")}
     value={form.socialMedia}
     onChange={handleChange}
   />
@@ -469,12 +482,12 @@ const handleSubmit = async () => {
 {/* ================= FAMILY DETAILS ================= */}
 
 <div style={styles.section}>
-  <h3 style={styles.heading}>👨‍👩‍👧‍👦 Family Details</h3>
+  <h3 style={styles.heading}>{t("👨‍👩‍👧‍👦 Family Details")}</h3>
 
   <input
     style={styles.input}
     name="fatherName"
-    placeholder="Father Name"
+    placeholder={t("Father Name")}
     value={form.fatherName}
     onChange={handleChange}
   />
@@ -482,7 +495,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="fatherOccupation"
-    placeholder="Father Occupation"
+    placeholder={t("Father Occupation")}
     value={form.fatherOccupation}
     onChange={handleChange}
   />
@@ -490,7 +503,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="motherName"
-    placeholder="Mother Name"
+    placeholder={t("Mother Name")}
     value={form.motherName}
     onChange={handleChange}
   />
@@ -498,7 +511,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="motherOccupation"
-    placeholder="Mother Occupation"
+    placeholder={t("Mother Occupation")}
     value={form.motherOccupation}
     onChange={handleChange}
   />
@@ -507,7 +520,7 @@ const handleSubmit = async () => {
     type="number"
     style={styles.input}
     name="brothersCount"
-    placeholder="Number of Brothers"
+    placeholder={t("Number of Brothers")}
     value={form.brothersCount}
     onChange={handleChange}
   />
@@ -516,7 +529,7 @@ const handleSubmit = async () => {
     type="number"
     style={styles.input}
     name="brothersMarried"
-    placeholder="Married Brothers"
+    placeholder={t("Married Brothers")}
     value={form.brothersMarried}
     onChange={handleChange}
   />
@@ -525,7 +538,7 @@ const handleSubmit = async () => {
     type="number"
     style={styles.input}
     name="sistersCount"
-    placeholder="Number of Sisters"
+    placeholder={t("Number of Sisters")}
     value={form.sistersCount}
     onChange={handleChange}
   />
@@ -534,7 +547,7 @@ const handleSubmit = async () => {
     type="number"
     style={styles.input}
     name="sistersMarried"
-    placeholder="Married Sisters"
+    placeholder={t("Married Sisters")}
     value={form.sistersMarried}
     onChange={handleChange}
   />
@@ -545,9 +558,9 @@ const handleSubmit = async () => {
     value={form.familyType}
     onChange={handleChange}
   >
-    <option value="">Family Type</option>
-    <option value="Joint">Joint Family</option>
-    <option value="Nuclear">Nuclear Family</option>
+    <option value="">{t("Family Type")}</option>
+    <option value="Joint">{t("Joint Family")}</option>
+    <option value="Nuclear">{t("Nuclear Family")}</option>
   </select>
 
   <select
@@ -556,10 +569,10 @@ const handleSubmit = async () => {
     value={form.familyStatus}
     onChange={handleChange}
   >
-    <option value="">Family Status</option>
-    <option value="Middle Class">Middle Class</option>
-    <option value="Upper Middle Class">Upper Middle Class</option>
-    <option value="Rich">Rich</option>
+    <option value="">{t("Family Status")}</option>
+    <option value="Middle Class">{t("Middle Class")}</option>
+    <option value="Upper Middle Class">{t("Upper Middle Class")}</option>
+    <option value="Rich">{t("Rich")}</option>
   </select>
 
   
@@ -571,12 +584,12 @@ const handleSubmit = async () => {
 ========================= */}
 
 <div style={styles.section}>
-  <h3 style={styles.heading}>🕉 Religion Details</h3>
+  <h3 style={styles.heading}>{t("🛕 Religion & Horoscope")}</h3>
 
   <input
     style={styles.input}
     name="religion"
-    placeholder="Religion"
+    placeholder={t("Religion")}
     value={form.religion}
     onChange={handleChange}
   />
@@ -584,7 +597,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="caste"
-    placeholder="Caste"
+    placeholder={t("Caste")}
     value={form.caste}
     onChange={handleChange}
   />
@@ -592,39 +605,24 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="subCaste"
-    placeholder="Sub Caste"
+    placeholder={t("Sub Caste")}
     value={form.subCaste}
     onChange={handleChange}
   />
 
-  <input
-    style={styles.input}
-    name="motherTongue"
-    placeholder="Mother Tongue"
-    value={form.motherTongue}
-    onChange={handleChange}
-  />
+  
 
   <input
     style={styles.input}
     name="kuladeivam"
-    placeholder="Kuladeivam"
+    placeholder={t("Kuladeivam")}
     value={form.kuladeivam}
     onChange={handleChange}
   />
-</div>
-
-{/* =========================
-    SECTION 7 : HOROSCOPE
-========================= */}
-
-<div style={styles.section}>
-  <h3 style={styles.heading}>🔮 Horoscope Details</h3>
-
   <input
     style={styles.input}
     name="star"
-    placeholder="Star / Nakshatra"
+    placeholder={t("Star / Nakshatra")}
     value={form.star}
     onChange={handleChange}
   />
@@ -632,7 +630,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="rashi"
-    placeholder="Rashi"
+    placeholder={t("Rashi")}
     value={form.rashi}
     onChange={handleChange}
   />
@@ -640,7 +638,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="lagnam"
-    placeholder="Lagnam"
+    placeholder={t("Lagnam")}
     value={form.lagnam}
     onChange={handleChange}
   />
@@ -648,7 +646,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="gothram"
-    placeholder="Gothram"
+    placeholder={t("Gothram")}
     value={form.gothram}
     onChange={handleChange}
   />
@@ -659,8 +657,8 @@ const handleSubmit = async () => {
     value={form.sevvaiDosham}
     onChange={handleChange}
   >
-    <option value="No">Sevvai Dosham - No</option>
-    <option value="Yes">Sevvai Dosham - Yes</option>
+    <option value="No">{t("Sevvai Dosham - No")}</option>
+    <option value="Yes">{t("Sevvai Dosham - Yes")}</option>
   </select>
 
   <select
@@ -669,8 +667,8 @@ const handleSubmit = async () => {
     value={form.rahuKethuDosham}
     onChange={handleChange}
   >
-    <option value="No">Rahu Kethu Dosham - No</option>
-    <option value="Yes">Rahu Kethu Dosham - Yes</option>
+    <option value="No">{t("Rahu Kethu Dosham - No")}</option>
+    <option value="Yes">{t("Rahu Kethu Dosham - Yes")}</option>
   </select>
 
   <select
@@ -679,8 +677,8 @@ const handleSubmit = async () => {
     value={form.horoscopeAvailable}
     onChange={handleChange}
   >
-    <option value="No">Horoscope Available - No</option>
-    <option value="Yes">Horoscope Available - Yes</option>
+    <option value="No">{t("Horoscope Available - No")}</option>
+    <option value="Yes">{t("Horoscope Available - Yes")}</option>
   </select>
 
   <input
@@ -694,13 +692,13 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="birthPlace"
-    placeholder="Birth Place"
+    placeholder={t("Birth Place")}
     value={form.birthPlace}
     onChange={handleChange}
   />
 
 
-  <h4 style={styles.subHeading}>📄 Horoscope File</h4>
+  <h4 style={styles.subHeading}>{t("📄 Horoscope File")}</h4>
 
   <input
     type="file"
@@ -714,12 +712,12 @@ const handleSubmit = async () => {
 =========================== */}
 
 <div style={styles.section}>
-  <h3 style={styles.heading}>💖 Partner Preferences</h3>
+  <h3 style={styles.heading}>{t("💖 Partner Preferences")}</h3>
 
   <input
     style={styles.input}
     name="preferredAgeFrom"
-    placeholder="Preferred Age From"
+    placeholder={t("Preferred Age From")}
     value={form.preferredAgeFrom}
     onChange={handleChange}
   />
@@ -727,7 +725,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredAgeTo"
-    placeholder="Preferred Age To"
+    placeholder={t("Preferred Age To")}
     value={form.preferredAgeTo}
     onChange={handleChange}
   />
@@ -735,7 +733,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredHeight"
-    placeholder="Preferred Height"
+    placeholder={t("Preferred Height")}
     value={form.preferredHeight}
     onChange={handleChange}
   />
@@ -743,7 +741,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredEducation"
-    placeholder="Preferred Education"
+    placeholder={t("Preferred Education")}
     value={form.preferredEducation}
     onChange={handleChange}
   />
@@ -751,7 +749,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredOccupation"
-    placeholder="Preferred Occupation"
+    placeholder={t("Preferred Occupation")}
     value={form.preferredOccupation}
     onChange={handleChange}
   />
@@ -759,7 +757,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredReligion"
-    placeholder="Preferred Religion"
+    placeholder={t("Preferred Religion")}
     value={form.preferredReligion}
     onChange={handleChange}
   />
@@ -767,7 +765,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredCaste"
-    placeholder="Preferred Caste"
+    placeholder={t("Preferred Caste")}
     value={form.preferredCaste}
     onChange={handleChange}
   />
@@ -775,7 +773,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredLocation"
-    placeholder="Preferred Location"
+    placeholder={t("Preferred Location")}
     value={form.preferredLocation}
     onChange={handleChange}
   />
@@ -783,7 +781,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredStar"
-    placeholder="Preferred Star"
+    placeholder={t("Preferred Star")}
     value={form.preferredStar}
     onChange={handleChange}
   />
@@ -791,7 +789,7 @@ const handleSubmit = async () => {
   <input
     style={styles.input}
     name="preferredRashi"
-    placeholder="Preferred Rashi"
+    placeholder={t("Preferred Rashi")}
     value={form.preferredRashi}
     onChange={handleChange}
   />
@@ -802,8 +800,8 @@ const handleSubmit = async () => {
     value={form.acceptSevvaiDosham}
     onChange={handleChange}
   >
-    <option value="Yes">Accept Sevvai Dosham - Yes</option>
-    <option value="No">Accept Sevvai Dosham - No</option>
+    <option value="Yes">{t("Accept Sevvai Dosham - Yes")}</option>
+    <option value="No">{t("Accept Sevvai Dosham - No")}</option>
   </select>
 
   <select
@@ -812,14 +810,14 @@ const handleSubmit = async () => {
     value={form.horoscopeMatchingRequired}
     onChange={handleChange}
   >
-    <option value="Yes">Horoscope Matching Required</option>
-    <option value="No">Horoscope Matching Not Required</option>
+    <option value="Yes">{t("Horoscope Matching Required")}</option>
+    <option value="No">{t("Horoscope Matching Not Required")}</option>
   </select>
 
   <textarea
     style={{ ...styles.input, minHeight: 120 }}
     name="expectations"
-    placeholder="Additional Expectations"
+    placeholder={t("Additional Expectations")}
     value={form.expectations}
     onChange={handleChange}
   />
@@ -829,12 +827,12 @@ const handleSubmit = async () => {
         =========================================== */}
 
         <div style={styles.section}>
-          <h3 style={styles.heading}>🌾 Assets & Property</h3>
+          <h3 style={styles.heading}>{t("🌾 Assets & Property")}</h3>
 
           <input
             style={styles.input}
             name="landAcres"
-            placeholder="Land (Acres)"
+            placeholder={t("Land (Acres)")}
             value={form.landAcres}
             onChange={handleChange}
           />
@@ -842,7 +840,7 @@ const handleSubmit = async () => {
           <input
             style={styles.input}
             name="landValue"
-            placeholder="Land Value"
+            placeholder={t("Land Value")}
             value={form.landValue}
             onChange={handleChange}
           />
@@ -850,7 +848,7 @@ const handleSubmit = async () => {
           <input
             style={styles.input}
             name="house"
-            placeholder="House Details"
+            placeholder={t("House Details")}
             value={form.house}
             onChange={handleChange}
           />
@@ -858,7 +856,7 @@ const handleSubmit = async () => {
           <input
             style={styles.input}
             name="vehicle"
-            placeholder="Vehicle Details"
+            placeholder={t("Vehicle Details")}
             value={form.vehicle}
             onChange={handleChange}
           />
@@ -866,7 +864,7 @@ const handleSubmit = async () => {
           <textarea
             style={{ ...styles.input, minHeight: 120 }}
             name="otherAssets"
-            placeholder="Other Assets"
+            placeholder={t("Other Assets")}
             value={form.otherAssets}
             onChange={handleChange}
           />
@@ -878,17 +876,9 @@ const handleSubmit = async () => {
         =========================================== */}
 
         <div style={styles.section}>
-          <h3 style={styles.heading}>🔒 Privacy Settings</h3>
+          <h3 style={styles.heading}>{t("🔒 Privacy Settings")}</h3>
 
-          <label style={styles.checkbox}>
-            <input
-              type="checkbox"
-              name="hideMobile"
-              checked={form.hideMobile}
-              onChange={handleChange}
-            />
-            Hide Mobile Number
-          </label>
+          
 
           <label style={styles.checkbox}>
             <input
@@ -896,9 +886,7 @@ const handleSubmit = async () => {
               name="hideIncome"
               checked={form.hideIncome}
               onChange={handleChange}
-            />
-            Hide Annual Income
-          </label>
+            />{t("Hide Annual Income")}</label>
 
           <label style={styles.checkbox}>
             <input
@@ -906,9 +894,7 @@ const handleSubmit = async () => {
               name="hideCompany"
               checked={form.hideCompany}
               onChange={handleChange}
-            />
-            Hide Company Details
-          </label>
+            />{t("Hide Company Details")}</label>
 
           <label style={styles.checkbox}>
             <input
@@ -916,9 +902,7 @@ const handleSubmit = async () => {
               name="hidePhotos"
               checked={form.hidePhotos}
               onChange={handleChange}
-            />
-            Hide Photos
-          </label>
+            />{t("Hide Photos")}</label>
 
           <select
             style={styles.input}
@@ -926,17 +910,17 @@ const handleSubmit = async () => {
             value={form.profileVisibility}
             onChange={handleChange}
           >
-            <option value="Public">Public</option>
-            <option value="Members Only">Members Only</option>
-            <option value="Private">Private</option>
+            <option value="Public">{t("Public")}</option>
+            <option value="Members Only">{t("Members Only")}</option>
+            <option value="Private">{t("Private")}</option>
           </select>
         </div>
 
        
         <div style={styles.section}>
-  <h3 style={styles.heading}>📷 Photo Uploads</h3>
+  <h3 style={styles.heading}>{t("📷 Photo Uploads")}</h3>
 
-  <h4 style={styles.subHeading}>Profile Photo</h4>
+  <h4 style={styles.subHeading}>{t("Profile Photo")}</h4>
 
   <input
     type="file"
@@ -944,7 +928,7 @@ const handleSubmit = async () => {
     onChange={(e) => setImageFile(e.target.files[0])}
   />
 
-  <h4 style={styles.subHeading}>Profile Photos</h4>
+  <h4 style={styles.subHeading}>{t("Profile Photos")}</h4>
 
   <input
     type="file"
@@ -953,7 +937,7 @@ const handleSubmit = async () => {
     onChange={(e) => setProfilePhotos(Array.from(e.target.files))}
   />
 
-  <h4 style={styles.subHeading}>Family Photos</h4>
+  <h4 style={styles.subHeading}>{t("Family Photos")}</h4>
 
   <input
     type="file"
@@ -962,7 +946,7 @@ const handleSubmit = async () => {
     onChange={(e) => setFamilyPhotos(Array.from(e.target.files))}
   />
 
-  <h4 style={styles.subHeading}>Office Photos</h4>
+  <h4 style={styles.subHeading}>{t("Office Photos")}</h4>
 
   <input
     type="file"
@@ -978,12 +962,12 @@ const handleSubmit = async () => {
         ============================ */}
 
         <div style={styles.section}>
-          <h3 style={styles.heading}>📞 Contact Details</h3>
+          <h3 style={styles.heading}>{t("📞 Contact Details")}</h3>
 
           <input
             style={styles.input}
     name="mobile"
-            placeholder="Phone Number"
+            placeholder={t("Phone Number")}
     value={form.mobile}
             onChange={handleChange}
           />
@@ -995,7 +979,7 @@ const handleSubmit = async () => {
               resize: "vertical",
             }}
             name="address"
-            placeholder="Full Address"
+            placeholder={t("Full Address")}
             value={form.address}
             onChange={handleChange}
           />
@@ -1014,9 +998,7 @@ const handleSubmit = async () => {
           aria-busy={saving}
           style={styles.button}
           onClick={handleSubmit}
-        >
-          💍 Save Profile
-        </button>
+        >{t("💍 Save Profile")}</button>
 
       </div>
     </div>

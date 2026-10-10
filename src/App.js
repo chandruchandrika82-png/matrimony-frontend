@@ -16,6 +16,8 @@ import InterestRequests from "./pages/InterestRequests";
 import AccountSettings from "./pages/AccountSettings";
 import Footer from "./components/Footer";
 import "./styles/site.css";
+import { LanguageProvider } from "./Language";
+import "./styles/customer.css";
 
 function ProtectedRoute({ children }) {
   const location = useLocation();
@@ -25,7 +27,7 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <Router>
+    <LanguageProvider><Router>
       <Navbar />
 
       <Routes>
@@ -115,7 +117,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />
-    </Router>
+    </Router></LanguageProvider>
   );
 }
 

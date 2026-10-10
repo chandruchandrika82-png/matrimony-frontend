@@ -1,8 +1,11 @@
+import { useLanguage } from "../Language";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { API, resolveMediaUrl } from "../config/api";
 import "./ProfileDetails.css";
+import { profilePhotos } from "../components/ProfilePhotos";
+import { isConnected } from "../config/connections";
 
 const groups = [
   ["Personal details", [["Age", "age"], ["Gender", "gender"], ["Marital status", "maritalStatus"], ["Height", "height"], ["Native place", "nativePlace"], ["Current city", "currentCity"], ["District", "district"], ["Mother tongue", "motherTongue"]]],
@@ -13,10 +16,15 @@ const groups = [
 ];
 
 function ProfileDetails() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
+  const [myProfile, setMyProfile] = useState(null);
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+  useEffect(() => {
+    if (currentUser?._id) axios.get(`${API}/users/${currentUser._id}`).then(response => setMyProfile(response.data)).catch(() => setMyProfile(null));
+  }, [currentUser?._id]);
 
 useEffect(() => {
   fetchProfile();
@@ -37,14 +45,15 @@ const fetchProfile = async () => {
     catch (error) { alert(error.response?.data?.error || "Unable to delete the profile"); }
   };
 
-  if (profile === null) return <main className="profile-page"><div className="profile-loading">Loading profile...</div></main>;
-  if (!profile) return <main className="profile-page"><div className="profile-loading"><h1>Profile not found</h1><button onClick={() => navigate("/profiles")}>Back to profiles</button></div></main>;
+  if (profile === null) return <main className="profile-page"><div className="profile-loading">{t("Loading profile...")}</div></main>;
+  if (!profile) return <main className="profile-page"><div className="profile-loading"><h1>{t("Profile not found")}</h1></div></main>;
 
   const owner = profile._id === currentUser?._id;
-  const mainImage = resolveMediaUrl(profile.image) || "https://placehold.co/640x720?text=Photo+private";
+  const gallery = profilePhotos(profile, owner);
+  const mainImage = gallery[0] || "https://placehold.co/640x720?text=Photo+private";
   const preferredAge = profile.preferredAgeFrom && profile.preferredAgeTo ? `${profile.preferredAgeFrom} to ${profile.preferredAgeTo} years` : "";
   const valueFor = (key) => { if (key === "preferredAge") return preferredAge; if (key === "companyName" && profile.hideCompany) return "Private"; if (key === "annualIncome" && profile.hideIncome) return "Private"; return profile[key]; };
-  const gallery = profile.hidePhotos ? [] : profile.profilePhotos || [];
+  const connected = isConnected(myProfile, profile);
   const interested = profile.interestRequests?.some(
   (id) => id.toString() === currentUser?._id
 );
@@ -72,37 +81,33 @@ const sendInterest = async () => {
 };
 
   return <main className="profile-page"><div className="profile-shell">
-    <div className="profile-topbar"><button onClick={() => navigate(-1)}>Back to results</button>{owner && <div><button onClick={() => navigate(`/edit/${profile._id}`)}>Edit profile</button><button className="delete-profile" onClick={removeProfile}>Delete account</button></div>}</div>
-    <section className="profile-intro"><img src={mainImage} alt={profile.name || "Member profile"} /><div><p className="profile-kicker">Namakkal Matrimony member</p><h1>{profile.name || "Member"}</h1><p className="profile-summary">{[profile.age && `${profile.age} years`, profile.currentCity || profile.district || "Tamil Nadu", profile.maritalStatus].filter(Boolean).join(" | ")}</p><div className="profile-tags">{profile.profileVisibility && <span>{profile.profileVisibility}</span>}{profile.isPremium && <span>Premium</span>}{profile.businessVerified && <span>Verified</span>}</div>{!owner && <p className="contact-note">Contact information is shared only according to this member’s privacy settings.</p>}</div></section>
-    <div className="detail-sections">{groups.map(([title, fields]) => <section className="detail-section" key={title}><h2>{title}</h2><div className="detail-grid">{fields.map(([label, key]) => <div key={key}><span>{label}</span><strong>{valueFor(key) || "Not shared"}</strong></div>)}</div></section>)}</div>
-    {gallery.length > 0 && <section className="detail-section"><h2>Photos</h2><div className="profile-gallery">{gallery.map((photo, index) => <img key={photo} src={resolveMediaUrl(photo)} alt={`${profile.name || "Member"} ${index + 1}`} />)}</div></section>}
+    <div className="profile-topbar">{owner && <div><button onClick={() => navigate(`/edit/${profile._id}`)}>{t("Edit profile")}</button><button className="delete-profile" onClick={removeProfile}>{t("Delete account")}</button></div>}</div>
+    <section className="profile-intro"><img src={mainImage} alt={profile.name || t("Member profile")} /><div><p className="profile-kicker">{t("Namakkal Matrimony member")}</p><h1>{profile.name || t("Member")}</h1><p className="profile-summary">{[profile.age && `${profile.age} ${t("years")}`, profile.currentCity || profile.district || t("Tamil Nadu"), t(profile.maritalStatus)].filter(Boolean).join(" | ")}</p><div className="profile-tags">{profile.profileVisibility && <span>{profile.profileVisibility}</span>}{profile.isPremium && <span>{t("Premium")}</span>}{profile.businessVerified && <span>{t("Verified")}</span>}</div>{!owner && <p className="contact-note">{t("Contact information is shared only according to this member’s privacy settings.")}</p>}</div></section>
+    <div className="detail-sections">{groups.map(([title, fields]) => <section className="detail-section" key={title}><h2>{t(title)}</h2><div className="detail-grid">{fields.map(([label, key]) => <div key={key}><span>{t(label)}</span><strong>{valueFor(key) || t("Not shared")}</strong></div>)}</div></section>)}</div>
+    {gallery.length > 0 && <section className="detail-section"><h2>{t("Photos")}</h2><div className="profile-gallery">{gallery.map((photo, index) => <img key={photo} src={resolveMediaUrl(photo)} alt={`${profile.name || t("Member")} ${index + 1}`} />)}</div></section>}
 {!owner && (
   <section className="contact-section">
 
     <div>
-      <p className="profile-kicker">Interested in this profile?</p>
+      <p className="profile-kicker">{t("Interested in this profile?")}</p>
 
       <h2>{profile.name}</h2>
       
 
-      <p>
-        Send an interest request. Once accepted, contact details can be shared.
-      </p>
+      {!connected && <p>{t("Send an interest request. Once accepted, contact details can be shared.")}</p>}
          
-      <button
+      {connected ? <Link className="connected-chat" to={`/chat/${profile._id}`}>{t("Chat")}</Link> : <button
   className={interested ? "interest-active" : "interest-button"}
   onClick={sendInterest}
   disabled={interested}
 >
-  {interested ? "❤️ Interest Sent" : "💖 Send Interest"}
-</button>
+  {interested ? t("❤️ Interest Sent") : t("💖 Send Interest")}
+</button>}
 
       
     </div>
 
-    {!profile.hideMobile && (
-      <span>{profile.mobile || "Mobile number is private"}</span>
-    )}
+    <span>{profile.mobile || t("Not shared")}</span>
 
   </section>
 )}  </div></main>;

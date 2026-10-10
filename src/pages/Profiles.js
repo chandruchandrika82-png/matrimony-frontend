@@ -1,9 +1,12 @@
+import { useLanguage } from "../Language";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { API, resolveMediaUrl } from "../config/api";
+import { API } from "../config/api";
 import "./Profiles.css";
+import ProfilePhotos from "../components/ProfilePhotos";
+import { isConnected } from "../config/connections";
 
 const districts = [
   "",
@@ -21,6 +24,7 @@ const districts = [
 ];
 
 function Profiles() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -94,6 +98,7 @@ function Profiles() {
 
   const visibleProfiles = useMemo(() => {
     const matches = users.filter((user) => {
+      if (user._id === currentUser?._id) return true;
       const haystack = `${user.name || ""} ${
         user.currentCity || ""
       } ${user.nativePlace || ""}`.toLowerCase();
@@ -116,6 +121,8 @@ function Profiles() {
     });
 
     return [...matches].sort((first, second) => {
+      if (first._id === currentUser?._id) return -1;
+      if (second._id === currentUser?._id) return 1;
       if (sort === "age-low") {
         return (
           Number(first.age || 0) -
@@ -141,7 +148,7 @@ function Profiles() {
         new Date(first.createdAt || 0)
       );
     });
-  }, [filters, search, sort, users]);
+  }, [filters, search, sort, users, currentUser?._id]);
 
   const loggedInUserProfile = users.find(
     (user) => user._id === currentUser?._id
@@ -223,31 +230,19 @@ function Profiles() {
 
         <header className="directory-header">
           <div>
-            <button
-              className="back-btn"
-              onClick={() => navigate(-1)}
-            >
-              ← Back
-            </button>
+            
 
-            <p className="directory-kicker">
-              Member directory
-            </p>
+            <p className="directory-kicker">{t("Member directory")}</p>
 
-            <h1>Discover compatible profiles</h1>
+            <h1>{t("Discover compatible profiles")}</h1>
 
-            <p>
-              Refine your search across Namakkal and
-              Tamil Nadu.
-            </p>
+            <p>{t("Refine your search across Namakkal and Tamil Nadu.")}</p>
           </div>
 
           <button
             className="directory-primary"
             onClick={() => navigate("/my-profile")}
-          >
-            Complete my profile
-          </button>
+          >{t("Complete my profile")}</button>
         </header>
 
         <div className="directory-layout">
@@ -255,45 +250,34 @@ function Profiles() {
           <aside className="filter-panel">
 
             <div className="filter-title">
-              <h2>Filters</h2>
+              <h2>{t("Filters")}</h2>
 
-              <button onClick={resetFilters}>
-                Clear all
-              </button>
+              <button onClick={resetFilters}>{t("Clear all")}</button>
             </div>
 
-            <label>
-              Search
-
-              <input
+            <label>{t("Search")}<input
                 value={search}
                 onChange={(event) =>
                   setSearch(event.target.value)
                 }
-                placeholder="Name or place"
+                placeholder={t("Name or place")}
               />
             </label>
 
-            <label>
-              Looking for
-
-              <select
+            <label>{t("Looking for")}<select
                 name="gender"
                 value={filters.gender}
                 onChange={updateFilter}
               >
-                <option value="">Anyone</option>
-                <option value="Female">Women</option>
-                <option value="Male">Men</option>
+                <option value="">{t("Anyone")}</option>
+                <option value="Female">{t("Women")}</option>
+                <option value="Male">{t("Men")}</option>
               </select>
             </label>
 
             <div className="filter-age">
 
-              <label>
-                Age from
-
-                <input
+              <label>{t("Age from")}<input
                   name="minAge"
                   type="number"
                   value={filters.minAge}
@@ -302,10 +286,7 @@ function Profiles() {
                 />
               </label>
 
-              <label>
-                Age to
-
-                <input
+              <label>{t("Age to")}<input
                   name="maxAge"
                   type="number"
                   value={filters.maxAge}
@@ -316,17 +297,12 @@ function Profiles() {
 
             </div>
 
-            <label>
-              District
-
-              <select
+            <label>{t("District")}<select
                 name="district"
                 value={filters.district}
                 onChange={updateFilter}
               >
-                <option value="">
-                  All districts
-                </option>
+                <option value="">{t("All districts")}</option>
 
                 {districts
                   .slice(1)
@@ -335,23 +311,18 @@ function Profiles() {
                       key={district}
                       value={district}
                     >
-                      {district}
+                      {t(district)}
                     </option>
                   ))}
               </select>
             </label>
 
-            <label>
-              Religion
-
-              <select
+            <label>{t("Religion")}<select
                 name="religion"
                 value={filters.religion}
                 onChange={updateFilter}
               >
-                <option value="">
-                  All religions
-                </option>
+                <option value="">{t("All religions")}</option>
 
                 {[
                   "Hindu",
@@ -364,23 +335,18 @@ function Profiles() {
                     key={item}
                     value={item}
                   >
-                    {item}
+                    {t(item)}
                   </option>
                 ))}
               </select>
             </label>
 
-            <label>
-              Mother tongue
-
-              <select
+            <label>{t("Mother tongue")}<select
                 name="motherTongue"
                 value={filters.motherTongue}
                 onChange={updateFilter}
               >
-                <option value="">
-                  All languages
-                </option>
+                <option value="">{t("All languages")}</option>
 
                 {[
                   "Tamil",
@@ -394,7 +360,7 @@ function Profiles() {
                     key={item}
                     value={item}
                   >
-                    {item}
+                    {t(item)}
                   </option>
                 ))}
               </select>
@@ -409,34 +375,21 @@ function Profiles() {
               <p>
                 <strong>
                   {visibleProfiles.length}
-                </strong>{" "}
-                profiles found
-              </p>
+                </strong>{" "}{t("profiles found")}</p>
 
-              <label>
-                Sort by
-
-                <select
+              <label>{t("Sort by")}<select
                   value={sort}
                   onChange={(event) =>
                     setSort(event.target.value)
                   }
                 >
-                  <option value="newest">
-                    Newest
-                  </option>
+                  <option value="newest">{t("Newest")}</option>
 
-                  <option value="age-low">
-                    Age: low to high
-                  </option>
+                  <option value="age-low">{t("Age: low to high")}</option>
 
-                  <option value="age-high">
-                    Age: high to low
-                  </option>
+                  <option value="age-high">{t("Age: high to low")}</option>
 
-                  <option value="name">
-                    Name
-                  </option>
+                  <option value="name">{t("Name")}</option>
                 </select>
               </label>
 
@@ -444,9 +397,7 @@ function Profiles() {
 
             {loading ? (
 
-              <div className="directory-status">
-                Loading profiles...
-              </div>
+              <div className="directory-status">{t("Loading profiles...")}</div>
 
             ) : visibleProfiles.length ? (
 
@@ -461,6 +412,7 @@ function Profiles() {
 
                   const favorite =
                     isFavorite(profile._id);
+                  const connected = isConnected(loggedInUserProfile, profile);
 
                   return (
                     <article
@@ -468,30 +420,7 @@ function Profiles() {
                       key={profile._id}
                     >
 
-                      <Link
-                        to={`/profile/${profile._id}`}
-                        className="card-image-link"
-                      >
-                        <img
-                          src={
-                            resolveMediaUrl(
-                              profile.image
-                            ) ||
-                            "https://placehold.co/480x540?text=Photo+private"
-                          }
-                          alt={
-                            profile.name ||
-                            "Member profile"
-                          }
-                        />
-
-                        <span>
-                          {profile.profileVisibility ===
-                          "Private"
-                            ? "Private profile"
-                            : "Member profile"}
-                        </span>
-                      </Link>
+                      <ProfilePhotos profile={profile} owner={owned} />
 
                       <div className="directory-card-body">
 
@@ -500,19 +429,19 @@ function Profiles() {
                           <div>
                             <h2>
                               {profile.name ||
-                                "Member"}
+                                t("Member")}
                             </h2>
 
                             <p className="profile-location">
                               {[
                                 profile.age &&
-                                  `${profile.age} years`,
+                                  `${profile.age} ${t("years")}`,
                                 profile.currentCity ||
                                   profile.district,
                               ]
                                 .filter(Boolean)
                                 .join(" | ") ||
-                                "Tamil Nadu"}
+                                t("Tamil Nadu")}
                             </p>
                           </div>
 
@@ -531,13 +460,13 @@ function Profiles() {
                               }
                               title={
                                 favorite
-                                  ? "Remove from favorites"
-                                  : "Add to favorites"
+                                  ? t("Remove from favorites")
+                                  : t("Add to favorites")
                               }
                               aria-label={
                                 favorite
-                                  ? "Remove from favorites"
-                                  : "Add to favorites"
+                                  ? t("Remove from favorites")
+                                  : t("Add to favorites")
                               }
                             >
                               {favorite ? (
@@ -553,21 +482,19 @@ function Profiles() {
                         <p className="profile-meta">
                           {[
                             profile.education,
-                            profile.occupationType,
-                            profile.motherTongue,
+                            t(profile.occupationType),
+                            t(profile.motherTongue),
                           ]
                             .filter(Boolean)
                             .join(" | ") ||
-                            "Details shared on profile"}
+                            t("Details shared on profile")}
                         </p>
 
                         <div className="card-actions">
 
                           <Link
                             to={`/profile/${profile._id}`}
-                          >
-                            View profile
-                          </Link>
+                          >{t("View profile")}</Link>
 
                           {owned ? (
 
@@ -577,11 +504,9 @@ function Profiles() {
                                   `/edit/${profile._id}`
                                 )
                               }
-                            >
-                              Edit profile
-                            </button>
+                            >{t("Edit profile")}</button>
 
-                          ) : (
+                          ) : connected ? <Link className="connected-chat" to={`/chat/${profile._id}`}>{t("Chat")}</Link> : (
 
                             <button
                               className={
@@ -596,8 +521,8 @@ function Profiles() {
                               }
                             >
                               {interested
-                                ? "Interest sent"
-                                : "Send interest"}
+                                ? t("Interest sent")
+                                : t("Send interest")}
                             </button>
 
                           )}
@@ -615,18 +540,11 @@ function Profiles() {
             ) : (
 
               <div className="directory-status">
-                <h2>
-                  No profiles match these filters.
-                </h2>
+                <h2>{t("No profiles match these filters.")}</h2>
 
-                <p>
-                  Try clearing a filter or expanding
-                  your age range.
-                </p>
+                <p>{t("Try clearing a filter or expanding your age range.")}</p>
 
-                <button onClick={resetFilters}>
-                  Reset filters
-                </button>
+                <button onClick={resetFilters}>{t("Reset filters")}</button>
               </div>
 
             )}

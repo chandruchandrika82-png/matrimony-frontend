@@ -1,10 +1,12 @@
+import { useLanguage } from "../Language";
 import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { API, resolveMediaUrl } from "../config/api";
-import PageBack from "../components/PageBack";
+
 
 function Chat() {
+  const { t } = useLanguage();
   const { id } = useParams();
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -81,7 +83,7 @@ function Chat() {
 
         {/* HEADER */}
         <div style={styles.header}>
-          <PageBack fallback="/interest-requests" />
+          
 
           <div style={styles.userInfo}>
 
@@ -93,18 +95,16 @@ function Chat() {
                     : resolveMediaUrl(user.image)
                   : "https://via.placeholder.com/100"
               }
-              alt="profile"
+              alt={t("profile")}
               style={styles.avatar}
             />
 
             <div>
               <h2 style={styles.userName}>
-                {user?.name || "Loading..."}
+                {user?.name || t("Loading...")}
               </h2>
 
-              <p style={styles.online}>
-                Private conversation
-              </p>
+              <p style={styles.online}>{t("Private conversation")}</p>
             </div>
 
           </div>
@@ -166,9 +166,9 @@ function Chat() {
 
           <input
             type="text"
-            placeholder="Type your message..."
+            placeholder={t("Type your message...")}
             value={text}
-            aria-label="Message"
+            aria-label={t("Message")}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) =>
               e.key === "Enter" && sendMessage()
@@ -177,8 +177,8 @@ function Chat() {
           />
 
           <button
-            aria-label="Send message"
-            title="Send message"
+            aria-label={t("Send message")}
+            title={t("Send message")}
             onClick={sendMessage}
             style={styles.sendBtn}
           >

@@ -1,6 +1,7 @@
+import { useLanguage } from "../Language";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   FaSearch,
   FaClock,
@@ -8,11 +9,13 @@ import {
   FaUserFriends,
 } from "react-icons/fa";
 
-import { API, resolveMediaUrl } from "../config/api";
+import { API } from "../config/api";
 import "./Profiles.css";
+import ProfilePhotos from "../components/ProfilePhotos";
+import { isConnected } from "../config/connections";
 
 function InterestRequests() {
-  const navigate = useNavigate();
+  const { t } = useLanguage();
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
   const token = localStorage.getItem("token");
 
@@ -53,7 +56,7 @@ setMyProfile(me);
   const receivedRequests = useMemo(() => {
   if (!myProfile) return [];
 
-  return users.filter((user) =>
+  return users.filter((user) => !isConnected(myProfile, user) &&
     (myProfile.interestRequests || []).some(
       (id) => id.toString() === user._id
     )
@@ -61,20 +64,16 @@ setMyProfile(me);
 }, [users, myProfile]);
 
   const sentRequests = useMemo(() => {
-  return users.filter((user) =>
+  return users.filter((user) => !isConnected(myProfile, user) &&
     (user.interestRequests || []).some(
       (id) => id.toString() === currentUser?._id
     )
   );
-}, [users, currentUser]);
+}, [users, currentUser, myProfile]);
 
   const acceptedRequests = useMemo(() => {
-    return users.filter((user) =>
-      (user.acceptedRequests || []).some(
-        (id) => id.toString() === currentUser?._id
-      )
-    );
-  }, [users, currentUser]);
+    return users.filter((user) => user._id !== currentUser?._id && isConnected(myProfile, user));
+  }, [users, currentUser, myProfile]);
 
   const filteredProfiles = useMemo(() => {
     let data = [];
@@ -145,18 +144,11 @@ setMyProfile(me);
         <header className="directory-header">
 
   <div>
-    <button
-      className="back-button"
-      onClick={() => navigate(-1)}
-    >
-      ← Back
-    </button>
+    
 
-    <h1>Interest Requests</h1>
+    <h1>{t("Interest Requests")}</h1>
 
-    <p>
-      View received, sent and accepted interests.
-    </p>
+    <p>{t("View received, sent and accepted interests.")}</p>
   </div>
 
 </header>
@@ -178,8 +170,7 @@ setMyProfile(me);
             }
             onClick={() => setActiveTab("received")}
           >
-            <FaClock /> Received (
-            {receivedRequests.length})
+            <FaClock />{t("Received (")}{receivedRequests.length})
           </button>
 
           <button
@@ -190,8 +181,7 @@ setMyProfile(me);
             }
             onClick={() => setActiveTab("sent")}
           >
-            <FaUserFriends /> Sent (
-            {sentRequests.length})
+            <FaUserFriends />{t("Sent (")}{sentRequests.length})
           </button>
 
           <button
@@ -202,8 +192,7 @@ setMyProfile(me);
             }
             onClick={() => setActiveTab("accepted")}
           >
-            <FaCheckCircle /> Accepted (
-            {acceptedRequests.length})
+            <FaCheckCircle />{t("Accepted (")}{acceptedRequests.length})
           </button>
 
         </div>
@@ -226,7 +215,7 @@ setMyProfile(me);
 
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t("Search...")}
             value={search}
             onChange={(e) =>
               setSearch(e.target.value)
@@ -242,9 +231,7 @@ setMyProfile(me);
         </div>
 
         {loading ? (
-          <div className="directory-status">
-            Loading...
-          </div>
+          <div className="directory-status">{t("Loading...")}</div>
         ) : (
           <div className="profile-grid">
                         {filteredProfiles.length === 0 ? (
@@ -255,13 +242,9 @@ setMyProfile(me);
                   color="#8B0000"
                 />
 
-                <h2>
-                  No Interest Requests
-                </h2>
+                <h2>{t("No Interest Requests")}</h2>
 
-                <p>
-                  There are no profiles to display.
-                </p>
+                <p>{t("There are no profiles to display.")}</p>
 
               </div>
             ) : (
@@ -280,27 +263,7 @@ setMyProfile(me);
                     className="directory-card"
                   >
 
-                    <Link
-                      to={`/profile/${profile._id}`}
-                      className="card-image-link"
-                    >
-
-                      <img
-                        src={
-                          resolveMediaUrl(profile.image) ||
-                          "https://placehold.co/480x540?text=Photo"
-                        }
-                        alt={profile.name}
-                      />
-
-                      <span>
-                        {profile.profileVisibility ===
-                        "Private"
-                          ? "Private Profile"
-                          : "Member Profile"}
-                      </span>
-
-                    </Link>
+                    <ProfilePhotos profile={profile} />
 
                     <div className="directory-card-body">
 
@@ -314,7 +277,7 @@ setMyProfile(me);
 
                           {[
                             profile.age &&
-                              `${profile.age} years`,
+                              `${profile.age} ${t("years")}`,
                             profile.currentCity ||
                               profile.district,
                           ]
@@ -329,8 +292,8 @@ setMyProfile(me);
 
                         {[
                           profile.education,
-                          profile.occupationType,
-                          profile.motherTongue,
+                          t(profile.occupationType),
+                          t(profile.motherTongue),
                         ]
                           .filter(Boolean)
                           .join(" | ")}
@@ -341,9 +304,7 @@ setMyProfile(me);
 
                         <Link
                           to={`/profile/${profile._id}`}
-                        >
-                          View Profile
-                        </Link>
+                        >{t("View Profile")}</Link>
 
                         {received && (
                           <>
@@ -354,9 +315,7 @@ setMyProfile(me);
                                   profile._id
                                 )
                               }
-                            >
-                              Accept
-                            </button>
+                            >{t("Accept")}</button>
 
                             <button
                               style={{
@@ -375,9 +334,7 @@ setMyProfile(me);
                                   profile._id
                                 )
                               }
-                            >
-                              Reject
-                            </button>
+                            >{t("Reject")}</button>
                           </>
                         )}
 
@@ -387,18 +344,14 @@ setMyProfile(me);
                           >
                             <button
                               className="interest-active"
-                            >
-                              Chat
-                            </button>
+                            >{t("Chat")}</button>
                           </Link>
                         )}
 
                         {activeTab === "sent" && (
                           <button
                             className="interest-active"
-                          >
-                            Interest Sent
-                          </button>
+                          >{t("Interest Sent")}</button>
                         )}
 
                       </div>

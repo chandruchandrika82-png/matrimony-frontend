@@ -1,9 +1,11 @@
+import { useLanguage } from "../Language";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API } from "../config/api";
 
 function AccountSettings() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const loggedInUser = useMemo(() => {
@@ -193,7 +195,7 @@ function AccountSettings() {
   if (loading) {
     return (
       <div className="member-settings" style={styles.page}>
-        <div style={styles.card}>Loading...</div>
+        <div style={styles.card}>{t("Loading...")}</div>
       </div>
     );
   }
@@ -201,44 +203,40 @@ function AccountSettings() {
   return (
     <div className="member-settings" style={styles.page}>
       <div style={styles.wrapper}>
-        <button onClick={() => navigate(-1)} style={styles.backBtn}>
-          ← Back
-        </button>
+        
 
         <div style={styles.card}>
-          <h1 style={styles.title}>Account Settings</h1>
-          <p style={styles.subtitle}>
-            Update your profile details and verify contact information.
-          </p>
+          <h1 style={styles.title}>{t("Account Settings")}</h1>
+          <p style={styles.subtitle}>{t("Update your profile details and verify contact information.")}</p>
 
           <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Profile Details</h3>
+            <h3 style={styles.sectionTitle}>{t("Profile Details")}</h3>
 
-            <label style={styles.label}>Full Name</label>
+            <label style={styles.label}>{t("Full Name")}</label>
             <input
               name="name"
               value={profile.name}
               onChange={handleProfileChange}
               style={styles.input}
-              placeholder="Full name"
+              placeholder={t("Full name")}
             />
 
-            <label style={styles.label}>Mobile Number</label>
+            <label style={styles.label}>{t("Mobile Number")}</label>
             <input
               name="mobile"
               value={profile.mobile}
               onChange={handleProfileChange}
               style={styles.input}
-              placeholder="Mobile number"
+              placeholder={t("Mobile number")}
             />
 
-            <label style={styles.label}>Gmail / Email</label>
+            <label style={styles.label}>{t("Gmail / Email")}</label>
             <input
               name="email"
               value={profile.email}
               onChange={handleProfileChange}
               style={styles.input}
-              placeholder="Email"
+              placeholder={t("Email")}
             />
 
             <button
@@ -246,125 +244,117 @@ function AccountSettings() {
               style={styles.primaryBtn}
               disabled={savingProfile}
             >
-              {savingProfile ? "Saving..." : "Save Profile"}
+              {savingProfile ? t("Saving...") : t("Save Profile")}
             </button>
           </div>
 
           <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Verify Mobile Number</h3>
+            <h3 style={styles.sectionTitle}>{t("Verify Mobile Number")}</h3>
 
-            <label style={styles.label}>New Mobile Number</label>
+            <label style={styles.label}>{t("New Mobile Number")}</label>
             <input
               name="newMobile"
               value={otpForm.newMobile}
               onChange={handleOtpChange}
               style={styles.input}
-              placeholder="Enter new mobile number"
+              placeholder={t("Enter new mobile number")}
             />
 
             <div style={styles.row}>
               <button
                 onClick={() => sendOtp("mobile")}
                 style={styles.secondaryBtn}
-              >
-                Send OTP
-              </button>
+              >{t("Send OTP")}</button>
               <button
                 onClick={() => verifyOtp("mobile")}
                 style={styles.secondaryBtn}
                 disabled={!otpForm.mobileOtp}
-              >
-                Verify OTP
-              </button>
+              >{t("Verify OTP")}</button>
             </div>
 
-            <label style={styles.label}>OTP</label>
+            <label style={styles.label}>{t("OTP")}</label>
             <input
               name="mobileOtp"
               value={otpForm.mobileOtp}
               onChange={handleOtpChange}
               style={styles.input}
-              placeholder="Enter mobile OTP"
+              placeholder={t("Enter mobile OTP")}
             />
 
             {mobileVerified && (
-              <p style={styles.verifiedText}>Mobile verified ✅</p>
+              <p style={styles.verifiedText}>{t("Mobile verified ✅")}</p>
             )}
           </div>
 
           <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Verify Email</h3>
+            <h3 style={styles.sectionTitle}>{t("Verify Email")}</h3>
 
-            <label style={styles.label}>New Email</label>
+            <label style={styles.label}>{t("New Email")}</label>
             <input
               name="newEmail"
               value={otpForm.newEmail}
               onChange={handleOtpChange}
               style={styles.input}
-              placeholder="Enter new email"
+              placeholder={t("Enter new email")}
             />
 
             <div style={styles.row}>
               <button
                 onClick={() => sendOtp("email")}
                 style={styles.secondaryBtn}
-              >
-                Send OTP
-              </button>
+              >{t("Send OTP")}</button>
               <button
                 onClick={() => verifyOtp("email")}
                 style={styles.secondaryBtn}
                 disabled={!otpForm.emailOtp}
-              >
-                Verify OTP
-              </button>
+              >{t("Verify OTP")}</button>
             </div>
 
-            <label style={styles.label}>OTP</label>
+            <label style={styles.label}>{t("OTP")}</label>
             <input
               name="emailOtp"
               value={otpForm.emailOtp}
               onChange={handleOtpChange}
               style={styles.input}
-              placeholder="Enter email OTP"
+              placeholder={t("Enter email OTP")}
             />
 
             {emailVerified && (
-              <p style={styles.verifiedText}>Email verified ✅</p>
+              <p style={styles.verifiedText}>{t("Email verified ✅")}</p>
             )}
           </div>
 
           <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Change Password</h3>
+            <h3 style={styles.sectionTitle}>{t("Change Password")}</h3>
 
-            <label style={styles.label}>Current Password</label>
+            <label style={styles.label}>{t("Current Password")}</label>
             <input
               type="password"
               name="oldPassword"
               value={passwordForm.oldPassword}
               onChange={handlePasswordChange}
               style={styles.input}
-              placeholder="Current password"
+              placeholder={t("Current password")}
             />
 
-            <label style={styles.label}>New Password</label>
+            <label style={styles.label}>{t("New Password")}</label>
             <input
               type="password"
               name="newPassword"
               value={passwordForm.newPassword}
               onChange={handlePasswordChange}
               style={styles.input}
-              placeholder="New password"
+              placeholder={t("New password")}
             />
 
-            <label style={styles.label}>Confirm New Password</label>
+            <label style={styles.label}>{t("Confirm New Password")}</label>
             <input
               type="password"
               name="confirmPassword"
               value={passwordForm.confirmPassword}
               onChange={handlePasswordChange}
               style={styles.input}
-              placeholder="Confirm new password"
+              placeholder={t("Confirm new password")}
             />
 
             <button
@@ -372,7 +362,7 @@ function AccountSettings() {
               style={styles.primaryBtn}
               disabled={changingPassword}
             >
-              {changingPassword ? "Updating..." : "Change Password"}
+              {changingPassword ? t("Updating...") : t("Change Password")}
             </button>
           </div>
         </div>

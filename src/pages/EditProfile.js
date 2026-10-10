@@ -1,3 +1,4 @@
+import { useLanguage } from "../Language";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -5,6 +6,7 @@ import { API } from "../config/api";
 import JobDetails from "../components/JobDetails";
 
 function EditProfile() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -186,7 +188,7 @@ function EditProfile() {
           return;
         }
 
-        formData.append(key, form[key] ?? "");
+        formData.append(key, key === "hideMobile" ? false : form[key] ?? "");
       });
 
       if (profilePhotos.length > 0) {
@@ -215,11 +217,9 @@ function EditProfile() {
         formData.append("horoscopeFile", horoscopeFile);
       }
 
-      await axios.put(`${API}/users/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const { data } = await axios.put(`${API}/users/${id}`, formData);
+      const account = JSON.parse(localStorage.getItem("user") || "null");
+      if (account?._id === id) localStorage.setItem("user", JSON.stringify({ ...account, ...data }));
 
       alert("Profile Updated Successfully ❤️");
       navigate("/profiles");
@@ -260,26 +260,24 @@ function EditProfile() {
   return (
     <div className="member-editor" style={styles.page}>
       <div style={styles.container}>
-        <h1 style={styles.title}>✏️ Edit Profile</h1>
+        <h1 style={styles.title}>{t("✏️ Edit Profile")}</h1>
 
-        <button onClick={() => navigate(-1)} style={styles.backBtn}>
-          ← Back
-        </button>
+        
 
         <div style={styles.section}>
-          <h3>👤 Basic Information</h3>
+
+
+          <h3>{t("👤 Basic Information")}</h3>
 
           <button
             style={styles.updateBtn}
             onClick={handleUpdate}
-          >
-            💾 Update Profile
-          </button>
+          >{t("💾 Update Profile")}</button>
 
           <input
             style={styles.input}
             name="name"
-            placeholder="Name"
+            placeholder={t("Name")}
             value={form.name || ""}
             onChange={handleChange}
           />
@@ -288,7 +286,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="email"
-            placeholder="Email"
+            placeholder={t("Email")}
             value={form.email || ""}
             onChange={handleChange}
           />
@@ -304,7 +302,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="age"
-            placeholder="Age"
+            placeholder={t("Age")}
             value={form.age || ""}
             onChange={handleChange}
           />
@@ -312,7 +310,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="height"
-            placeholder="Height"
+            placeholder={t("Height")}
             value={form.height || ""}
             onChange={handleChange}
           />
@@ -320,7 +318,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="weight"
-            placeholder="Weight"
+            placeholder={t("Weight")}
             value={form.weight || ""}
             onChange={handleChange}
           />
@@ -331,12 +329,12 @@ function EditProfile() {
             value={form.gender || ""}
             onChange={handleChange}
           >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
+            <option value="">{t("Select Gender")}</option>
+            <option value="Male">{t("Male")}</option>
+            <option value="Female">{t("Female")}</option>
           </select>
 
-          <h3 style={styles.heading}>🖼 Main Profile Image</h3>
+          <h3 style={styles.heading}>{t("🖼 Main Profile Image")}</h3>
 
           <input
             type="file"
@@ -346,17 +344,24 @@ function EditProfile() {
           {form.image && (
             <img
               src={form.image}
-              alt="Profile"
+              alt={t("Profile")}
               style={styles.previewImage}
             />
           )}
 
-          <h3 style={styles.heading}>📍 Personal Details</h3>
+          <h3 style={styles.heading}>{t("📍 Personal Details")}</h3>
+<input
+            style={styles.input}
+            name="motherTongue"
+            placeholder={t("Mother Tongue")}
+            value={form.motherTongue || ""}
+            onChange={handleChange}
+          />
 
           <input
             style={styles.input}
             name="nativePlace"
-            placeholder="Native Place"
+            placeholder={t("Native Place")}
             value={form.nativePlace || ""}
             onChange={handleChange}
           />
@@ -364,7 +369,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="currentCity"
-            placeholder="Current City"
+            placeholder={t("Current City")}
             value={form.currentCity || ""}
             onChange={handleChange}
           />
@@ -372,7 +377,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="district"
-            placeholder="District"
+            placeholder={t("District")}
             value={form.district || ""}
             onChange={handleChange}
           />
@@ -380,7 +385,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="state"
-            placeholder="State"
+            placeholder={t("State")}
             value={form.state || ""}
             onChange={handleChange}
           />
@@ -388,17 +393,17 @@ function EditProfile() {
           <input
             style={styles.input}
             name="country"
-            placeholder="Country"
+            placeholder={t("Country")}
             value={form.country || ""}
             onChange={handleChange}
           />
 
-          <h3 style={styles.heading}>📞 Contact Details</h3>
+          <h3 style={styles.heading}>{t("📞 Contact Details")}</h3>
 
           <input
             style={styles.input}
             name="mobile"
-            placeholder="Phone"
+            placeholder={t("Phone")}
             value={form.mobile || ""}
             onChange={handleChange}
           />
@@ -406,7 +411,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="address"
-            placeholder="Address"
+            placeholder={t("Address")}
             value={form.address || ""}
             onChange={handleChange}
           />
@@ -417,17 +422,17 @@ function EditProfile() {
             value={form.maritalStatus || ""}
             onChange={handleChange}
           >
-            <option value="">Marital Status</option>
-            <option value="Never Married">Never Married</option>
-            <option value="Divorcee">Divorcee</option>
-            <option value="Widow">Widow</option>
-            <option value="Widower">Widower</option>
+            <option value="">{t("Marital Status")}</option>
+            <option value="Never Married">{t("Never Married")}</option>
+            <option value="Divorcee">{t("Divorcee")}</option>
+            <option value="Widow">{t("Widow")}</option>
+            <option value="Widower">{t("Widower")}</option>
           </select>
 
           <input
             style={styles.input}
             name="languages"
-            placeholder="Languages Known"
+            placeholder={t("Languages Known")}
             value={form.languages || ""}
             onChange={handleChange}
           />
@@ -435,12 +440,12 @@ function EditProfile() {
           <input
             style={styles.input}
             name="hobbies"
-            placeholder="Hobbies"
+            placeholder={t("Hobbies")}
             value={form.hobbies || ""}
             onChange={handleChange}
           />
 
-          <h3 style={styles.heading}>📸 Profile Photos</h3>
+          <h3 style={styles.heading}>{t("📸 Profile Photos")}</h3>
 
           <input
             type="file"
@@ -453,18 +458,18 @@ function EditProfile() {
               <img
                 key={index}
                 src={img}
-                alt="Profile"
+                alt={t("Profile")}
                 style={styles.galleryImage}
               />
             ))}
           </div>
 
-          <h3 style={styles.heading}>🎓 Education & Career</h3>
+          <h3 style={styles.heading}>{t("🎓 Education & Career")}</h3>
 
           <input
             style={styles.input}
             name="education"
-            placeholder="Education"
+            placeholder={t("Education")}
             value={form.education || ""}
             onChange={handleChange}
           />
@@ -475,10 +480,10 @@ function EditProfile() {
             value={form.occupationType || ""}
             onChange={handleChange}
           >
-            <option value="">Occupation Type</option>
-            <option value="Job">Job</option>
-            <option value="Business">Business</option>
-            <option value="Both">Both</option>
+            <option value="">{t("Occupation Type")}</option>
+            <option value="Job">{t("Job")}</option>
+            <option value="Business">{t("Business")}</option>
+            <option value="Both">{t("Both")}</option>
           </select>
 
 
@@ -490,16 +495,16 @@ function EditProfile() {
             value={form.businessType || ""}
             onChange={handleChange}
           >
-            <option value="">Business Type</option>
-            <option value="Job">Job</option>
-            <option value="Business">Business</option>
-            <option value="Both">Both</option>
+            <option value="">{t("Business Type")}</option>
+            <option value="Job">{t("Job")}</option>
+            <option value="Business">{t("Business")}</option>
+            <option value="Both">{t("Both")}</option>
           </select>
 
           <input
             style={styles.input}
             name="businessCategory"
-            placeholder="Business Category"
+            placeholder={t("Business Category")}
             value={form.businessCategory || ""}
             onChange={handleChange}
           />
@@ -507,7 +512,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="businessLocation"
-            placeholder="Business Location"
+            placeholder={t("Business Location")}
             value={form.businessLocation || ""}
             onChange={handleChange}
           />
@@ -515,7 +520,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="numberOfBranches"
-            placeholder="Number of Branches"
+            placeholder={t("Number of Branches")}
             value={form.numberOfBranches || ""}
             onChange={handleChange}
           />
@@ -523,7 +528,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="branchLocations"
-            placeholder="Branch Locations"
+            placeholder={t("Branch Locations")}
             value={form.branchLocations || ""}
             onChange={handleChange}
           />
@@ -531,7 +536,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="yearsInBusiness"
-            placeholder="Years in Business"
+            placeholder={t("Years in Business")}
             value={form.yearsInBusiness || ""}
             onChange={handleChange}
           />
@@ -539,7 +544,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="numberOfEmployees"
-            placeholder="Number of Employees"
+            placeholder={t("Number of Employees")}
             value={form.numberOfEmployees || ""}
             onChange={handleChange}
           />
@@ -547,7 +552,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="businessWebsite"
-            placeholder="Business Website"
+            placeholder={t("Business Website")}
             value={form.businessWebsite || ""}
             onChange={handleChange}
           />
@@ -555,7 +560,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="socialMedia"
-            placeholder="Social Media"
+            placeholder={t("Social Media")}
             value={form.socialMedia || ""}
             onChange={handleChange}
           />
@@ -563,7 +568,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="annualIncome"
-            placeholder="Annual Income"
+            placeholder={t("Annual Income")}
             value={form.annualIncome || ""}
             onChange={handleChange}
           />
@@ -574,12 +579,12 @@ function EditProfile() {
             value={form.nri || ""}
             onChange={handleChange}
           >
-            <option value="">NRI?</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
+            <option value="">{t("NRI?")}</option>
+            <option value="Yes">{t("Yes")}</option>
+            <option value="No">{t("No")}</option>
           </select>
 
-          <h3 style={styles.heading}>🏢 Office Photos</h3>
+          <h3 style={styles.heading}>{t("🏢 Office Photos")}</h3>
 
           <input
             type="file"
@@ -593,7 +598,7 @@ function EditProfile() {
                 <img
                   key={index}
                   src={photo}
-                  alt=""
+                  alt={t("")}
                   style={styles.galleryImage}
                 />
               ))}
@@ -608,14 +613,12 @@ function EditProfile() {
               borderBottom: "2px solid #f3d5d5",
               paddingBottom: 8,
             }}
-          >
-            🛕 Religion & Horoscope
-          </h3>
+          >{t("🛕 Religion & Horoscope")}</h3>
 
           <input
             style={styles.input}
             name="religion"
-            placeholder="Religion"
+            placeholder={t("Religion")}
             value={form.religion || ""}
             onChange={handleChange}
           />
@@ -623,7 +626,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="caste"
-            placeholder="Caste"
+            placeholder={t("Caste")}
             value={form.caste || ""}
             onChange={handleChange}
           />
@@ -631,15 +634,23 @@ function EditProfile() {
           <input
             style={styles.input}
             name="subCaste"
-            placeholder="Sub Caste"
+            placeholder={t("Sub Caste")}
             value={form.subCaste || ""}
             onChange={handleChange}
           />
 
           <input
             style={styles.input}
+            name="kuladeivam"
+            placeholder={t("Kuladeivam")}
+            value={form.kuladeivam || ""}
+            onChange={handleChange}
+          />
+
+          <input
+            style={styles.input}
             name="star"
-            placeholder="Star (Nakshatra)"
+            placeholder={t("Star (Nakshatra)")}
             value={form.star || ""}
             onChange={handleChange}
           />
@@ -647,7 +658,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="rashi"
-            placeholder="Rashi"
+            placeholder={t("Rashi")}
             value={form.rashi || ""}
             onChange={handleChange}
           />
@@ -655,7 +666,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="lagnam"
-            placeholder="Lagnam"
+            placeholder={t("Lagnam")}
             value={form.lagnam || ""}
             onChange={handleChange}
           />
@@ -663,7 +674,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="gothram"
-            placeholder="Gothram"
+            placeholder={t("Gothram")}
             value={form.gothram || ""}
             onChange={handleChange}
           />
@@ -674,9 +685,9 @@ function EditProfile() {
             value={form.dosha || ""}
             onChange={handleChange}
           >
-            <option value="">Dosha</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
+            <option value="">{t("Dosha")}</option>
+            <option value="Yes">{t("Yes")}</option>
+            <option value="No">{t("No")}</option>
           </select>
 
           <select
@@ -685,8 +696,8 @@ function EditProfile() {
             value={form.sevvaiDosham || "No"}
             onChange={handleChange}
           >
-            <option value="No">Sevvai Dosham - No</option>
-            <option value="Yes">Sevvai Dosham - Yes</option>
+            <option value="No">{t("Sevvai Dosham - No")}</option>
+            <option value="Yes">{t("Sevvai Dosham - Yes")}</option>
           </select>
 
           <select
@@ -695,8 +706,8 @@ function EditProfile() {
             value={form.rahuKethuDosham || "No"}
             onChange={handleChange}
           >
-            <option value="No">Rahu Kethu Dosham - No</option>
-            <option value="Yes">Rahu Kethu Dosham - Yes</option>
+            <option value="No">{t("Rahu Kethu Dosham - No")}</option>
+            <option value="Yes">{t("Rahu Kethu Dosham - Yes")}</option>
           </select>
 
           <select
@@ -705,8 +716,8 @@ function EditProfile() {
             value={form.horoscopeAvailable || "No"}
             onChange={handleChange}
           >
-            <option value="No">Horoscope Available - No</option>
-            <option value="Yes">Horoscope Available - Yes</option>
+            <option value="No">{t("Horoscope Available - No")}</option>
+            <option value="Yes">{t("Horoscope Available - Yes")}</option>
           </select>
 
           <input
@@ -720,14 +731,14 @@ function EditProfile() {
           <input
             style={styles.input}
             name="birthPlace"
-            placeholder="Birth Place"
+            placeholder={t("Birth Place")}
             value={form.birthPlace || ""}
             onChange={handleChange}
           />
 
           
 
-          <h3 style={styles.heading}>📄 Horoscope Upload</h3>
+          <h3 style={styles.heading}>{t("📄 Horoscope Upload")}</h3>
 
           <input
             type="file"
@@ -736,33 +747,15 @@ function EditProfile() {
           />
 
           {form.horoscopeFile && (
-            <p style={{ color: "#666" }}>📄 Horoscope file uploaded</p>
+            <p style={{ color: "#666" }}>{t("📄 Horoscope file uploaded")}</p>
           )}
 
-          <h3 style={styles.heading}>🕉 Additional Religious Details</h3>
-
-          <input
-            style={styles.input}
-            name="motherTongue"
-            placeholder="Mother Tongue"
-            value={form.motherTongue || ""}
-            onChange={handleChange}
-          />
-
-          <input
-            style={styles.input}
-            name="kuladeivam"
-            placeholder="Kuladeivam"
-            value={form.kuladeivam || ""}
-            onChange={handleChange}
-          />
-
-          <h3 style={styles.heading}>👨‍👩‍👧 Family Details</h3>
+          <h3 style={styles.heading}>{t("👨‍👩‍👧 Family Details")}</h3>
 
           <input
             style={styles.input}
             name="fatherName"
-            placeholder="Father Name"
+            placeholder={t("Father Name")}
             value={form.fatherName || ""}
             onChange={handleChange}
           />
@@ -770,7 +763,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="fatherOccupation"
-            placeholder="Father Occupation"
+            placeholder={t("Father Occupation")}
             value={form.fatherOccupation || ""}
             onChange={handleChange}
           />
@@ -778,7 +771,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="motherName"
-            placeholder="Mother Name"
+            placeholder={t("Mother Name")}
             value={form.motherName || ""}
             onChange={handleChange}
           />
@@ -786,7 +779,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="motherOccupation"
-            placeholder="Mother Occupation"
+            placeholder={t("Mother Occupation")}
             value={form.motherOccupation || ""}
             onChange={handleChange}
           />
@@ -794,7 +787,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="brothersCount"
-            placeholder="Number of Brothers"
+            placeholder={t("Number of Brothers")}
             value={form.brothersCount || ""}
             onChange={handleChange}
           />
@@ -802,7 +795,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="brothersMarried"
-            placeholder="Married Brothers"
+            placeholder={t("Married Brothers")}
             value={form.brothersMarried || ""}
             onChange={handleChange}
           />
@@ -810,7 +803,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="sistersCount"
-            placeholder="Number of Sisters"
+            placeholder={t("Number of Sisters")}
             value={form.sistersCount || ""}
             onChange={handleChange}
           />
@@ -818,7 +811,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="sistersMarried"
-            placeholder="Married Sisters"
+            placeholder={t("Married Sisters")}
             value={form.sistersMarried || ""}
             onChange={handleChange}
           />
@@ -829,9 +822,9 @@ function EditProfile() {
             value={form.familyType || ""}
             onChange={handleChange}
           >
-            <option value="">Family Type</option>
-            <option>Joint</option>
-            <option>Nuclear</option>
+            <option value="">{t("Family Type")}</option>
+            <option value="Joint">{t("Joint")}</option>
+            <option value="Nuclear">{t("Nuclear")}</option>
           </select>
 
           <select
@@ -840,13 +833,13 @@ function EditProfile() {
             value={form.familyStatus || ""}
             onChange={handleChange}
           >
-            <option value="">Family Status</option>
-            <option>Middle Class</option>
-            <option>Upper Middle Class</option>
-            <option>Rich</option>
+            <option value="">{t("Family Status")}</option>
+            <option value="Middle Class">{t("Middle Class")}</option>
+            <option value="Upper Middle Class">{t("Upper Middle Class")}</option>
+            <option value="Rich">{t("Rich")}</option>
           </select>
 
-          <h3 style={styles.heading}>👨‍👩‍👧 Family Photos</h3>
+          <h3 style={styles.heading}>{t("👨‍👩‍👧 Family Photos")}</h3>
 
           <input
             type="file"
@@ -860,19 +853,19 @@ function EditProfile() {
                 <img
                   key={index}
                   src={photo}
-                  alt=""
+                  alt={t("")}
                   style={styles.galleryImage}
                 />
               ))}
             </div>
           )}
 
-          <h3 style={styles.heading}>❤️ Partner Preferences</h3>
+          <h3 style={styles.heading}>{t("❤️ Partner Preferences")}</h3>
 
           <input
             style={styles.input}
             name="preferredAgeFrom"
-            placeholder="Preferred Age From"
+            placeholder={t("Preferred Age From")}
             value={form.preferredAgeFrom || ""}
             onChange={handleChange}
           />
@@ -880,7 +873,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredAgeTo"
-            placeholder="Preferred Age To"
+            placeholder={t("Preferred Age To")}
             value={form.preferredAgeTo || ""}
             onChange={handleChange}
           />
@@ -888,7 +881,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredHeight"
-            placeholder="Preferred Height"
+            placeholder={t("Preferred Height")}
             value={form.preferredHeight || ""}
             onChange={handleChange}
           />
@@ -896,7 +889,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredEducation"
-            placeholder="Preferred Education"
+            placeholder={t("Preferred Education")}
             value={form.preferredEducation || ""}
             onChange={handleChange}
           />
@@ -904,7 +897,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredOccupation"
-            placeholder="Preferred Occupation"
+            placeholder={t("Preferred Occupation")}
             value={form.preferredOccupation || ""}
             onChange={handleChange}
           />
@@ -912,7 +905,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredReligion"
-            placeholder="Preferred Religion"
+            placeholder={t("Preferred Religion")}
             value={form.preferredReligion || ""}
             onChange={handleChange}
           />
@@ -920,7 +913,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredCaste"
-            placeholder="Preferred Caste"
+            placeholder={t("Preferred Caste")}
             value={form.preferredCaste || ""}
             onChange={handleChange}
           />
@@ -928,7 +921,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="preferredLocation"
-            placeholder="Preferred Location"
+            placeholder={t("Preferred Location")}
             value={form.preferredLocation || ""}
             onChange={handleChange}
           />
@@ -936,22 +929,14 @@ function EditProfile() {
           <textarea
             style={styles.textarea}
             name="expectations"
-            placeholder="Additional Expectations"
+            placeholder={t("Additional Expectations")}
             value={form.expectations || ""}
             onChange={handleChange}
           />
 
-          <h3 style={styles.heading}>🔒 Privacy Settings</h3>
+          <h3 style={styles.heading}>{t("🔒 Privacy Settings")}</h3>
 
-          <label style={styles.checkbox}>
-            <input
-              type="checkbox"
-              name="hideMobile"
-              checked={form.hideMobile || false}
-              onChange={handleChange}
-            />
-            Hide Mobile Number
-          </label>
+          
 
           <label style={styles.checkbox}>
             <input
@@ -959,9 +944,7 @@ function EditProfile() {
               name="hideIncome"
               checked={form.hideIncome || false}
               onChange={handleChange}
-            />
-            Hide Annual Income
-          </label>
+            />{t("Hide Annual Income")}</label>
 
           <label style={styles.checkbox}>
             <input
@@ -969,9 +952,7 @@ function EditProfile() {
               name="hideCompany"
               checked={form.hideCompany || false}
               onChange={handleChange}
-            />
-            Hide Company Name
-          </label>
+            />{t("Hide Company Name")}</label>
 
           <label style={styles.checkbox}>
             <input
@@ -979,9 +960,7 @@ function EditProfile() {
               name="hidePhotos"
               checked={form.hidePhotos || false}
               onChange={handleChange}
-            />
-            Hide Personal Photos
-          </label>
+            />{t("Hide Personal Photos")}</label>
 
           <select
             style={styles.input}
@@ -989,12 +968,12 @@ function EditProfile() {
             value={form.profileVisibility || "Public"}
             onChange={handleChange}
           >
-            <option>Public</option>
-            <option>Members Only</option>
-            <option>Private</option>
+            <option value="Public">{t("Public")}</option>
+            <option value="Members Only">{t("Members Only")}</option>
+            <option value="Private">{t("Private")}</option>
           </select>
 
-          <h3 style={styles.heading}>⭐ Premium</h3>
+          <h3 style={styles.heading}>{t("⭐ Premium")}</h3>
 
           <label style={styles.checkbox}>
             <input
@@ -1006,9 +985,7 @@ function EditProfile() {
                   isPremium: e.target.checked,
                 })
               }
-            />
-            Premium Member
-          </label>
+            />{t("Premium Member")}</label>
 
           <label style={styles.checkbox}>
             <input
@@ -1020,9 +997,7 @@ function EditProfile() {
                   gstVerified: e.target.checked,
                 })
               }
-            />
-            GST Verified
-          </label>
+            />{t("GST Verified")}</label>
 
           <label style={styles.checkbox}>
             <input
@@ -1034,16 +1009,14 @@ function EditProfile() {
                   businessVerified: e.target.checked,
                 })
               }
-            />
-            Business Verified
-          </label>
+            />{t("Business Verified")}</label>
 
-          <h3 style={styles.heading}>🌾 Assets & Property</h3>
+          <h3 style={styles.heading}>{t("🌾 Assets & Property")}</h3>
 
           <input
             style={styles.input}
             name="landAcres"
-            placeholder="Land (Acres)"
+            placeholder={t("Land (Acres)")}
             value={form.landAcres || ""}
             onChange={handleChange}
           />
@@ -1051,7 +1024,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="landValue"
-            placeholder="Land Value"
+            placeholder={t("Land Value")}
             value={form.landValue || ""}
             onChange={handleChange}
           />
@@ -1059,7 +1032,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="house"
-            placeholder="House Details"
+            placeholder={t("House Details")}
             value={form.house || ""}
             onChange={handleChange}
           />
@@ -1067,7 +1040,7 @@ function EditProfile() {
           <input
             style={styles.input}
             name="vehicle"
-            placeholder="Vehicle Details"
+            placeholder={t("Vehicle Details")}
             value={form.vehicle || ""}
             onChange={handleChange}
           />
@@ -1075,7 +1048,7 @@ function EditProfile() {
           <textarea
             style={styles.textarea}
             name="otherAssets"
-            placeholder="Other Assets"
+            placeholder={t("Other Assets")}
             value={form.otherAssets || ""}
             onChange={handleChange}
           />
@@ -1091,9 +1064,7 @@ function EditProfile() {
 <button
   onClick={handleDelete}
   style={styles.deleteBtn}
->
-  🗑 Delete Profile
-</button>
+>{t("🗑 Delete Profile")}</button>
         </div>
       </div>
     </div>
