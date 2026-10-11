@@ -1,185 +1,53 @@
 import { useLanguage } from "../Language";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
-import {
-  FaHeart,
-  FaMapMarkerAlt,
-  FaGraduationCap,
-  FaBriefcase,
-} from "react-icons/fa";
-
+import { FiBookmark, FiMapPin, FiBookOpen, FiBriefcase, FiEye, FiMessageCircle, FiTrash2, FiArrowRight } from "react-icons/fi";
 import { API } from "../config/api";
 import ProfilePhotos from "../components/ProfilePhotos";
 import "./Profiles.css";
 
-function SavedProfiles() {
+export default function SavedProfiles() {
   const { t } = useLanguage();
-  const currentUser = JSON.parse(
-    localStorage.getItem("user") || "null"
-  );
-
+  const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+  const userId = currentUser?._id;
   const token = localStorage.getItem("token");
-
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [removing, setRemoving] = useState(null);
 
-  const loadFavorites = async () => {
+  const loadFavorites = useCallback(async () => {
+    setLoading(true); setError("");
     try {
-      setLoading(true);
-
-      const response = await axios.get(
-        `${API}/users/${currentUser._id}/favorites`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      const response = await axios.get(`${API}/users/${userId}/favorites`, { headers: { Authorization: `Bearer ${token}` } });
       setFavorites(response.data || []);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    } catch {
+      setError("Unable to load saved profiles. Please try again.");
+    } finally { setLoading(false); }
+  }, [userId, token]);
+  useEffect(() => { loadFavorites(); }, [loadFavorites]);
 
-  useEffect(() => {
-    loadFavorites();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const removeFavorite = async (favoriteId) => {
+  async function removeFavorite(id) {
+    setRemoving(id); setError("");
     try {
-      await axios.put(
-        `${API}/users/${currentUser._id}/favorite/${favoriteId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.put(`${API}/users/${userId}/favorite/${id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setFavorites(profiles => profiles.filter(profile => profile._id !== id));
+    } catch { setError("Unable to remove favorite"); }
+    finally { setRemoving(null); }
+  }
 
-      loadFavorites();
-
-    } catch (err) {
-      alert(
-        err.response?.data?.error ||
-          "Unable to remove favorite"
-      );
-    }
-  };
-
-  return (
-    <main className="directory-page">
-      <div className="directory-shell">
-        
-
-        <header className="directory-header">
-          <div>
-            <h1>{t("❤️ Saved Profiles")}</h1>
-
-            <p>{t("Your favourite Namakkal Matrimony matches.")}</p>
-          </div>
-        </header>
-
-        {loading ? (
-          <div className="directory-status">{t("Loading...")}</div>
-        ) : (
-          <div className="profile-grid">
-
-            {favorites.length === 0 ? (
-
-              <div className="directory-status">
-
-                <FaHeart
-                  size={60}
-                  color="#8B0000"
-                />
-
-                <h2>{t("No Saved Profiles")}</h2>
-
-                <p>{t("You haven't added any profiles to favourites yet.")}</p>
-
-              </div>
-
-            ) : (
-
-              favorites.map((profile) => (
-                                <article
-                  key={profile._id}
-                  className="directory-card"
-                >
-                  <ProfilePhotos profile={profile} />
-
-                  <div className="directory-card-body">
-
-                    <div>
-
-                      <h2>{profile.name}</h2>
-
-                      <p className="profile-location">
-                        <FaMapMarkerAlt />{" "}
-                        {[
-                          profile.age &&
-                            `${profile.age} ${t("years")}`,
-                          profile.currentCity ||
-                            profile.district,
-                        ]
-                          .filter(Boolean)
-                          .join(" | ")}
-                      </p>
-
-                    </div>
-
-                    <p className="profile-meta">
-                      <FaGraduationCap />{" "}
-                      {profile.education || t("Not Updated")}
-
-                      <br />
-
-                      <FaBriefcase />{" "}
-                      {t(profile.occupationType) ||
-                        t("Not Updated")}
-                    </p>
-
-                    <div className="card-actions">
-
-                      <Link
-                        to={`/profile/${profile._id}`}
-                      >{t("View Profile")}</Link>
-
-                      <button
-                        className="interest-button"
-                        onClick={() =>
-                          removeFavorite(profile._id)
-                        }
-                        style={{
-                          background: "#d32f2f",
-                          color: "#fff",
-                        }}
-                      >{t("Remove")}</button>
-
-                    </div>
-
-                  </div>
-
-                </article>
-
-              ))
-
-            )}
-
-          </div>
-
-        )}
-              </div>
-    </main>
-  );
+  return <main className="directory-page saved-page"><div className="directory-shell">
+    <header className="directory-header saved-heading"><div><p className="saved-eyebrow"><FiBookmark aria-hidden="true" />{t("Saved profiles")}{!loading && <span>{favorites.length}</span>}</p><h1>{t("Saved Profiles")}</h1><p>{t("Your favourite Namakkal Matrimony matches.")}</p></div><Link className="saved-browse" to="/profiles">{t("Browse profiles")}<FiArrowRight aria-hidden="true" /></Link></header>
+    {error && <div className="saved-error" role="alert"><span>{t(error)}</span><button onClick={loadFavorites} disabled={loading || Boolean(removing)}>{t("Try again")}</button></div>}
+    {loading ? <div className="directory-status" role="status">{t("Loading...")}</div> : favorites.length ? <div className="profile-grid saved-grid">
+      {favorites.map(profile => <article key={profile._id} className="directory-card saved-card" aria-label={profile.name}>
+        <ProfilePhotos profile={profile} owner={profile._id === userId} />
+        <div className="directory-card-body saved-card-body"><h2>{profile.name || t("Member")}</h2><p className="saved-demographics">{[profile.age && `${profile.age} ${t("years")}`, profile.gender && t(profile.gender)].filter(Boolean).join(" / ") || t("Not shared")}</p>
+          <dl className="saved-facts"><div><dt title={t("Location")}><FiMapPin aria-hidden="true" /><span className="saved-sr-only">{t("Location")}</span></dt><dd>{profile.currentCity || profile.district || t("Not shared")}</dd></div><div><dt title={t("Education")}><FiBookOpen aria-hidden="true" /><span className="saved-sr-only">{t("Education")}</span></dt><dd>{profile.education || t("Not shared")}</dd></div><div><dt title={t("Occupation")}><FiBriefcase aria-hidden="true" /><span className="saved-sr-only">{t("Occupation")}</span></dt><dd>{t(profile.occupationType) || t("Not shared")}</dd></div></dl>
+          <div className="card-actions saved-actions"><Link to={`/profile/${profile._id}`}><FiEye aria-hidden="true" />{t("View Profile")}</Link>{profile._id !== userId && <Link className="connected-chat" to={`/chat/${profile._id}`}><FiMessageCircle aria-hidden="true" />{t("Chat")}</Link>}</div>
+        </div><footer className="saved-card-footer"><button type="button" title={t("Remove from favorites")} disabled={Boolean(removing)} onClick={() => removeFavorite(profile._id)}><FiTrash2 aria-hidden="true" />{t(removing === profile._id ? "Removing..." : "Remove")}</button></footer>
+      </article>)}
+    </div> : !error && <div className="directory-status saved-empty"><FiBookmark aria-hidden="true" /><h2>{t("No Saved Profiles")}</h2><p>{t("You haven't added any profiles to favourites yet.")}</p><Link className="saved-browse" to="/profiles">{t("Browse profiles")}<FiArrowRight aria-hidden="true" /></Link></div>}
+  </div></main>;
 }
-
-export default SavedProfiles;

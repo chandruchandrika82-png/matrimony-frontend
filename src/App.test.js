@@ -43,7 +43,7 @@ test('accept removes pending request and makes connection available in accepted 
   open('/interest-requests'); await screen.findByRole('button', { name: 'Accept' });
   fireEvent.click(screen.getByRole('button', { name: 'Accept' }));
   await waitFor(() => expect(screen.queryByRole('button', { name: 'Accept' })).not.toBeInTheDocument());
-  fireEvent.click(screen.getByRole('button', { name: 'Accepted (2)' }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Accepted (2)' }));
   expect(screen.getAllByRole('link', { name: 'Chat' })).toHaveLength(2);
 });
 test('accepted profile view hides interest action and shows Chat for receiver too', async () => {
@@ -80,4 +80,103 @@ test('connection is recognized for sender and receiver, not pending interests', 
 test('private photos remain hidden from other members but available to the owner', () => {
   expect(profilePhotos({ ...me, hidePhotos: true })).toEqual([]);
   expect(profilePhotos({ ...me, hidePhotos: true }, true)).toHaveLength(3);
+});
+test('saved profiles retain View and Remove and offer direct Chat for each saved member', async () => {
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/favorites') ? [connected, pending] : me }));
+  open('/saved');
+  await screen.findAllByRole('link', { name: 'Chat' });
+  expect(screen.getAllByRole('link', { name: 'Chat' })).toHaveLength(2);
+  expect(screen.getAllByRole('link', { name: 'View Profile' })).toHaveLength(2);
+  expect(screen.getAllByRole('button', { name: 'Remove' })).toHaveLength(2);
+  expect(document.querySelector('a[href="/chat/pending"]')).toBeInTheDocument();
+});
+test('saved profile Chat does not require an extra connection lookup', async () => {
+  axios.get.mockImplementation(url => url.endsWith('/favorites') ? Promise.resolve({ data: [connected] }) : Promise.reject(new Error('Offline')));
+  open('/saved'); await screen.findByRole('button', { name: 'Remove' });
+  expect(screen.getByRole('link', { name: 'Chat' })).toHaveAttribute('href', '/chat/connected');
+  expect(axios.get).toHaveBeenCalledTimes(1);
+});
+test('saved profile removal updates the list and counter without hiding other cards', async () => {
+  axios.get.mockResolvedValue({ data: [connected, pending] });
+  axios.put.mockResolvedValue({ data: { message: 'Removed' } });
+  open('/saved'); await screen.findAllByRole('button', { name: 'Remove' });
+  fireEvent.click(screen.getAllByRole('button', { name: 'Remove' })[0]);
+  await waitFor(() => expect(screen.queryByRole('heading', { name: 'Connected Member' })).not.toBeInTheDocument());
+  expect(screen.getByRole('heading', { name: 'Pending Member' })).toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: 'Remove' })).toHaveLength(1);
+  expect(axios.put).toHaveBeenCalledWith(expect.stringContaining('/favorite/connected'), {}, expect.any(Object));
+});
+test('failed saved-profile load shows a retry instead of an empty collection', async () => {
+  axios.get.mockRejectedValueOnce(new Error('Offline')).mockResolvedValue({ data: [connected] });
+  open('/saved'); await screen.findByRole('alert');
+  expect(screen.queryByText('No Saved Profiles')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+  await screen.findByRole('heading', { name: 'Connected Member' });
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+test('chat loads authenticated messages and sends trimmed text without duplicate submission', async () => {
+  const message = { _id: 'message-one', sender: 'connected', text: 'Hello there', createdAt: '2026-10-11T06:00:00Z' };
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.includes('/messages/') ? [message] : connected }));
+  let finish;
+  axios.post.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+  open('/chat/connected'); await screen.findByText('Hello there');
+  const input = screen.getByRole('textbox', { name: 'Message' });
+  fireEvent.change(input, { target: { value: '  Nice to meet you  ' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Send message' }));
+  expect(screen.getByRole('button', { name: 'Sending...' })).toBeDisabled();
+  expect(axios.post).toHaveBeenCalledTimes(1);
+  expect(axios.post).toHaveBeenCalledWith(expect.stringContaining('/messages'), { sender: 'me', receiver: 'connected', text: 'Nice to meet you' }, expect.objectContaining({ headers: { Authorization: 'Bearer fixture' } }));
+  finish({ data: {} });
+  await waitFor(() => expect(input).toHaveValue(''));
+  expect(axios.get).toHaveBeenCalledWith(expect.stringContaining('/messages/me/connected'), expect.objectContaining({ headers: { Authorization: 'Bearer fixture' } }));
+});
+test('failed chat send keeps the draft and displays a clear error', async () => {
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.includes('/messages/') ? [] : connected }));
+  axios.post.mockRejectedValue(new Error('Offline'));
+  open('/chat/connected'); await screen.findByText('No messages yet');
+  const input = screen.getByRole('textbox', { name: 'Message' });
+  await waitFor(() => expect(input).not.toBeDisabled());
+  fireEvent.change(input, { target: { value: 'Keep this draft' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Send message' }));
+  await screen.findByRole('alert');
+  expect(input).toHaveValue('Keep this draft');
+  expect(screen.getByRole('button', { name: 'Send message' })).not.toBeDisabled();
+});
+test('chat offers retry when message loading fails', async () => {
+  let fail = true;
+  axios.get.mockImplementation(url => url.includes('/messages/') && fail ? Promise.reject(new Error('Offline')) : Promise.resolve({ data: url.includes('/messages/') ? [] : connected }));
+  open('/chat/connected'); await screen.findByRole('alert');
+  fail = false; fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+  await screen.findByText('No messages yet');
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+test('request tabs support keyboard navigation and search by district', async () => {
+  axios.get.mockResolvedValue({ data: [me, { ...pending, district: 'Namakkal' }, connected] });
+  open('/interest-requests'); await screen.findByRole('heading', { name: 'Pending Member' });
+  fireEvent.change(screen.getByRole('textbox', { name: 'Search requests' }), { target: { value: 'Namakkal' } });
+  expect(screen.getByRole('heading', { name: 'Pending Member' })).toBeInTheDocument();
+  fireEvent.change(screen.getByRole('textbox', { name: 'Search requests' }), { target: { value: 'no-match' } });
+  expect(screen.getByText('No matching profiles')).toBeInTheDocument();
+  fireEvent.click(within(screen.getByRole('tabpanel')).getByRole('button', { name: 'Clear search' }));
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Received (1)' }), { key: 'End' });
+  expect(screen.getByRole('tab', { name: 'Accepted (1)' })).toHaveAttribute('aria-selected', 'true');
+  expect(screen.getByRole('link', { name: 'Chat' })).toHaveAttribute('href', '/chat/connected');
+});
+test('rejecting a request removes it without adding an accepted connection', async () => {
+  axios.get.mockResolvedValue({ data: [me, pending, connected] });
+  axios.put.mockResolvedValue({ data: {} });
+  open('/interest-requests'); await screen.findByRole('button', { name: 'Reject' });
+  fireEvent.click(screen.getByRole('button', { name: 'Reject' }));
+  await screen.findByText('Interest request rejected');
+  expect(screen.getByRole('tab', { name: 'Received (0)' })).toBeInTheDocument();
+  expect(screen.getByRole('tab', { name: 'Accepted (1)' })).toBeInTheDocument();
+});
+test('failed acceptance keeps the pending request visible and shows an error', async () => {
+  axios.get.mockResolvedValue({ data: [me, pending, connected] });
+  axios.put.mockRejectedValue(new Error('Offline'));
+  open('/interest-requests'); await screen.findByRole('button', { name: 'Accept' });
+  fireEvent.click(screen.getByRole('button', { name: 'Accept' }));
+  await screen.findByRole('alert');
+  expect(screen.getByRole('heading', { name: 'Pending Member' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Accept' })).not.toBeDisabled();
 });
