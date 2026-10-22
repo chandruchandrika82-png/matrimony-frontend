@@ -7,6 +7,30 @@ jest.mock('axios');
 // CRA's Jest resolver does not understand the newer router export map.
 jest.mock('react-router-dom', () => jest.requireActual('../node_modules/react-router-dom/dist/index.js'), { virtual: true });
 jest.mock('react-router/dom', () => jest.requireActual('../node_modules/react-router/dist/development/dom-export.js'), { virtual: true });
+
+test('home search validates age range and preserves selected filters in the directory', async () => {
+  open('/');
+  fireEvent.change(screen.getByRole('combobox', { name: 'Minimum age' }), { target: { value: '35' } });
+  fireEvent.change(screen.getByRole('combobox', { name: 'Maximum age' }), { target: { value: '25' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Search profiles' }));
+  expect(screen.getByRole('alert')).toHaveTextContent('Minimum age must be lower');
+  fireEvent.change(screen.getByRole('combobox', { name: 'Maximum age' }), { target: { value: '40' } });
+  fireEvent.change(screen.getByLabelText('Religion'), { target: { value: 'Hindu' } });
+  fireEvent.change(screen.getByLabelText('Location'), { target: { value: 'Namakkal' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Search profiles' }));
+  await screen.findByText('Discover compatible profiles');
+  expect(screen.getByLabelText('Age from')).toHaveValue(35);
+  expect(screen.getByLabelText('Age to')).toHaveValue(40);
+  expect(screen.getByLabelText('Religion')).toHaveValue('Hindu');
+  expect(screen.getByLabelText('District')).toHaveValue('Namakkal');
+});
+test('home visitor calls to action lead to registration and search stays accessible', () => {
+  localStorage.clear(); open('/');
+  expect(screen.getByRole('link', { name: 'Start your journey' })).toHaveAttribute('href', '/register');
+  expect(screen.getAllByRole('link', { name: 'Create your profile' })[0]).toHaveAttribute('href', '/register');
+  expect(screen.getByRole('link', { name: 'Search profiles' })).toHaveAttribute('href', '#find-a-match');
+  expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+});
 const me = { _id: 'me', name: 'Own Member', age: 30, gender: 'Male', image: '/own.jpg', profilePhotos: ['/own.jpg', '/second.jpg'], familyPhotos: ['/family.jpg'], acceptedRequests: ['connected'], interestRequests: ['pending'], favoriteProfiles: [] };
 const connected = { _id: 'connected', name: 'Connected Member', age: 29, gender: 'Female', image: '/other.jpg', acceptedRequests: [], interestRequests: [] };
 const pending = { _id: 'pending', name: 'Pending Member', age: 28, gender: 'Female', image: '/pending.jpg', interestRequests: [] };
