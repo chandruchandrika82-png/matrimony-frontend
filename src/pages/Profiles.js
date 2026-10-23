@@ -6,6 +6,7 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { API } from "../config/api";
 import "./Profiles.css";
 import ProfilePhotos from "../components/ProfilePhotos";
+import ProfileCardFacts, { ProfileCardIdentity } from "../components/ProfileCardFacts";
 import { isConnected } from "../config/connections";
 
 const districts = [
@@ -426,24 +427,7 @@ function Profiles() {
 
                         <div className="profile-card-heading">
 
-                          <div>
-                            <h2>
-                              {profile.name ||
-                                t("Member")}
-                            </h2>
-
-                            <p className="profile-location">
-                              {[
-                                profile.age &&
-                                  `${profile.age} ${t("years")}`,
-                                profile.currentCity ||
-                                  profile.district,
-                              ]
-                                .filter(Boolean)
-                                .join(" | ") ||
-                                t("Tamil Nadu")}
-                            </p>
-                          </div>
+                          <ProfileCardIdentity profile={profile} />
 
                           {!owned && (
                             <button
@@ -479,16 +463,7 @@ function Profiles() {
 
                         </div>
 
-                        <p className="profile-meta">
-                          {[
-                            profile.education,
-                            t(profile.occupationType),
-                            t(profile.motherTongue),
-                          ]
-                            .filter(Boolean)
-                            .join(" | ") ||
-                            t("Details shared on profile")}
-                        </p>
+                        <ProfileCardFacts profile={profile} />
 
                         <div className="card-actions">
 
