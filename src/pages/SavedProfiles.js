@@ -15,15 +15,25 @@ export default function SavedProfiles() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [needsSignIn, setNeedsSignIn] = useState(false);
   const [removing, setRemoving] = useState(null);
 
   const loadFavorites = useCallback(async () => {
-    setLoading(true); setError("");
+    setLoading(true); setError(""); setNeedsSignIn(false);
+    if (!userId || !token) {
+      setError("Please sign in again to load your saved profiles."); setNeedsSignIn(true); setLoading(false); return;
+    }
     try {
-      const response = await axios.get(`${API}/users/${userId}/favorites`, { headers: { Authorization: `Bearer ${token}` } });
-      setFavorites(response.data || []);
-    } catch {
-      setError("Unable to load saved profiles. Please try again.");
+      const response = await axios.get(`${API}/users/${userId}/favorites`, { timeout: 20000, headers: { Authorization: `Bearer ${token}` } });
+      if (!Array.isArray(response.data)) { setError("The server returned an invalid saved-profile response. Please try again."); return; }
+      setFavorites(response.data.filter(profile => profile && profile._id));
+    } catch (err) {
+      const status = err.response?.status;
+      if ([401, 403].includes(status)) {
+        setError("Your saved-profile session is no longer valid. Please sign in again."); setNeedsSignIn(true);
+      } else if (status === 404) {
+        setError("This account could not be found. Please sign in again."); setNeedsSignIn(true);
+      } else setError(!err.response ? "Cannot reach the server. Please check your connection and try again." : "Unable to load saved profiles. Please try again.");
     } finally { setLoading(false); }
   }, [userId, token]);
   useEffect(() => { loadFavorites(); }, [loadFavorites]);
@@ -39,7 +49,7 @@ export default function SavedProfiles() {
 
   return <main className="directory-page saved-page"><div className="directory-shell">
     <header className="directory-header saved-heading"><div><p className="saved-eyebrow"><FiBookmark aria-hidden="true" />{t("Saved profiles")}{!loading && <span>{favorites.length}</span>}</p><h1>{t("Saved Profiles")}</h1><p>{t("Your favourite Namakkal Matrimony matches.")}</p></div><Link className="saved-browse" to="/profiles">{t("Browse profiles")}<FiArrowRight aria-hidden="true" /></Link></header>
-    {error && <div className="saved-error" role="alert"><span>{t(error)}</span><button onClick={loadFavorites} disabled={loading || Boolean(removing)}>{t("Try again")}</button></div>}
+    {error && <div className="saved-error" role="alert"><span>{t(error)}</span>{needsSignIn ? <Link className="saved-browse" to="/login" state={{ from: { pathname: '/saved' } }}>{t("Sign in")}</Link> : <button onClick={loadFavorites} disabled={loading || Boolean(removing)}>{t("Try again")}</button>}</div>}
     {loading ? <div className="directory-status" role="status">{t("Loading...")}</div> : favorites.length ? <div className="profile-grid saved-grid">
       {favorites.map(profile => <article key={profile._id} className="directory-card saved-card" aria-label={profile.name}>
         <ProfilePhotos profile={profile} owner={profile._id === userId} />

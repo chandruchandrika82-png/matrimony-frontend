@@ -107,7 +107,6 @@ const sendInterest = async () => {
       
     </div>
 
-    <span>{profile.mobile || t("Not shared")}</span>
 
   </section>
 )}  </div></main>;

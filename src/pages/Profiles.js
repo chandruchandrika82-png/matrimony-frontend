@@ -225,7 +225,7 @@ function Profiles() {
   };
 
   return (
-    <main className="directory-page">
+    <main className="directory-page browse-page">
       <div className="directory-shell">
 
         <header className="directory-header">

@@ -7,6 +7,7 @@ jest.mock('axios');
 // CRA's Jest resolver does not understand the newer router export map.
 jest.mock('react-router-dom', () => jest.requireActual('../node_modules/react-router-dom/dist/index.js'), { virtual: true });
 jest.mock('react-router/dom', () => jest.requireActual('../node_modules/react-router/dist/development/dom-export.js'), { virtual: true });
+beforeAll(() => { HTMLElement.prototype.scrollIntoView = jest.fn(); });
 
 test('home search validates age range and preserves selected filters in the directory', async () => {
   open('/');
@@ -27,8 +28,9 @@ test('home search validates age range and preserves selected filters in the dire
 test('home visitor calls to action lead to registration and search stays accessible', () => {
   localStorage.clear(); open('/');
   expect(screen.getByRole('link', { name: 'Start your journey' })).toHaveAttribute('href', '/register');
-  expect(screen.getAllByRole('link', { name: 'Create your profile' })[0]).toHaveAttribute('href', '/register');
-  expect(screen.getByRole('link', { name: 'Search profiles' })).toHaveAttribute('href', '#find-a-match');
+  expect(screen.getByRole('link', { name: 'Join Namakkal Matrimony' })).toHaveAttribute('href', '/register');
+  expect(screen.queryByRole('link', { name: 'Search profiles' })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Search profiles' })).toBeInTheDocument();
   expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 });
 const me = { _id: 'me', name: 'Own Member', age: 30, gender: 'Male', image: '/own.jpg', profilePhotos: ['/own.jpg', '/second.jpg'], familyPhotos: ['/family.jpg'], acceptedRequests: ['connected'], interestRequests: ['pending'], favoriteProfiles: [] };
@@ -77,7 +79,7 @@ test('accepted profile view hides interest action and shows Chat for receiver to
 test('mother tongue belongs to personal details and phone hide option is absent', async () => {
   open('/edit/me'); await screen.findByPlaceholderText('Mother Tongue');
   const mother = screen.getByPlaceholderText('Mother Tongue');
-  const heading = screen.getByText(/Personal Details/);
+  const heading = screen.getByRole('heading', { name: /Personal Details/ });
   expect(heading.compareDocumentPosition(mother) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   expect(document.querySelector('[name="hideMobile"]')).toBeNull();
   expect(screen.queryByText(/Additional Religious Details/)).not.toBeInTheDocument();
@@ -87,6 +89,22 @@ test('mother tongue belongs to personal details and phone hide option is absent'
   expect(religion.compareDocumentPosition(kuladeivam) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   expect(kuladeivam.compareDocumentPosition(screen.getByPlaceholderText('Star (Nakshatra)')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 });
+test('edit profile has labeled fields, no section shortcuts and protected save state', async () => {
+  let complete;
+  axios.put.mockImplementation(() => new Promise(resolve => { complete = resolve; }));
+  open('/edit/me');
+  await waitFor(() => expect(screen.getAllByRole('button', { name: 'Save Profile' })[0]).toBeEnabled());
+  expect(screen.getByLabelText('Name')).toHaveValue('Own Member');
+  fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Updated Member' } });
+  expect(screen.queryByRole('link', { name: 'Personal Details' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getAllByRole('button', { name: 'Save Profile' })[0]);
+  expect(screen.getAllByRole('button', { name: 'Updating...' })).toHaveLength(2);
+  expect(axios.put).toHaveBeenCalledTimes(1);
+  expect(axios.put.mock.calls[0][1].get('name')).toBe('Updated Member');
+  complete({ data: { ...me, name: 'Updated Member' } });
+  await screen.findByText('Discover compatible profiles');
+});
+
 test('add profile keeps religion and horoscope fields in one section', () => {
   open('/my-profile');
   const heading = screen.getByRole('heading', { name: /Religion & Horoscope/ });
@@ -203,4 +221,38 @@ test('failed acceptance keeps the pending request visible and shows an error', a
   await screen.findByRole('alert');
   expect(screen.getByRole('heading', { name: 'Pending Member' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Accept' })).not.toBeDisabled();
+});
+test('customer settings live inside the account dropdown and home headings have no forced breaks', () => {
+  open('/');
+  expect(within(screen.getByRole('navigation', { name: 'Main navigation' })).queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Account options' }));
+  expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/account-settings');
+  fireEvent.keyDown(document, { key: 'Escape' });
+  expect(screen.queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
+  expect(screen.getAllByRole('link', { name: 'Explore profiles' })).toHaveLength(1);
+  expect(document.querySelector('.hero-benefits')).toBeNull();
+  expect(document.querySelectorAll('.home-section-heading h2 br,.final-cta h2 br')).toHaveLength(0);
+});
+test('customer profile view does not display the member mobile number', async () => {
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/me') ? me : { ...connected, mobile: '0000000000', hideMobile: false } }));
+  open('/profile/connected'); await screen.findByRole('heading', { name: 'Connected Member', level: 1 });
+  expect(screen.queryByText('0000000000')).not.toBeInTheDocument();
+  expect(document.querySelector('a[href^="tel:"]')).toBeNull();
+});
+test('expired saved-profile session offers sign-in instead of repeated retries', async () => {
+  axios.get.mockRejectedValue({ response: { status: 401 } });
+  open('/saved'); await screen.findByRole('alert');
+  expect(screen.getByRole('alert')).toHaveTextContent('session is no longer valid');
+  expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login');
+  expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument();
+});
+test('saved profiles with missing user session never request an undefined account', async () => {
+  localStorage.removeItem('user'); open('/saved');
+  await screen.findByText('Please sign in again to load your saved profiles.');
+  expect(axios.get).not.toHaveBeenCalled();
+});
+test('deleted saved profiles are omitted without breaking the collection', async () => {
+  axios.get.mockResolvedValue({ data: [null, connected] });
+  open('/saved'); await screen.findByRole('heading', { name: 'Connected Member' });
+  expect(screen.getAllByRole('button', { name: 'Remove' })).toHaveLength(1);
 });

@@ -1,0 +1,37 @@
+.premium-editor{background:#f5f7f9!important}
+.member-editor.premium-editor>div{max-width:1100px!important;margin-inline:auto!important}
+.edit-page-header{display:flex;justify-content:space-between;align-items:center;gap:24px;padding-bottom:28px;border-bottom:1px solid #dce2e8}
+.edit-eyebrow{color:#8c1c32;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 10px}
+.edit-page-header h1{font-family:Georgia,serif;font-size:34px;line-height:1.25;margin:0;color:#30343b}
+.edit-member-name{font-size:14px;color:#74808d;margin:10px 0 0;overflow-wrap:anywhere}
+.premium-editor button{font-family:inherit;cursor:pointer}
+.edit-save,.edit-cancel{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 18px;min-height:44px;border:1px solid #8c1c32;border-radius:5px;background:#8c1c32;color:white;font-size:13px;font-weight:600}
+.edit-save:disabled{opacity:.6;cursor:wait}.edit-save svg,.edit-danger svg{flex-shrink:0;width:16px;height:16px}
+.edit-section-nav{display:flex;flex-wrap:wrap;gap:8px 22px;padding:20px 0;border-bottom:1px solid #dce2e8}
+.edit-section-nav a{color:#63707e;text-decoration:none;font-size:12px;padding:6px 0;line-height:1.5}.edit-section-nav a:hover{color:#8c1c32;text-decoration:underline}
+.edit-section{padding:32px 0;border-bottom:1px solid #dce2e8;scroll-margin-top:190px}
+.edit-section>header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.edit-section-number{display:grid;place-items:center;width:30px;height:30px;flex-shrink:0;border:1px solid #e6d2d8;border-radius:5px;color:#8c1c32;font-size:11px;font-weight:600;background:#fff}
+.premium-editor .edit-section h2{color:#303843;line-height:1.5;margin:0;font-family:inherit!important;font-size:19px!important;font-weight:600!important}
+.edit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px;align-items:start}
+.edit-field{display:flex;flex-direction:column;gap:9px;min-width:0;color:#596572;font-size:12px;line-height:1.5}
+.edit-fields .edit-field>input,.edit-fields .edit-field>select,.edit-fields .edit-field>textarea{width:100%;min-width:0;border:1px solid #d9e0e7!important;background:white!important;border-radius:5px!important;padding:12px 14px!important;font-size:14px!important;color:#343e49;min-height:46px;margin:0!important;font-family:inherit}
+.edit-field:has(textarea),.edit-fields>.career-details,.edit-fields>div,.edit-fields>p,.edit-upload{grid-column:1/-1}
+.edit-fields .career-details{background:transparent;border:0;padding:0;margin:0}
+.edit-fields .career-details h4{font-size:14px;margin-top:4px}
+.edit-fields>img{width:180px!important;height:200px!important;object-fit:contain!important;background:#edf0f3;border-radius:5px!important}
+.edit-fields>div:has(img){grid-template-columns:repeat(auto-fill,minmax(130px,160px))!important;margin:0!important;gap:12px!important}
+.edit-fields>div img{height:160px!important;object-fit:contain!important;background:#edf0f3;border-radius:5px!important;box-shadow:none!important}
+.edit-upload{display:flex;align-items:center;gap:16px;background:white;border:1px dashed #c8d1db;border-radius:5px;padding:20px;min-width:0;color:#8c1c32}
+.edit-upload>svg{width:22px;height:22px;flex-shrink:0}.edit-upload input{font-size:12px;min-width:0;width:100%;color:#63707e}
+.edit-upload input::file-selector-button{border:1px solid #d9e0e7;border-radius:4px;background:#f7f9fb;color:#434f5d;padding:9px 12px;margin-right:12px;font-family:inherit;cursor:pointer}
+.edit-fields>label:not(.edit-field):not(.edit-upload){font-size:13px!important;line-height:1.6;min-height:42px;margin:0!important}
+.edit-bottom-actions{display:flex;justify-content:flex-end;gap:12px;padding:24px 0}
+.premium-editor .edit-cancel{background:white!important;border-color:#d9e0e7;color:#63707e}
+.edit-danger{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;border-top:1px solid #dce2e8}
+.premium-editor .edit-danger h2{font:500 16px/1.5 Arial,sans-serif!important;margin:0;color:#697583!important}
+.premium-editor .edit-danger button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e3c8cf;border-radius:5px;background:white!important;color:#a23950;padding:10px 14px;font-size:12px}
+.premium-editor .edit-feedback{display:flex!important;align-items:center;justify-content:space-between;gap:16px;background:#fff0f3!important;color:#9c3048;border:1px solid #ebcbd4!important;border-radius:5px!important;padding:16px!important;margin-top:20px;font-size:13px}
+.edit-feedback button{background:white;border:1px solid #e3c8cf;color:inherit;border-radius:4px;padding:8px;flex-shrink:0}
+@media(max-width:720px){.edit-page-header{align-items:flex-start;gap:16px}.edit-page-header h1{font-size:28px}.edit-page-header>.edit-save{font-size:12px;padding:10px 12px}.edit-fields{grid-template-columns:minmax(0,1fr);gap:20px}.edit-section{padding:26px 0;scroll-margin-top:230px}.edit-section-nav{gap:4px 16px}.edit-upload{padding:16px;gap:12px}.edit-section h2{font-size:17px}.edit-bottom-actions>*{flex:1}.edit-danger{align-items:flex-start;flex-wrap:wrap}}
+@media(max-width:600px){.edit-page-header{flex-direction:column}.edit-page-header>.edit-save{width:100%}.edit-page-header>div{min-width:0;max-width:100%}}
