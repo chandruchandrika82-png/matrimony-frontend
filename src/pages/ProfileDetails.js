@@ -6,6 +6,7 @@ import { API, resolveMediaUrl } from "../config/api";
 import "./ProfileDetails.css";
 import { profilePhotos } from "../components/ProfilePhotos";
 import { isConnected } from "../config/connections";
+import FullProfileView from "../components/FullProfileView";
 
 const groups = [
   ["Personal details", [["Age", "age"], ["Gender", "gender"], ["Marital status", "maritalStatus"], ["Height", "height"], ["Native place", "nativePlace"], ["Current city", "currentCity"], ["District", "district"], ["Mother tongue", "motherTongue"]]],
@@ -15,12 +16,14 @@ const groups = [
   ["Partner preferences", [["Preferred age", "preferredAge"], ["Preferred education", "preferredEducation"], ["Preferred occupation", "preferredOccupation"], ["Preferred location", "preferredLocation"], ["Additional expectations", "expectations"]]],
 ];
 
-function ProfileDetails() {
+function ProfileDetails({ profileId }) {
   const { t } = useLanguage();
-  const { id } = useParams();
+  const { id: routeId } = useParams();
+  const id = profileId || routeId;
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [myProfile, setMyProfile] = useState(null);
+  const [savingFavorite, setSavingFavorite] = useState(false);
   const currentUser = JSON.parse(localStorage.getItem("user") || "null");
   useEffect(() => {
     if (currentUser?._id) axios.get(`${API}/users/${currentUser._id}`).then(response => setMyProfile(response.data)).catch(() => setMyProfile(null));
@@ -79,6 +82,19 @@ const sendInterest = async () => {
     alert(err.response?.data?.error || "Unable to send interest");
   }
 };
+
+  const favorite = myProfile?.favoriteProfiles?.some(item => String(item?._id || item) === String(profile._id)) || false;
+  const saveFavorite = async () => {
+    if (savingFavorite || !myProfile || !currentUser?._id) return;
+    setSavingFavorite(true);
+    try {
+      await axios.put(`${API}/users/${currentUser._id}/favorite/${profile._id}`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+      setMyProfile(current => ({ ...current, favoriteProfiles: favorite ? (current?.favoriteProfiles || []).filter(item => String(item?._id || item) !== String(profile._id)) : [...(current?.favoriteProfiles || []), profile._id] }));
+    } catch (error) {
+      alert(error.response?.data?.error || t("Unable to update favorite"));
+    } finally { setSavingFavorite(false); }
+  };
+  if (!profileId) return <FullProfileView profile={profile} owner={owner} gallery={gallery} groups={groups} valueFor={valueFor} connected={connected} interested={interested} sendInterest={sendInterest} removeProfile={removeProfile} favorite={favorite} saveFavorite={saveFavorite} savingFavorite={savingFavorite} />;
 
   return <main className="profile-page"><div className="profile-shell">
     <div className="profile-topbar">{owner && <div><button onClick={() => navigate(`/edit/${profile._id}`)}>{t("Edit profile")}</button><button className="delete-profile" onClick={removeProfile}>{t("Delete account")}</button></div>}</div>

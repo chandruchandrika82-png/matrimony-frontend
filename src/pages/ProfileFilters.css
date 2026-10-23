@@ -1,0 +1,20 @@
+.browse-page .match-filter-panel{padding:0;border:1px solid #e1dce1;border-radius:6px;overflow:hidden;background:#fff}
+.match-filter-form{display:flex;flex-direction:column;min-width:0}
+.match-filter-panel .filter-title{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#8c1c32;margin:0 0 20px;padding:16px}
+.match-filter-panel .filter-title h2{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:white;line-height:1.5;margin:0}
+.match-filter-panel .filter-title h2 svg{width:15px;height:15px;flex-shrink:0}
+.match-filter-panel .filter-title button{color:#fff;font-size:11px;padding:4px 0;line-height:1.5;flex-shrink:0}
+.match-filter-form>label,.match-filter-form>.filter-age{margin:0 16px 18px}
+.match-filter-form>label{font-weight:500;font-size:12px;gap:8px}
+.match-filter-form>label:has(select[name=gender]){display:none}
+.match-filter-panel .filter-age label{margin:0}
+.match-filter-panel input,.match-filter-panel select{background:#fff;border-color:#dce1e6;border-radius:5px;min-width:0;color:#535d69}
+.match-gender-options{border:0;border-bottom:1px solid #edf0f3;margin:0 16px 18px;padding:0 0 16px;display:flex;gap:10px;flex-wrap:wrap;min-width:0}
+.match-gender-options legend{font-size:12px;color:#626d79;margin-bottom:12px;padding:0}
+.match-filter-panel .match-gender-options label{display:inline-flex;align-items:center;gap:6px;font-weight:400;font-size:12px;margin:0;cursor:pointer}
+.match-filter-panel .match-gender-options input{width:15px;height:15px;accent-color:#a51f46;padding:0;margin:0;flex-shrink:0}
+.match-filter-submit{display:flex;align-items:center;justify-content:center;gap:9px;margin:2px 16px 20px;min-height:44px;background:#8c1c32;border:1px solid #8c1c32;border-radius:5px;color:white;font:600 12px/1.5 inherit;padding:10px;cursor:pointer}
+.match-filter-submit svg{width:14px;height:14px;flex-shrink:0}
+.browse-page .profile-results{scroll-margin-top:180px;min-width:0}
+@media(max-width:720px){.browse-page .match-filter-panel{display:block}.match-filter-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}.match-filter-panel .filter-title,.match-filter-form>.match-gender-options,.match-filter-form>.match-filter-submit{grid-column:1/-1}.match-filter-form>label,.match-filter-form>.filter-age{margin:0 14px 18px}.match-gender-options{margin-inline:14px}.match-filter-submit{margin-inline:14px}}
+@media(max-width:440px){.match-filter-form{grid-template-columns:minmax(0,1fr)}}

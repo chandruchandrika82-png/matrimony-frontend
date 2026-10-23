@@ -42,6 +42,23 @@ beforeEach(() => {
   axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/users') ? [pending, connected, me] : url.endsWith('/me') ? me : connected }));
 });
 function open(path) { window.history.replaceState({}, '', path); return render(<App />); }
+test('directory filters caste, education, marital status and occupation and clears all', async () => {
+  axios.get.mockResolvedValue({ data: [
+    { ...connected, caste: 'Kongu', education: 'B.E.', maritalStatus: 'Never Married', occupationType: 'Job' },
+    { ...pending, caste: 'Other', education: 'MBA', maritalStatus: 'Divorcee', occupationType: 'Business' },
+  ] });
+  open('/profiles'); await screen.findByText('Connected Member');
+  for (const [name, value] of [['Caste', 'Kongu'], ['Education', 'B.E.'], ['Marital status', 'Never Married'], ['Occupation', 'Job']]) {
+    fireEvent.change(screen.getByRole('combobox', { name }), { target: { value } });
+  }
+  expect(document.querySelectorAll('.directory-card')).toHaveLength(1);
+  expect(screen.queryByRole('heading', { name: 'Pending Member' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Search profiles' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
+  expect(document.querySelectorAll('.directory-card')).toHaveLength(2);
+  expect(screen.getByRole('radio', { name: 'Anyone' })).toBeChecked();
+});
+
 test('own profile is first, all photo groups are browsable, and accepted member has Chat', async () => {
   open('/profiles'); await screen.findByText('Connected Member');
   const cards = document.querySelectorAll('.directory-card');

@@ -1,4 +1,8 @@
 const customerTamil = {
+  "All castes": "அனைத்து சாதிகள்",
+  "Any education": "அனைத்து கல்வித் தகுதிகள்",
+  "Any status": "அனைத்து திருமண நிலைகள்",
+  "Any occupation": "அனைத்து தொழில்கள்",
   "Profile visibility": "சுயவிவரத் தெரிவுநிலை",
   "Birth Time": "பிறந்த நேரம்",
   "Unable to load profile. Please try again.": "சுயவிவரத்தை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.",

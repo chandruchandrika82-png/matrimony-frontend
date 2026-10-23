@@ -2,11 +2,13 @@ import { useLanguage } from "../Language";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaFilter, FaSearch } from "react-icons/fa";
 import { API } from "../config/api";
 import "./Profiles.css";
 import ProfilePhotos from "../components/ProfilePhotos";
 import ProfileCardFacts, { ProfileCardIdentity } from "../components/ProfileCardFacts";
+import ProfilePreview from "../components/ProfilePreview";
+import "./ProfileFilters.css";
 import { isConnected } from "../config/connections";
 
 const districts = [
@@ -37,6 +39,7 @@ function Profiles() {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState(null);
   const [search, setSearch] = useState("");
 
   const [filters, setFilters] = useState({
@@ -46,6 +49,10 @@ function Profiles() {
     district: "",
     religion: "",
     motherTongue: "",
+    caste: "",
+    education: "",
+    maritalStatus: "",
+    occupationType: "",
   });
 
   const [sort, setSort] = useState("newest");
@@ -94,6 +101,10 @@ function Profiles() {
       district: "",
       religion: "",
       motherTongue: "",
+      caste: "",
+      education: "",
+      maritalStatus: "",
+      occupationType: "",
     });
   };
 
@@ -116,6 +127,10 @@ function Profiles() {
           user.district === filters.district) &&
         (!filters.religion ||
           user.religion === filters.religion) &&
+        (!filters.caste || user.caste === filters.caste) &&
+        (!filters.education || user.education === filters.education) &&
+        (!filters.maritalStatus || user.maritalStatus === filters.maritalStatus) &&
+        (!filters.occupationType || user.occupationType === filters.occupationType) &&
         (!filters.motherTongue ||
           user.motherTongue === filters.motherTongue)
       );
@@ -248,12 +263,16 @@ function Profiles() {
 
         <div className="directory-layout">
 
-          <aside className="filter-panel">
+          <aside className="filter-panel match-filter-panel">
+            <form className="match-filter-form" onSubmit={event => {
+              event.preventDefault();
+              document.querySelector('.profile-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}>
 
             <div className="filter-title">
-              <h2>{t("Filters")}</h2>
+              <h2><FaFilter aria-hidden="true" />{t("Filters")}</h2>
 
-              <button onClick={resetFilters}>{t("Clear all")}</button>
+              <button type="button" onClick={resetFilters}>{t("Clear all")}</button>
             </div>
 
             <label>{t("Search")}<input
@@ -275,6 +294,10 @@ function Profiles() {
                 <option value="Male">{t("Men")}</option>
               </select>
             </label>
+
+            <fieldset className="match-gender-options"><legend>{t("Looking for")}</legend>
+              {[["", "Anyone"], ["Female", "Female"], ["Male", "Male"]].map(([value, label]) => <label key={label}><input type="radio" name="gender" value={value} checked={filters.gender === value} onChange={updateFilter} /><span>{t(label)}</span></label>)}
+            </fieldset>
 
             <div className="filter-age">
 
@@ -367,6 +390,17 @@ function Profiles() {
               </select>
             </label>
 
+            {[
+              ["caste", "Caste", "All castes"],
+              ["education", "Education", "Any education"],
+              ["maritalStatus", "Marital status", "Any status"],
+              ["occupationType", "Occupation", "Any occupation"],
+            ].map(([key, label, empty]) => <label key={key}>{t(label)}<select name={key} value={filters[key]} onChange={updateFilter}>
+              <option value="">{t(empty)}</option>
+              {[...new Set(users.map(user => user[key]).filter(value => typeof value === "string" && value.trim()))].sort((a, b) => a.localeCompare(b)).map(value => <option key={value} value={value}>{t(value)}</option>)}
+            </select></label>)}
+            <button type="submit" className="match-filter-submit"><FaSearch aria-hidden="true" />{t("Search profiles")}</button>
+            </form>
           </aside>
 
           <section className="profile-results">
@@ -469,6 +503,11 @@ function Profiles() {
 
                           <Link
                             to={`/profile/${profile._id}`}
+                            onClick={(event) => {
+                              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                              event.preventDefault();
+                              setPreview(profile);
+                            }}
                           >{t("View profile")}</Link>
 
                           {owned ? (
@@ -528,6 +567,7 @@ function Profiles() {
 
         </div>
       </div>
+      {preview && <ProfilePreview profile={preview} owner={preview._id === currentUser?._id} onClose={() => setPreview(null)} />}
     </main>
   );
 }
