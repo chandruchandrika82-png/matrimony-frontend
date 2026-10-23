@@ -82,8 +82,11 @@ const sendInterest = async () => {
 
   return <main className="profile-page"><div className="profile-shell">
     <div className="profile-topbar">{owner && <div><button onClick={() => navigate(`/edit/${profile._id}`)}>{t("Edit profile")}</button><button className="delete-profile" onClick={removeProfile}>{t("Delete account")}</button></div>}</div>
+    <div className="profile-overview-layout">
     <section className="profile-intro"><img src={mainImage} alt={profile.name || t("Member profile")} /><div><p className="profile-kicker">{t("Namakkal Matrimony member")}</p><h1>{profile.name || t("Member")}</h1><p className="profile-summary">{[profile.age && `${profile.age} ${t("years")}`, profile.currentCity || profile.district || t("Tamil Nadu"), t(profile.maritalStatus)].filter(Boolean).join(" | ")}</p><div className="profile-tags">{profile.profileVisibility && <span>{profile.profileVisibility}</span>}{profile.isPremium && <span>{t("Premium")}</span>}{profile.businessVerified && <span>{t("Verified")}</span>}</div>{!owner && <p className="contact-note">{t("Contact information is shared only according to this member’s privacy settings.")}</p>}</div></section>
-    <div className="detail-sections">{groups.map(([title, fields]) => <section className="detail-section" key={title}><h2>{t(title)}</h2><div className="detail-grid">{fields.map(([label, key]) => <div key={key}><span>{t(label)}</span><strong>{valueFor(key) || t("Not shared")}</strong></div>)}</div></section>)}</div>
+    {groups.slice(0, 1).map(([title, fields]) => <section className="detail-section profile-personal-details" key={title}><h2>{t(title)}</h2><div className="detail-grid">{fields.map(([label, key]) => <div key={key}><span>{t(label)}</span><strong>{valueFor(key) || t("Not shared")}</strong></div>)}</div></section>)}
+    </div>
+    <div className="detail-sections">{groups.slice(1).map(([title, fields]) => <section className="detail-section" key={title}><h2>{t(title)}</h2><div className="detail-grid">{fields.map(([label, key]) => <div key={key}><span>{t(label)}</span><strong>{valueFor(key) || t("Not shared")}</strong></div>)}</div></section>)}</div>
     {gallery.length > 0 && <section className="detail-section"><h2>{t("Photos")}</h2><div className="profile-gallery">{gallery.map((photo, index) => <img key={photo} src={resolveMediaUrl(photo)} alt={`${profile.name || t("Member")} ${index + 1}`} />)}</div></section>}
 {!owner && (
   <section className="contact-section">
