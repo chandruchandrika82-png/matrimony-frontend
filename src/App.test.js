@@ -27,8 +27,11 @@ test('home search validates age range and preserves selected filters in the dire
 });
 test('home visitor calls to action lead to registration and search stays accessible', () => {
   localStorage.clear(); open('/');
+  expect(screen.getByRole('link', { name: 'New Varan Kongu Thirumana Matrimony home' })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'New Varan Kongu Thirumana Matrimony' })).toBeInTheDocument();
+  expect(screen.queryByText('Namakkal Matrimony')).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Start your journey' })).toHaveAttribute('href', '/register');
-  expect(screen.getByRole('link', { name: 'Join Namakkal Matrimony' })).toHaveAttribute('href', '/register');
+  expect(screen.getByRole('link', { name: 'Join New Varan Kongu Thirumana Matrimony' })).toHaveAttribute('href', '/register');
   expect(screen.queryByRole('link', { name: 'Search profiles' })).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Search profiles' })).toBeInTheDocument();
   expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);

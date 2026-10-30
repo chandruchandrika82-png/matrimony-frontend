@@ -24,7 +24,7 @@ export default function FullProfileView({ profile, owner, gallery, groups, value
         </div>
       </div>
       <div className="member-summary profile-intro">
-        <p className="member-label">{t("Namakkal Matrimony member")}{profile.businessVerified && <FiCheckCircle aria-label={t("Verified")} />}</p>
+        <p className="member-label">{t("New Varan Kongu Thirumana Matrimony member")}{profile.businessVerified && <FiCheckCircle aria-label={t("Verified")} />}</p>
         <h1>{profile.name || t("Member")}</h1>
         <p className="member-demographics">{[profile.age && `${profile.age} ${t("years")}`, profile.religion && t(profile.religion), profile.maritalStatus && t(profile.maritalStatus)].filter(Boolean).join("  |  ") || t("Not shared")}</p>
         <p className="member-location"><FiMapPin aria-hidden="true" /><span>{location || t("Not shared")}</span></p>

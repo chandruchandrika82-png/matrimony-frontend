@@ -39,7 +39,7 @@ export default function Home() {
     <section className="hero-section" aria-labelledby="home-title">
       <img className="hero-photo" src="/tamil-wedding-premium-hero.png" alt={t("Tamil bride and groom wearing traditional wedding attire and flower garlands")} fetchPriority="high" />
       <div className="hero-shade" />
-      <div className="home-container hero-content"><p className="hero-kicker">{t("TRADITIONAL ROOTS. MODERN CONNECTIONS.")}</p><h1 id="home-title"><span>{t("Namakkal")}</span><span>{t("Matrimony")}</span></h1><div className="hero-title-rule" aria-hidden="true"><span /><FiHeart /><span /></div><p className="hero-copy">{t("Find a life partner who shares your values, culture and dreams.")}</p><div className="home-hero-actions"><Link to={signedIn ? "/profiles" : "/register"} className="home-primary">{t(signedIn ? "Find your match" : "Start your journey")}<FiArrowRight aria-hidden="true" /></Link></div></div>
+      <div className="home-container hero-content"><p className="hero-kicker">{t("TRADITIONAL ROOTS. MODERN CONNECTIONS.")}</p><h1 id="home-title"><span>{t("New Varan")}</span><span>{t("Kongu Thirumana Matrimony")}</span></h1><div className="hero-title-rule" aria-hidden="true"><span /><FiHeart /><span /></div><p className="hero-copy">{t("Find a life partner who shares your values, culture and dreams.")}</p><div className="home-hero-actions"><Link to={signedIn ? "/profiles" : "/register"} className="home-primary">{t(signedIn ? "Find your match" : "Start your journey")}<FiArrowRight aria-hidden="true" /></Link></div></div>
     </section>
 
     <section className="search-band" id="find-a-match" aria-labelledby="search-title"><div className="home-container"><div className="search-heading"><div><p className="section-kicker">{t("Find your match")}</p><h2 id="search-title">{t("Find someone who feels right for you")}</h2></div><FiSearch aria-hidden="true" /></div>
@@ -57,6 +57,6 @@ export default function Home() {
 
     <section className="process-section"><div className="home-container"><div className="home-section-heading"><div><p className="section-kicker">{t("YOUR NEXT CHAPTER")}</p><h2>{t("A connection begins")} {t("with a simple hello.")}</h2></div></div><ol className="process-list">{steps.map(([title, description], index) => <li key={title}><span>{String(index + 1).padStart(2, '0')}</span><h3>{t(title)}</h3><p>{t(description)}</p></li>)}</ol></div></section>
 
-    <section className="final-cta"><div className="home-container"><div><p className="section-kicker"><FiHeart aria-hidden="true" />{t("BEGIN AT YOUR OWN PACE")}</p><h2>{t("Your story deserves")} {t("a beautiful next chapter.")}</h2></div><Link className="home-primary" to={signedIn ? "/profiles" : "/register"}>{t(signedIn ? "Explore profiles" : "Join Namakkal Matrimony")}<FiArrowRight aria-hidden="true" /></Link></div></section>
+    <section className="final-cta"><div className="home-container"><div><p className="section-kicker"><FiHeart aria-hidden="true" />{t("BEGIN AT YOUR OWN PACE")}</p><h2>{t("Your story deserves")} {t("a beautiful next chapter.")}</h2></div><Link className="home-primary" to={signedIn ? "/profiles" : "/register"}>{t(signedIn ? "Explore profiles" : "Join New Varan Kongu Thirumana Matrimony")}<FiArrowRight aria-hidden="true" /></Link></div></section>
   </main>;
 }

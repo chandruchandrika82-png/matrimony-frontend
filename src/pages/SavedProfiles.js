@@ -48,7 +48,7 @@ export default function SavedProfiles() {
   }
 
   return <main className="directory-page saved-page"><div className="directory-shell">
-    <header className="directory-header saved-heading"><div><p className="saved-eyebrow"><FiBookmark aria-hidden="true" />{t("Saved profiles")}{!loading && <span>{favorites.length}</span>}</p><h1>{t("Saved Profiles")}</h1><p>{t("Your favourite Namakkal Matrimony matches.")}</p></div><Link className="saved-browse" to="/profiles">{t("Browse profiles")}<FiArrowRight aria-hidden="true" /></Link></header>
+    <header className="directory-header saved-heading"><div><p className="saved-eyebrow"><FiBookmark aria-hidden="true" />{t("Saved profiles")}{!loading && <span>{favorites.length}</span>}</p><h1>{t("Saved Profiles")}</h1><p>{t("Your favourite New Varan Kongu Thirumana Matrimony matches.")}</p></div><Link className="saved-browse" to="/profiles">{t("Browse profiles")}<FiArrowRight aria-hidden="true" /></Link></header>
     {error && <div className="saved-error" role="alert"><span>{t(error)}</span>{needsSignIn ? <Link className="saved-browse" to="/login" state={{ from: { pathname: '/saved' } }}>{t("Sign in")}</Link> : <button onClick={loadFavorites} disabled={loading || Boolean(removing)}>{t("Try again")}</button>}</div>}
     {loading ? <div className="directory-status" role="status">{t("Loading...")}</div> : favorites.length ? <div className="profile-grid saved-grid">
       {favorites.map(profile => <article key={profile._id} className="directory-card saved-card" aria-label={profile.name}>

@@ -203,7 +203,7 @@ const handleSubmit = async () => {
   return (
   <div className="member-editor" style={styles.page}>
     <div style={styles.container}>
-      <header className="editor-heading"><p className="section-kicker">{t("YOUR NAMAKKAL MATRIMONY PROFILE")}</p><h1>{t("Tell your story")}</h1></header>
+      <header className="editor-heading"><p className="section-kicker">{t("YOUR NEW VARAN KONGU THIRUMANA MATRIMONY PROFILE")}</p><h1>{t("Tell your story")}</h1></header>
       {/* =========================
     SECTION 1 : PERSONAL DETAILS
 ========================= */}
